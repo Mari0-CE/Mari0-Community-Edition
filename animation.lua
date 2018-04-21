@@ -28,6 +28,10 @@ pancameratox:x:time					pans the camera horizontally over <time> secs to <x>
 pancameratoy:y:time					pans the camera vertically over <time> secs to <y>
 disablescroll						disables autoscroll
 enablescroll						enables autoscroll
+disablexscroll						disables horizontal autoscroll
+enablexscroll						enables horizontal autoscroll
+disableyscroll						disables vertical autoscroll
+enableyscroll						enables vertical autoscroll
 setx[:player]:x						sets the x-position of player(s)
 sety[:player]:y						sets the y-position of player(s)
 playerwalk[:player]:direction		makes players walk into the given <direction>
@@ -184,7 +188,7 @@ function animation:update(dt)
 			if v[1] == "disablecontrols" then
 				if v[2] == "everyone" then
 					for i = 1, players do
-						objects["player"][1].controlsenabled = false
+						objects["player"][i].controlsenabled = false
 					end
 				else
 					local p = objects["player"][tonumber(string.sub(v[2], -1))]
@@ -195,7 +199,7 @@ function animation:update(dt)
 			elseif v[1] == "enablecontrols" then
 				if v[2] == "everyone" then
 					for i = 1, players do
-						objects["player"][1].controlsenabled = true
+						objects["player"][i].controlsenabled = true
 					end
 				else
 					local p = objects["player"][tonumber(string.sub(v[2], -1))]
@@ -207,6 +211,8 @@ function animation:update(dt)
 				self.sleep = tonumber(v[2])
 			elseif v[1] == "setcamerax" then
 				xscroll = tonumber(v[2])
+			elseif v[1] == "setcameray" then
+				yscroll = tonumber(v[2])
 			elseif v[1] == "pancameratox" then
 				autoscroll = false
 				cameraxpan(tonumber(v[2]), tonumber(v[3]))
@@ -217,6 +223,14 @@ function animation:update(dt)
 				autoscroll = false
 			elseif v[1] == "enablescroll" then
 				autoscroll = true
+			elseif v[1] == "disablexscroll" then
+				autoscrollx = false
+			elseif v[1] == "enablexscroll" then
+				autoscrollx = true
+			elseif v[1] == "disableyscroll" then
+				autoscrolly = false
+			elseif v[1] == "enableyscroll" then
+				autoscrolly = true
 			elseif v[1] == "setx" then
 				if v[2] == "everyone" then
 					for i = 1, players do

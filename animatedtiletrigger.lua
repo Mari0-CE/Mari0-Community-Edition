@@ -61,7 +61,7 @@ end
 function animatedtiletrigger:input(t, input)
 	for x = self.regionX+1, self.regionX + self.regionwidth do
 		for y = self.regionY+1, self.regionY + self.regionheight do
-			if animatedtimers[x][y] then
+			if animatedtimers[x] and animatedtimers[x][y] then
 				animatedtimers[x][y]:input(t)
 			end
 		end

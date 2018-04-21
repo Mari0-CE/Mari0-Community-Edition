@@ -95,9 +95,10 @@ function animatedquad:quad(x, y)
 end
 
 function animatedquad:getproperty(s, x, y)
-	if self.triggered and x and y and animatedtimers[x][y] then
-		return self.properties[animatedtimers[x][y]:geti()][s]
-	else
-		return self.props[s]
+	if self.triggered and x and y and animatedtimers[x] and animatedtimers[x][y] then
+		if self.properties[animatedtimers[x][y]:geti()] then
+			return self.properties[animatedtimers[x][y]:geti()][s]
+		end
 	end
+	return self.props[s]
 end

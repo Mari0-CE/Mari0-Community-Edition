@@ -148,7 +148,7 @@ function funnel:update(dt)
 					local diff = (w.y+w.height/2)-y-1
 					w.speedy = -diff*funnelforce
 					
-					if rectcol[i] == "player" then
+					if rectcol[i] == "player" and w.controlsenabled then
 						if downkey(rectcol[i+1]) then
 							w.speedy = funnelmovespeed
 						elseif upkey(rectcol[i+1]) then
@@ -162,7 +162,7 @@ function funnel:update(dt)
 					local diff = (w.y+w.height/2)-y-1
 					w.speedy = -diff*funnelforce
 					
-					if rectcol[i] == "player" then
+					if rectcol[i] == "player" and w.controlsenabled then
 						if downkey(rectcol[i+1]) then
 							w.speedy = funnelmovespeed
 						elseif upkey(rectcol[i+1]) then
@@ -176,7 +176,7 @@ function funnel:update(dt)
 					local diff = (w.x+w.width/2)-x-1
 					w.speedx = -diff*funnelforce
 					
-					if rectcol[i] == "player" then
+					if rectcol[i] == "player" and w.controlsenabled then
 						if leftkey(rectcol[i+1]) then
 							w.speedx = -funnelmovespeed
 						elseif rightkey(rectcol[i+1]) then
@@ -190,7 +190,7 @@ function funnel:update(dt)
 					local diff = (w.x+w.width/2)-x-1
 					w.speedx = -diff*funnelforce
 					
-					if rectcol[i] == "player" then
+					if rectcol[i] == "player" and w.controlsenabled then
 						if leftkey(rectcol[i+1]) then
 							w.speedx = -funnelmovespeed
 						elseif rightkey(rectcol[i+1]) then
@@ -217,7 +217,7 @@ function funnel:draw()
 			endimg = excursionfunnelendimg
 		else
 			img = excursionfunnel2img
-			endimg = excursionfunnelendimg2
+			endimg = excursionfunnelend2img
 		end
 		
 		for i, v in pairs(self.funneltable) do

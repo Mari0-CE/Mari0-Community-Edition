@@ -1,6 +1,6 @@
 portalprojectile = class("portalprojectile")
 
-function portalprojectile:init(x, y, tx, ty, color, hit, payload, mirror, mirrored)
+function portalprojectile:init(x, y, tx, ty, color, hit, payload, mirror, mirrored, bounces)
 	self.x = x
 	self.y = y
 	
@@ -8,6 +8,7 @@ function portalprojectile:init(x, y, tx, ty, color, hit, payload, mirror, mirror
 	self.starty = y
 	self.endx = tx
 	self.endy = ty
+	self.bounces = bounces or portalbouncethreshold
 	
 	self.color = color
 	self.hit = hit
@@ -158,8 +159,9 @@ function portalprojectile:createportal()
 		else
 			angle = math.atan2(self.endx-self.startx, self.starty-self.endy)
 		end
-		
-		shootportal(portal.number, i, self.endx, self.endy, angle, true)
+		if self.bounces > 0 then
+			shootportal(portal.number, i, self.endx, self.endy, angle, true, self.bounces-1)
+		end
 	else
 		portal.createportal(unpack(self.payload))
 	end

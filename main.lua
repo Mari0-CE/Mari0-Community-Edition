@@ -24,6 +24,41 @@
 ]]
 
 function love.run()
+	if love._version_minor < 9 then
+		--Cheap af but I don't care, COMPATIBILITY!!!
+		love.math = {}
+		love.math.setRandomSeed = math.randomseed
+		love.math.random = math.random
+		
+		love.window = {}
+		love.window.setMode = love.graphics.setMode
+		love.window.getMode = love.graphics.getMode
+		love.window.setTitle = love.graphics.setCaption
+		love.window.setIcon = love.graphics.setIcon
+		love.window.getFullscreenModes = love.graphics.getModes
+		
+		love.filesystem.getDirectoryItems = love.filesystem.enumerate
+		love.filesystem.createDirectory = love.filesystem.mkdir
+		
+		love.graphics.setDefaultFilter = love.graphics.setDefaultImageFilter
+		love.graphics.origin = function() --Don't kill me for being cheap
+			local ptimes = 0
+			local ok, msg = pcall(love.graphics.pull)
+			if not ok then
+				return
+			else
+				while ok do
+					ptimes = ptimes + 1
+					ok, msg = pcall(love.graphics.pull)
+				end
+				for i = 1, ptimes do
+					love.graphics.push()
+				end
+			end
+		end
+		
+		love.mouse.setGrabbed = love.mouse.setGrab
+	end
 	love.math.setRandomSeed(os.time())
 	for i=1, 2 do 
 		love.math.random() 
@@ -53,13 +88,20 @@ function love.run()
         love.update(dt) -- will pass 0 if love.timer is disabled
 		love.graphics.clear()
 		love.graphics.origin()
-		
 		--Fullscreen hack
 		if not mkstation and fullscreen and gamestate ~= "intro" then
-			completecanvas:clear()
+			if loveVersion <= 9 then
+				completecanvas:clear()
+			else
+				love.graphics.setCanvas(completecanvas)
+				love.graphics.clear()
+			end
 			love.graphics.setScissor()
 			completecanvas:renderTo(love.draw)
 			love.graphics.setScissor()
+			if loveVersion > 9 then
+				love.graphics.setCanvas()
+			end
 			if fullscreenmode == "full" then
 				love.graphics.draw(completecanvas, 0, 0, 0, desktopsize.width/(width*16*scale), desktopsize.height/(height*16*scale))
 			else
@@ -197,15 +239,20 @@ function love.load(arg)
 	
 	--version check by checking for a const that was added in 0.8.0 --todo: change to 0.9.0
 	if love._version_major == nil or (love._version_minor and love._version_minor < 9) then 
-		versionerror = true
-		error("You have an outdated version of Love! Get 0.9.0 and retry.") 
+		--versionerror = true
+		--error("You have an outdated version of Love! Get 0.9.0 and retry.")
+		
+		--HOW ABOUT NO
+		--Leave backwards compatibility with Hugo!
 	end
 
 	math.mod = math.fmod
 	math.random = love.math.random
 	
 	--blame slime
-	love.graphics.drawq = love.graphics.draw
+	if love._version_minor >= 9 then
+		love.graphics.drawq = love.graphics.draw
+	end
 	
 	print("Loading Mari0 SE!")
 	print("=======================")
@@ -214,7 +261,6 @@ function love.load(arg)
 	totaltime = 0
 	JSON = require "JSON"
 	require "notice"
-	
 	--Get biggest screen size
 	
 	local sizes = love.window.getFullscreenModes()
@@ -254,7 +300,30 @@ function love.load(arg)
 	table.remove(shaderlist, rem)
 	table.insert(shaderlist, 1, "none")
 	
-	iconimg = love.image.newImageData("graphics/icon.gif")
+	--=================--
+	-- VERSION CONTROL --
+	--=================--
+	loveVersion = love._version_minor
+	if loveVersion > 9 then
+		lkisDown = love.keyboard.isDown
+		lmisDown = love.mouse.isDown
+		function love.keyboard.isDown(key)
+			if key == " " then key = "space" end
+			return lkisDown(key)
+		end
+		function love.mouse.isDown(button)
+			if button == "l" then button = 1
+			elseif button == "r" then button = 2
+			elseif button == "m" then button = 3 end
+			return lmisDown(button)
+		end
+	end
+	
+	
+	iconimg = love.image.newImageData("graphics/icon.png")
+	if loveVersion < 9 then
+		iconimg = love.graphics.newImage("graphics/icon.png")
+	end
 	love.window.setIcon(iconimg)
 	
 	love.graphics.setDefaultFilter("nearest", "nearest")
@@ -307,7 +376,6 @@ function love.load(arg)
 	add("Characterloader")
 	
 	dlclist = {}
-	
 	hatcount = #love.filesystem.getDirectoryItems("graphics/standardhats")
 	saveconfig()
 	love.window.setTitle( "Mari0 SE" )
@@ -985,8 +1053,7 @@ function love.update(dt)
 		
 		notice.update(dt)
 		
-		--love.window.setTitle("FPS:" .. love.timer.getFPS() .. " - Send feedback/issues to crash@stabyourself.net")
-		love.window.setTitle("Mari0 SE")
+		love.window.setTitle("FPS:" .. love.timer.getFPS() .. " - Send feedback/issues to crash@stabyourself.net")
 	end
 end
 
@@ -1528,20 +1595,18 @@ function changescale(s, init)
 	end
 	
 	if fullscreen then
-		love.window.setMode(desktopsize.width, desktopsize.height, {fullscreen=fullscreen, vsync=vsync, fsaa=fsaa})
+		love.window.setMode(desktopsize.width, desktopsize.height, {fullscreen=fullscreen, vsync=vsync--[[, fsaa=fsaa]]})
 	else
 		uispace = math.floor(width*16*scale/4)
-		love.window.setMode(width*16*scale, height*16*scale, {fullscreen=fullscreen, vsync=vsync, fsaa=fsaa}) --25x14 blocks (15 blocks actual height)
+		love.window.setMode(width*16*scale, height*16*scale, {fullscreen=fullscreen, vsync=vsync--[[, fsaa=fsaa]]}) --25x14 blocks (15 blocks actual height)
 	end
 	
-	if love.graphics.isSupported("canvas") then
+	if loveVersion > 9 or love.graphics.isSupported("canvas") then
 		completecanvas = love.graphics.newCanvas()
 		completecanvas:setFilter("linear", "linear")
 	end
 	
-	gamewidth = love.window.getWidth()
-	gameheight = love.window.getHeight()
-	
+	gamewidth, gameheight = love.window.getMode()
 	if shaders then
 		shaders:refresh()
 	end
@@ -1552,6 +1617,7 @@ function changescale(s, init)
 end
 
 function love.keypressed(key, isrepeat)
+	if key == "space" and loveVersion > 9 then key = " " end
 	if key == "k" then
 		savelevel()
 	end
@@ -1618,6 +1684,7 @@ function love.keypressed(key, isrepeat)
 end
 
 function love.keyreleased(key)
+	if key == "space" and loveVersion > 9 then key = " " end
 	if gamestate == "menu" or gamestate == "options" then
 		menu_keyreleased(key)
 	elseif gamestate == "game" then
@@ -1625,7 +1692,34 @@ function love.keyreleased(key)
 	end
 end
 
+function love.textinput(text)
+	if _G[gamestate .. "_textinput"] and type(_G[gamestate .. "_textinput"]) == "function" then
+		local success, err = pcall(function() _G[gamestate .. "_textinput"](text) end) -- I don't wanna cause a crash
+		if not success then print(err) end
+	end
+	
+	if guielements then
+		for _, v in pairs(guielements) do
+			v:textinput(text)
+		end
+	end
+end
+
+function love.wheelmoved(x, y)
+	if y > 0 then
+		love.mousepressed(love.mouse.getX(), love.mouse.getY(), "wu")
+	elseif y < 0 then
+		love.mousepressed(love.mouse.getX(), love.mouse.getY(), "wd")
+	end
+end
+
 function love.mousepressed(x, y, button)
+	if loveVersion > 9 then
+		if button == 1 then button = "l"
+		elseif button == 2 then button = "r"
+		elseif button == 3 then button = "m"
+		end
+	end
 	if fullscreen then
 		if fullscreenmode == "full" then
 			x, y = x/(desktopsize.width/(width*16*scale)), y/(desktopsize.height/(height*16*scale))
@@ -1685,6 +1779,12 @@ function love.mousepressed(x, y, button)
 end
 
 function love.mousereleased(x, y, button)
+	if loveVersion > 9 then
+		if button == 1 then button = "l"
+		elseif button == 2 then button = "r"
+		elseif button == 3 then button = "m"
+		end
+	end
 	x, y = desktopsize.width/(width*16*scale)*x, desktopsize.height/(height*16*scale)*y
 	if gamestate == "menu" or gamestate == "options" then
 		menu_mousereleased(x, y, button)
@@ -1971,7 +2071,7 @@ function loadcustombackgrounds()
 	for i = 1, #fl do
 		local v = "mappacks/" .. mappack .. "/backgrounds/" .. fl[i]
 		
-		if love.filesystem.isFile(v) then
+		if love.filesystem.isFile(v) and v ~= ".DS_STORE" and v ~= ".DS_S" then
 			if string.sub(v, -5, -5) == "1" then
 				local name = string.sub(fl[i], 1, -6)
 				local bg = string.sub(v, 1, -6)

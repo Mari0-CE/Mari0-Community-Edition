@@ -66,6 +66,9 @@ function scaffold:init(x, y, r)
 	self.category = 15
 	self.mask = {true}
 	self.gravity = 0
+	if self.dir == "down" or self.dir == "up" then
+		self.starty = self.starty-1
+	end
 	
 	--IMAGE STUFF
 	self.drawable = false
@@ -206,7 +209,7 @@ function scaffold:update(dt)
 					end
 				end
 			else
-				if self.dir == "left" then
+				if self.dir == "up" then
 					if self.y > self.starty then
 						self.state = "start"
 						self.y = self.starty

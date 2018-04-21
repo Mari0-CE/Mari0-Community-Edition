@@ -233,6 +233,16 @@ function rightclickmenu:keypressed(key)
 	end
 end
 
+function rightclickmenu:textinput(text)
+	for i = 1, #self.t do
+		if self.t[i].type then
+			if self.t[i]:textinput(text) then
+				return
+			end
+		end
+	end
+end
+
 function rightclickmenu:linkcallback(self, t, rem)
 	if rem then
 		removelink(self.tx, self.ty, t)

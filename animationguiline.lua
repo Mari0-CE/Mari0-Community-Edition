@@ -306,6 +306,46 @@ table.insert(toenter, {name = "enablescroll",
 	}
 })
 
+table.insert(toenter, {name = "disablexscroll", 
+	t = {
+		t="action",
+		nicename="disable horizontal scrolling",
+		entries={
+		
+		}
+	}
+})
+
+table.insert(toenter, {name = "enablexscroll", 
+	t = {
+		t="action",
+		nicename="enable horizontal scrolling",
+		entries={
+		
+		}
+	}
+})
+
+table.insert(toenter, {name = "disableyscroll", 
+	t = {
+		t="action",
+		nicename="disable vertical scrolling",
+		entries={
+		
+		}
+	}
+})
+
+table.insert(toenter, {name = "enableyscroll", 
+	t = {
+		t="action",
+		nicename="enable vertical scrolling",
+		entries={
+		
+		}
+	}
+})
+
 table.insert(toenter, {name = "setx", 
 	t = {
 		t="action",
@@ -992,6 +1032,14 @@ function animationguiline:keypressed(key)
 	for i = 1, #self.elements do
 		if self.elements[i].gui then
 			self.elements[i].gui:keypress(key)
+		end
+	end
+end
+
+function animationguiline:textinput(text)
+	for i = 1, #self.elements do
+		if self.elements[i].gui then
+			self.elements[i].gui:textinput(text)
 		end
 	end
 end

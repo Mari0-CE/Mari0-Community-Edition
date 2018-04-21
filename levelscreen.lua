@@ -22,10 +22,14 @@ function levelscreen_load(reason, i)
 			checkpointsub = false
 			checkpointx = {}
 			checkpointy = {}
-			respawnsublevel = 0
+			respawnsublevel = mariosublevel or 0
 			
 			--check if next level doesn't exist
-			if not love.filesystem.exists("mappacks/" .. mappack .. "/" .. marioworld .. "-" .. mariolevel .. ".txt") then
+			if mariosublevel > 0 and not love.filesystem.exists("mappacks/" .. mappack .. "/" .. marioworld .. "-" .. mariolevel .. "_" .. mariosublevel .. ".txt") then
+				gamestate = "mappackfinished"
+				blacktime = gameovertime
+				music:play("princessmusic.ogg")
+			elseif not love.filesystem.exists("mappacks/" .. mappack .. "/" .. marioworld .. "-" .. mariolevel .. ".txt") then
 				gamestate = "mappackfinished"
 				blacktime = gameovertime
 				music:play("princessmusic.ogg")

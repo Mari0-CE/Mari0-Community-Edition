@@ -1762,7 +1762,7 @@ function mario:setquad(anim, s)
 	elseif not self.portalsavailable[1] and not self.portalsavailable[2] and not self.char.nogunanimations then
 		angleframe = 3
 	else
-		angleframe = getAngleFrame(self.pointingangle, self.rotation)
+		angleframe = getAngleFrame(self.pointingangle, self.rotation) or 1
 	end
 	
 	local animationstate = anim or self.animationstate
@@ -1846,7 +1846,7 @@ function gethatoffset(char, graphic, animationstate, runframe, jumpframe, climbf
 		if not char.bighatoffsets then
 			return
 		end
-		if infunnel or animationstate == "jumping" and not ducking and not underwater then
+		if infunnel or animationstate == "jumping" and not ducking then
 			hatoffset = char.bighatoffsets["jumping"][jumpframe]
 		elseif underwater and (animationstate == "jumping" or animationstate == "falling") then
 			hatoffset = char.bighatoffsets["swimming"][swimframe]

@@ -5,6 +5,9 @@ CATEGORYDELIMITER = "¸"
 MULTIPLYDELIMITER = "·"
 EQUALSIGN = "¨"
 
+--HUGO'S VARIABLES
+portalbouncethreshold = 256
+
 --SETABLE VARS--	
 --almost all vars are in "blocks", "blocks per second" or just "seconds". Should be obvious enough what's what.
 portalgundelay = 0.2

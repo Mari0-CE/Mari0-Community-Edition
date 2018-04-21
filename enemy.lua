@@ -254,6 +254,10 @@ function enemy:update(dt)
 	end
 	
 	if self.spawnsenemy then
+		if lakitoend and self.movement == "follow" then
+			self.speedx = -3
+			return false
+		end
 		self.spawnenemytimer = self.spawnenemytimer + dt
 		while self.spawnenemytimer >= self.spawnenemydelay and self.spawnallow and (not self.spawnmax or self:getspawnedenemies() < self.spawnmax) do
 			if self.spawnsenemyrandoms then

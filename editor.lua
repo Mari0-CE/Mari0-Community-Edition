@@ -1,12 +1,19 @@
 function editor_load()
-	print("Editor loaded!")
+	print("Better editor loaded!")
+	
 	currentanimation = 1
 	tilecount1 = 168
 	tilecount2 = 74
 	
+	brush = {1, 1}
+	brushmax = 10
+	
+	middlemode = {false, 0, 0}
+	
 	tooltipa = 0
 	
 	tilesoffset = 0
+	multitilesoffset = 0
 	
 	minimapscroll = 0
 	minimapx = 3
@@ -22,9 +29,81 @@ function editor_load()
 	
 	allowdrag = true
 	
+	savestates = {}
+	maxstates = 15
+	currentstate = 1
+	
+	tileswitcherkey = controls[1]["use"][1]
+	
+	if musiclist[#musiclist] ~= "princessmusic.ogg" then
+		musiclist[#musiclist+1] = "princessmusic.ogg"
+	end
+
+	rightclickmenues.pipe = {
+		{t="text", value="destination:"},
+		{t="input", default="1"},
+		{t="text", value="note: 1 is main"}
+	}
+	
+
+	rightclickmenues.vine = {
+		{t="text", value="destination:"},
+		{t="input", default="1"},
+		{t="text", value="note: 1 is main"}
+	}
+
+	rightclickmenues.pipespawn = {
+		{t="text", value="source:"},
+		{t="input", default="1"},
+		{t="text", value="note: 1 is main"}
+	}
+
+	rightclickmenues.warppipe = {
+		{t="text", value="world:"},
+		{t="input", default="1"},
+		{t="text", value="level:"},
+		{t="input", default="1"}
+	}
+
+	powerlinedrawtable = {
+		{"up", "down", 43, true},
+		{"down", "up", 43, true},
+		{"left", "right", 44, true},
+		{"right", "left", 44, true},
+		{"up", "right", 45, true},
+		{"right", "up", 45, true},
+		{"right", "down", 46, true},
+		{"down", "right", 46, true},
+		{"down", "left", 47, true},
+		{"left", "down", 47, true},
+		{"left", "up", 48, true},
+		{"up", "left", 48, true}}
+	
+	tileselection = false
+	tileselectionclick1 = false
+	tileselectionclick1x = 0
+	tileselectionclick1y = 0	
+	tileselectionclick2 = false
+	tileselectionclick2x = 0
+	tileselectionclick2y = 0
+	
+	mtsavehighlighttime = 5
+	mtsavetimer = 0
+	mtjustsaved = false
+	mtsavecolors = {255, 112, 112, 128}
+	
+	pastingtiles = false
+	pastemode = false -- 1 transparent, 2 opaque
+	pastecenter = {0, 0}
+	mtclipboard = {} -- fill with x, y, tile
+	
+	splitxscroll = {0, 0}
+	
 	animationguiarea =  {12, 33, 399, 212}
 	mapbuttonarea =  {4, 21, 381, 220}
 	animationlineinset = 14
+	
+	secretcheckboxtext = {"secret feature", "really secret feature", "super secret feature", "very secret feature", "don't enable this", "exit editor", "copy enemies", "copy entities", "all of the above", "play music in editor", "shmuck bait", "disable tiles", "enable tiles", "goombas are cats", "hat stacking", "auto-update", "horizontal tileset scrollbar", "show mazes", "play space jam while editing", "get rid of this checkbox", "old editor", "disable better editor", "1.6 editor", "enable autocorrect", "make cool maps like willware", "snes mode", "disable crashing", "enable this checkbox", "enable the super secret checkbox", ""}
 	
 	guielements["tabmain"] = guielement:new("button", 1, 1, "main", maintab, 3)
 	guielements["tabmain"].fillcolor = {63, 63, 63}
@@ -36,6 +115,8 @@ function editor_load()
 	guielements["tabmaps"].fillcolor = {63, 63, 63}
 	guielements["tabanimations"] = guielement:new("button", 185, 1, "animations", animationstab, 3)
 	guielements["tabanimations"].fillcolor = {63, 63, 63}
+	guielements["tabobjects"] = guielement:new("button", 275, 1, "objects", objectstab, 3)
+	guielements["tabobjects"].fillcolor = {63, 63, 63}
 	
 	--MAIN
 	--left side
@@ -87,7 +168,7 @@ function editor_load()
 	
 	--bottom
 	guielements["savebutton"] = guielement:new("button", 10, 200, "save", savelevel, 2)
-	guielements["menubutton"] = guielement:new("button", 54, 200, "return to menu", menu_load, 2)
+	guielements["menubutton"] = guielement:new("button", 54, 200, "return to menu", editorexit, 2)
 	guielements["testbutton"] = guielement:new("button", 204, 200, "test level", test_level, 2)
 	guielements["widthbutton"] = guielement:new("button", 296, 200, "change size", openchangewidth, 2)
 	
@@ -147,57 +228,6 @@ function editor_load()
 		end
 	end
 	
-	guielements["levelscreendropdown"] = guielement:new("dropdown", 298, 185, 10, changelevelscreen, i, unpack(args))
-	
-	--TILES
-	guielements["tilesall"] = guielement:new("button", 4, 20, "all", tilesall, 2) --72
-	guielements["tilessmb"] = guielement:new("button", 37, 20, "smb", tilessmb, 2)
-	guielements["tilesportal"] = guielement:new("button", 70, 20, "portal", tilesportal, 2)
-	guielements["tilescustom"] = guielement:new("button", 127, 20, "custom", tilescustom, 2)
-	guielements["tilesanimated"] = guielement:new("button", 184, 20, "animated", tilesanimated, 2)
-	guielements["tilesentities"] = guielement:new("button", 257, 20, "entities", tilesentities, 2)
-	guielements["tilesenemies"] = guielement:new("button", 330, 20, "enemies", tilesenemies, 2)
-	
-	guielements["tilesscrollbar"] = guielement:new("scrollbar", 381, 37, 167, 15, 40, 0, "ver", nil, nil, nil, nil, true)
-	
-	--TOOLS
-	guielements["selectionbutton"] = guielement:new("button", 5, 22, "selection tool|click and drag to select entities|rightclick to configure all at once|hit del to delete.", selectionbutton, 2, false, 4, 383)
-	guielements["selectionbutton"].bordercolor = {0, 255, 0}
-	guielements["selectionbutton"].bordercolorhigh = {220, 255, 220}
-	guielements["lightdrawbutton"] = guielement:new("button", 5, 71, "power line draw|click and drag to draw power lines", lightdrawbutton, 2, false, 2, 383)
-	guielements["lightdrawbutton"].bordercolor = {0, 0, 255}
-	guielements["lightdrawbutton"].bordercolorhigh = {127, 127, 255}
-	
-	guielements["livesdecrease"] = guielement:new("button", 198, 104, "{", livesdecrease, 0)
-	guielements["livesincrease"] = guielement:new("button", 194, 104, "}", livesincrease, 0)
-	
-	--MAPS
-	--[[guielements["savebutton2"] = guielement:new("button", 10, 140, "save", savelevel, 2)
-	guielements["savebutton2"].bordercolor = {255, 0, 0}
-	guielements["savebutton2"].bordercolorhigh = {255, 127, 127}--]]
-	guielements["mapscrollbar"] = guielement:new("scrollbar", 381, 21, 199, 15, 40, 0, "ver", nil, nil, nil, nil, true)
-	
-	--animationS
-	guielements["animationsscrollbarver"] = guielement:new("scrollbar", animationguiarea[1]-10, animationguiarea[2], animationguiarea[4]-animationguiarea[2], 10, 40, 0, "ver", nil, nil, nil, nil, true)
-	guielements["animationsscrollbarhor"] = guielement:new("scrollbar", animationguiarea[1], animationguiarea[4], animationguiarea[3]-animationguiarea[1], 40, 10, 0, "hor", nil, nil, nil, nil, false)
-	
-	local args = {}
-	for i, v in ipairs(animations) do
-		table.insert(args, string.sub(v.name, 1, -6))
-	end
-	guielements["animationselectdrop"] = guielement:new("dropdown", 15, 20, 15, selectanimation, 1, unpack(args))
-	guielements["animationnewbutton"] = guielement:new("button", 3, 20, "+", createnewanimation, nil)
-	guielements["animationsavebutton"] = guielement:new("button", 150, 19, "save", saveanimation, 1)
-	
-	addanimationtriggerbutton = guielement:new("button", 0, 0, "+", addanimationtrigger, nil, nil, nil, 8)
-	addanimationtriggerbutton.textcolor = {0, 200, 0}
-	
-	addanimationconditionbutton = guielement:new("button", 0, 0, "+", addanimationcondition, nil, nil, nil, 8)
-	addanimationconditionbutton.textcolor = {0, 200, 0}
-	
-	addanimationactionbutton = guielement:new("button", 0, 0, "+", addanimationaction, nil, nil, nil, 8)
-	addanimationactionbutton.textcolor = {0, 200, 0}
-	
 	--get current description and shit
 	local mappackname = ""
 	local mappackauthor = ""
@@ -217,12 +247,89 @@ function editor_load()
 		end
 	end
 	
+	guielements["levelscreendropdown"] = guielement:new("dropdown", 298, 185, 10, changelevelscreen, i, unpack(args))
+	
+	--TILES
+	guielements["tilesall"] = guielement:new("button", 4, 20, "all", tilesall, 2) --72
+	guielements["tilessmb"] = guielement:new("button", 37, 20, "smb", tilessmb, 2)
+	guielements["tilesportal"] = guielement:new("button", 70, 20, "portal", tilesportal, 2)
+	guielements["tilescustom"] = guielement:new("button", 127, 20, "custom", tilescustom, 2)
+	guielements["tilesanimated"] = guielement:new("button", 184, 20, "animated", tilesanimated, 2)
+	guielements["tilesentities"] = guielement:new("button", 257, 20, "entities", tilesentities, 2)
+	guielements["tilesenemies"] = guielement:new("button", 330, 20, "enemies", tilesenemies, 2)
+	
+	guielements["tilesscrollbar"] = guielement:new("scrollbar", 381, 37, 167, 15, 40, 0, "ver", nil, nil, nil, nil, true)
+	
+	--TOOLS
+	guielements["selectionbutton"] = guielement:new("button", 5, 22, "selection tool|click and drag to select entities|rightclick to configure all at once|hit del to delete.", selectionbutton, 2, false, 4, 383)
+	guielements["selectionbutton"].bordercolor = {0, 255, 0}
+	guielements["selectionbutton"].bordercolorhigh = {220, 255, 220}
+	guielements["lightdrawbutton"] = guielement:new("button", 5, 71, "advanced draw tool|place tiles seamlessly using premade tools", powerlinestab, 2, false, 2, 383)
+	guielements["lightdrawbutton"].bordercolor = {0, 0, 255}
+	guielements["lightdrawbutton"].bordercolorhigh = {127, 127, 255}
+	
+	guielements["livesdecrease"] = guielement:new("button", 198, 104, "{", livesdecrease, 0)
+	guielements["livesincrease"] = guielement:new("button", 194, 104, "}", livesincrease, 0)
+
+	guielements["pastemodedropdown"] = guielement:new("checkbox", 149, 135, changepastemode, pastemode, "opaque paste")
+	guielements["clipboardcheckbox"] = guielement:new("checkbox", 149, 145, toggleclipboardenabled, clipboardenabled, "copy to clipboard")
+	guielements["linktoolkindabutnotreally"] = guielement:new("checkbox", 149, 155, toggledrawalllinks, drawalllinks, "draw all links")
+	guielements["editordebugcheckbox"] = guielement:new("checkbox", 149, 165, toggleeditordebug, editordebug, "show hitboxes")
+	guielements["levelscreencheckbox"] = guielement:new("checkbox", 149, 175, toggleskiplevelscreen, skiplevelscreen, "skip level screens")
+	guielements["secretcheckbox"] = guielement:new("checkbox", 149, 185, editorexit, nil, secretcheckboxtext[math.random(1,#secretcheckboxtext)])
+	
 	guielements["edittitle"] = guielement:new("input", 5, 115, 17, nil, mappackname, 17)
 	guielements["editauthor"] = guielement:new("input", 5, 140, 13, nil, mappackauthor, 13)
 	guielements["editdescription"] = guielement:new("input", 5, 165, 17, nil, mappackdescription, 51, 3)
 	guielements["savesettings"] = guielement:new("button", 5, 203, "save settings", savesettings, 2)
 	guielements["savesettings"].bordercolor = {255, 0, 0}
 	guielements["savesettings"].bordercolorhigh = {255, 127, 127}
+	
+  --[[MAPS
+	guielements["savebutton2"] = guielement:new("button", 10, 140, "save", savelevel, 2)
+	guielements["savebutton2"].bordercolor = {255, 0, 0}
+	guielements["savebutton2"].bordercolorhigh = {255, 127, 127}]]
+	guielements["mapscrollbar"] = guielement:new("scrollbar", 381, 21, 199, 15, 40, 0, "ver", nil, nil, nil, nil, true)
+	guielements["mapsworldbox"] = guielement:new("input", 332, 21, 2, nil, nil, 2, 1, true, 0)
+	guielements["mapslevelbox"] = guielement:new("input", 361, 21, 2, nil, nil, 2, 1, true, 0)
+	guielements["mapsnewlevel"] = guielement:new("button", 320, 21, "+", newlevel, 0)
+	
+	--animationS
+	guielements["animationsscrollbarver"] = guielement:new("scrollbar", animationguiarea[1]-10, animationguiarea[2], animationguiarea[4]-animationguiarea[2], 10, 40, 0, "ver", nil, nil, nil, nil, true)
+	guielements["animationsscrollbarhor"] = guielement:new("scrollbar", animationguiarea[1], animationguiarea[4], animationguiarea[3]-animationguiarea[1], 40, 10, 0, "hor", nil, nil, nil, nil, false)
+	
+	addanimationtriggerbutton = guielement:new("button", 0, 0, "+", addanimationtrigger, nil, nil, nil, 8)
+	addanimationtriggerbutton.textcolor = {0, 200, 0}
+	
+	addanimationconditionbutton = guielement:new("button", 0, 0, "+", addanimationcondition, nil, nil, nil, 8)
+	addanimationconditionbutton.textcolor = {0, 200, 0}
+	
+	addanimationactionbutton = guielement:new("button", 0, 0, "+", addanimationaction, nil, nil, nil, 8)
+	addanimationactionbutton.textcolor = {0, 200, 0}
+	
+	local args = {}
+	for i, v in ipairs(animations) do
+		table.insert(args, string.sub(v.name, 1, -6))
+	end
+	guielements["animationselectdrop"] = guielement:new("dropdown", 15, 20, 15, selectanimation, 1, unpack(args))
+	guielements["animationnewbutton"] = guielement:new("button", 3, 20, "+", createnewanimation, nil)
+	guielements["animationsavebutton"] = guielement:new("button", 150, 19, "save", saveanimation, 1)
+		
+	--OBJECTS fun fact: objects were originally in the tiles tab
+	guielements["objectscrollbar"] = guielement:new("scrollbar", 381, 21, 199, 15, 40, 0, "ver", nil, nil, nil, nil, true)
+	
+	--POWERLINE "SUBTAB"
+	drawtools = 2
+	guielements["drawtool1"] = guielement:new("button", 5, 21, "power line draw", drawpowerlines, 2)
+	guielements["drawtool1"].bordercolor = {0, 0, 255}
+	guielements["drawtool1"].bordercolorhigh = {127, 127, 255}
+	guielements["drawtool2"] = guielement:new("button", 5, 38, "mushroom platforms", drawmushrooms, 2)
+	guielements["drawtool2"].bordercolor = {255, 0, 0}
+	guielements["drawtool2"].bordercolorhigh = {255, 127, 127}
+	
+	multitileobjects = {}
+	multitileobjectnames = {}
+	loadmtobjects()
 	
 	tilesall()
 	if editorloadopen then
@@ -233,6 +340,8 @@ function editor_load()
 		editorstate = "main"
 		editentities = false
 	end
+	
+	savestate()
 end
 
 function editor_start()
@@ -255,6 +364,11 @@ function editor_update(dt)
 	----------
 	--EDITOR--
 	----------
+	
+	if middlemode[1] == false and not love.mouse.isDown("m") then
+		middlemode[2], middlemode[3] = getMouseTile(love.mouse.getX(), love.mouse.getY()-8*scale)
+	end
+	
 	if rightclickm then
 		rightclickm:update(dt)
 		if rightclicka < 1 then
@@ -277,26 +391,63 @@ function editor_update(dt)
 		return
 	end
 	
+	if love.keyboard.isDown("rctrl") or love.keyboard.isDown("lctrl") then
+		ctrlpressed = true
+	else
+		ctrlpressed = false
+	end
+	
+	if love.keyboard.isDown(tileswitcherkey) then
+		tileswitcherpressed = true
+	else
+		tileswitcherpressed = false
+	end
+
+	if ctrlpressed then
+		tileselection = true
+	elseif tileselectionclick1 == true and tileselectionclick2 == true then
+		-- both points selected: keep highlighting the area
+		
+	else
+		tileselection = false
+		tileselectionclick1 = false
+		tileselectionclick1x = 0
+		tileselectionclick1y = 0	
+		tileselectionclick2 = false
+		tileselectionclick2x = 0
+		tileselectionclick2y = 0
+	end
+	
 	if editormenuopen == false then
 		--key scroll
-		if love.keyboard.isDown("left") then
+		local shiftpressed = ((love.keyboard.isDown("lshift") or love.keyboard.isDown("rshift")) and true) or false
+		
+		if love.keyboard.isDown("left") and not shiftpressed then
 			autoscroll = false
 			guielements["autoscrollcheckbox"].var = autoscroll
 			xscroll = xscroll - 30*gdt
 			if xscroll < 0 then
 				xscroll = 0
 			end
+			splitxscroll[1] = splitxscroll[1] - 30*gdt
+			if splitxscroll[1] < 0 then
+				splitxscroll[1] = 0
+			end
 			generatespritebatch()
-		elseif love.keyboard.isDown("right") then
+		elseif love.keyboard.isDown("right") and not shiftpressed then
 			autoscroll = false
 			guielements["autoscrollcheckbox"].var = autoscroll
 			xscroll = xscroll + 30*gdt
 			if xscroll > mapwidth-width then
 				xscroll = mapwidth-width
 			end
+			splitxscroll[1] = splitxscroll[1] + 30*gdt
+			if splitxscroll[1] > mapwidth-width then
+				splitxscroll[1] = mapwidth-width
+			end
 			generatespritebatch()
 		end
-		if love.keyboard.isDown("up") then
+		if love.keyboard.isDown("up") and not shiftpressed then
 			autoscroll = false
 			guielements["autoscrollcheckbox"].var = autoscroll
 			yscroll = yscroll - 30*gdt
@@ -304,7 +455,7 @@ function editor_update(dt)
 				yscroll = 0
 			end
 			generatespritebatch()
-		elseif love.keyboard.isDown("down") then
+		elseif love.keyboard.isDown("down") and not shiftpressed then
 			autoscroll = false
 			guielements["autoscrollcheckbox"].var = autoscroll
 			yscroll = yscroll + 30*gdt
@@ -361,10 +512,19 @@ function editor_update(dt)
 							local prev = "up"
 							if prevx < currx then
 								prev = "left"
+								hprev = hprev - 2
+								vprev = 0
 							elseif prevx > currx then
 								prev = "right"
+								hprev = hprev + 2
+								vprev = 0
 							elseif prevy > curry then
 								prev = "down"
+								vprev = vprev + 2
+								hprev = 0
+							else
+								vprev = vprev - 2
+								hprev = 0
 							end
 							
 							local next = "up"
@@ -376,22 +536,42 @@ function editor_update(dt)
 								next = "down"
 							end
 							
-							local tile
-							if (prev == "up" and next == "down") or (prev == "down" and next == "up") then
-								tile = 43
-							elseif (prev == "left" and next == "right") or (prev == "right" and next == "left") then
-								tile = 44
-							elseif (prev == "up" and next == "right") or (prev == "right" and next == "up") then
-								tile = 45
-							elseif (prev == "right" and next == "down") or (prev == "down" and next == "right") then
-								tile = 46
-							elseif (prev == "down" and next == "left") or (prev == "left" and next == "down") then
-								tile = 47
-							elseif (prev == "left" and next == "up") or (prev == "up" and next == "left") then
-								tile = 48
+							if mushroomplatform then
+								powerlinedrawtable = { --mushroom platform
+								{"down", "up", 65, false},
+								{"left", "right", 22, false, hprev, 0, 20, false, (hprev/math.abs(hprev)), 0, 21, false, hprev-(hprev/math.abs(hprev)), 0, 21},
+								{"right", "left", 20, false, hprev, 0, 22, false, (hprev/math.abs(hprev)), 0, 21, false, hprev-(hprev/math.abs(hprev)), 0, 21},
+								{"down", "right", 21, false, 0, 1, 43},
+								{"down", "left", 21, false, 0, 1, 43}}
+							else
+								powerlinedrawtable = { --powerlines
+								{"up", "down", 43, true},
+								{"down", "up", 43, true},
+								{"left", "right", 44, true},
+								{"right", "left", 44, true},
+								{"up", "right", 45, true},
+								{"right", "up", 45, true},
+								{"right", "down", 46, true},
+								{"down", "right", 46, true},
+								{"down", "left", 47, true},
+								{"left", "down", 47, true},
+								{"left", "up", 48, true},
+								{"up", "left", 48, true}}
 							end
 							
-							placetile((currx-xscroll-.5)*16*scale, (curry-yscroll-1)*16*scale, tile, true)
+							local ii
+							for i = 1, #powerlinedrawtable do
+								if prev == powerlinedrawtable[i][1] and next == powerlinedrawtable[i][2] then
+									ii = i
+								end
+							end
+							
+							if powerlinedrawtable[ii] then
+								placetile((currx-xscroll-.5)*16*scale, (curry-yscroll-1)*16*scale, powerlinedrawtable[ii][3], powerlinedrawtable[ii][4] or false)
+								for i = 5, #powerlinedrawtable[ii], 4 do
+									placetile((currx-xscroll-.5+powerlinedrawtable[ii][i])*16*scale, (curry-yscroll-1+powerlinedrawtable[ii][i+1])*16*scale, powerlinedrawtable[ii][i+2] or powerlinedrawtable[ii][3], powerlinedrawtable[ii][1+3] or powerlinedrawtable[ii][4] or false)
+								end
+							end
 						end
 					end
 					
@@ -408,8 +588,88 @@ function editor_update(dt)
 		end
 		
 		if love.mouse.isDown("l") and allowdrag then
-			local x, y = mouse.getPosition()
-			placetile(x, y)
+			if not (pastingtiles or tileselection) then
+				local x, y = mouse.getPosition()
+				for t1 = 1, brush[1] do
+					for t2 = 1, brush[2] do
+						placetile(x+(t1-1)*16*scale, y+(t2-1)*16*scale)
+					end
+				end
+			end
+		elseif love.mouse.isDown("m") and not middlemode[1] then
+			if math.abs(love.mouse.getX() - middlemode[2]) >= 8*scale or math.abs(love.mouse.getY() - middlemode[3]) >= 8*scale then
+				middlemode[1] = true
+			end
+		end
+		
+		if middlemode[1] then
+			local xx, yy = love.mouse.getX() - middlemode[2], love.mouse.getY() - middlemode[3]
+			
+			if math.abs(xx) < 8*scale and math.abs(yy) < 8*scale then
+				--ignore
+			else
+				if math.abs(yy) > math.abs(xx) then
+					xx = 0
+					if yy < 0 then yy = -1 else yy = 1 end
+				else
+					if xx < 0 then xx = -1 else xx = 1 end
+					yy = 0
+				end
+				if editentities and editenemies then
+					for i = 1, #enemies do
+						if enemies[i] == currenttile then
+							currenttile = i
+							break
+						end
+					end
+					if xx > 0 then
+						currenttile = math.min(currenttile+1, math.ceil(currenttile/22)*22, #enemies)
+					elseif xx < 0 then
+						currenttile = math.max(currenttile-1, math.ceil(currenttile/22)*22-21, 1)
+					elseif yy > 0 and currenttile+22 <= #enemies then
+						currenttile = currenttile+22
+					elseif yy < 0 and currenttile-22 >= 1 then
+						currenttile = currenttile-22
+					end
+					currenttile = enemies[currenttile]
+				elseif editentities then
+					local list = 1
+					local id = 1
+					for i, v in ipairs(entitylistitems) do
+						for j, w in ipairs(v.entries) do
+							if w.i == currenttile then
+								list = i
+								id = j
+							end
+						end
+					end
+					if xx > 0 then
+						id = math.min(id+1, #entitylistitems[list].entries)
+					elseif xx < 0 then
+						id = math.max(1, id-1)
+					elseif yy > 0 then
+						list = math.min(list+1, #entitylistitems)
+						id = math.min(id, #entitylistitems[list].entries)
+					elseif yy < 0 then
+						list = math.max(list-1, 1)
+						id = math.min(id, #entitylistitems[list].entries)
+					end
+					currenttile = entitylistitems[list].entries[id].i
+				else
+					if xx > 0 then
+						currenttile = math.min(currenttile+1, math.ceil(currenttile/22)*22, tilelistcount+tileliststart)
+					elseif xx < 0 then
+						currenttile = math.max(currenttile-1, math.ceil(currenttile/22)*22-21, tileliststart)
+					elseif yy > 0 and currenttile+22 <= tilelistcount+tileliststart then
+						currenttile = currenttile+22
+					elseif yy < 0 and currenttile-22 >= tileliststart then
+						currenttile = currenttile-22
+					end
+					currenttile = math.max(1, currenttile)
+					currenttile = math.min(currenttile, smbtilecount + portaltilecount + customtilecount)
+				end
+				love.mouse.setPosition(middlemode[2], middlemode[3])
+			end
 		end
 	elseif editorstate == "main" then
 		if love.mouse.isDown("l") then
@@ -432,6 +692,24 @@ function editor_update(dt)
 							end
 						end
 					end
+					
+					splitxscroll[1] = (mousex/scale-3-width) / 2 + minimapscroll
+					
+					if splitxscroll[1] < minimapscroll then
+						splitxscroll[1] = minimapscroll
+					end
+					if splitxscroll[1] > 170 + minimapscroll then
+						splitxscroll[1] = 170 + minimapscroll
+					end
+					if splitxscroll[1] > mapwidth-width then
+						splitxscroll[1] = mapwidth-width
+					end
+	
+					--SPRITEBATCH UPDATE
+					if math.floor(splitxscroll[1]) ~= spritebatchX[1] then
+						spritebatchX[1] = math.floor(splitxscroll[1])
+					end
+					generatespritebatch()
 					
 					--VERTICAL
 					if mousey < (minimapy+5)*scale then
@@ -464,12 +742,11 @@ function editor_update(dt)
 	
 					--SPRITEBATCH UPDATE
 					if math.floor(xscroll) ~= spritebatchX[1] then
-						generatespritebatch()
 						spritebatchX[1] = math.floor(xscroll)
 					elseif math.floor(yscroll) ~= spritebatchY[1] then
-						generatespritebatch()
 						spritebatchY[1] = math.floor(yscroll)
 					end
+					generatespritebatch()
 				end
 			end
 			
@@ -498,6 +775,8 @@ function editor_update(dt)
 			
 			prevtile = tile
 		end
+	elseif editorstate == "objects" then
+		multitilesoffset = guielements["objectscrollbar"].value * objectscrollbarheight * scale
 	end
 	
 	
@@ -556,19 +835,235 @@ function editor_draw()
 			local x, y = getMouseTile(mouse.getX(), mouse.getY()-8*scale)
 			
 			if inmap(x, y+1) then
+				
+				if pastingtiles then
+					-- draw mtclipboard
+						for i, v in ipairs(mtclipboard) do
+							for j, w in ipairs(v) do
+								--w = tonumber(w)
+								local quad = tilequads[w]:quad() --[[tilequads[w].quad]]
+								if w == 1 and pastemode == false then 
+									-- well, do nothing
+									-- or better: draw empty tiles almost transparent
+									love.graphics.setColor(255, 255, 255, 8)
+									love.graphics.drawq(tilequads[w].image, quad, math.floor((x-xscroll-1 + pastecenter[1])*16*scale+(i-1)*16*scale), ((y-yscroll-1 + pastecenter[2])*16+8)*scale+((j-1)*16*scale), 0, scale, scale)
+								else
+									love.graphics.setColor(255, 255, 255, 72)
+									love.graphics.drawq(tilequads[w].image, quad, math.floor((x-xscroll-1 + pastecenter[1])*16*scale+(i-1)*16*scale), ((y-yscroll-1 + pastecenter[2])*16+8)*scale+((j-1)*16*scale), 0, scale, scale)
+								end
+							end
+						end
+					--end
+				end
+				
 				love.graphics.setColor(255, 255, 255, 200)
-				if editentities == false then
-					local quad = tilequads[currenttile]:quad()
-					if currenttile > 10000 then
-						quad = tilequads[currenttile]:quad()
+				if tileswitcherpressed then
+					-- draw temporal overlay for all the tiles that will be switched
+					
+					local cox, coy = getMouseTile(love.mouse.getX(), love.mouse.getY()+8*scale)
+
+					-- now replace everything thats == map[cox][coy][1] to: currenttile
+					local mousetile = map[cox][coy][1]
+					for i, v in ipairs(map) do
+						for j, w in ipairs(v) do
+							local quad = tilequads[currenttile]:quad() --[[tilequads[w].quad]]
+							if w[1] == mousetile then
+								--print(i,j,w[1],"SWITCHED")
+								love.graphics.drawq(tilequads[currenttile].image, quad, (i-1)*16*scale-xscroll*16*scale, (((j-1)*16*scale)-8*scale)-yscroll*16*scale, 0, scale, scale)
+							end
+						end
 					end
-					love.graphics.drawq(tilequads[currenttile].image, quad, math.floor((x-xscroll-1)*16*scale), math.floor(((y-yscroll-1)*16+8)*scale), 0, scale, scale)
-				elseif editenemies == false then
-					love.graphics.drawq(entityquads[currenttile].image, entityquads[currenttile].quad, math.floor((x-xscroll-1)*16*scale), math.floor(((y-yscroll-1)*16+8)*scale), 0, scale, scale)
-				else
-					local v = enemiesdata[currenttile]
-					local xoff, yoff = (((v.spawnoffsetx or 0)+v.width/2-.5)*16 - v.offsetX + v.quadcenterX)*scale, (((v.spawnoffsety or 0)-v.height+1)*16-v.offsetY - v.quadcenterY)*scale
-					love.graphics.drawq(v.graphic, v.quad, math.floor((x-xscroll-1)*16*scale+xoff), math.floor(((y-yscroll)*16)*scale+yoff), 0, scale, scale)
+					
+					
+					
+				elseif tileselection then
+					if tileselectionclick1 == false then
+						if pastingtiles == false then
+							-- no clicks yet - draw layer on single block
+							love.graphics.setColor(128,255,128,72)
+							love.graphics.rectangle("fill",math.floor((x-xscroll-1)*16*scale), (((y-1)*16+8)*scale)-yscroll*16*scale, 16*scale, 16*scale)
+						end
+					elseif tileselectionclick2 == false then
+						-- first click done - draw area: click1xy->mousexy
+						local lx1, ly1
+						lx1 = math.min(tileselectionclick1x, x)
+						ly1 = math.min(tileselectionclick1y, y)
+						
+						love.graphics.setColor(112,112,255,112)
+						love.graphics.rectangle("fill",math.floor((lx1-xscroll-1)*16*scale), (((ly1-1)*16+8)*scale)-yscroll*16*scale, (math.max(tileselectionclick1x, x)-lx1)*16*scale+16*scale, (math.max(tileselectionclick1y, y)-ly1)*16*scale+16*scale)
+					else
+						-- two clicks done
+						local lx1, ly1, lx2, ly2
+						lx1 = math.min(tileselectionclick1x, tileselectionclick2x)
+						ly1 = math.min(tileselectionclick1y, tileselectionclick2y)
+						lx2 = math.max(tileselectionclick1x, tileselectionclick2x)
+						ly2 = math.max(tileselectionclick1y, tileselectionclick2y)
+						
+						love.graphics.setColor(172,255,172,72)
+						if mtjustsaved then
+							local r, g, b, a = unpack(mtsavecolors)
+							if r > 172 then
+								r = r - math.floor(mtsavetimer*3)
+							end
+							if r < 172 then
+								r = 172
+							end
+							if g < 255 then
+								g = g + math.floor(mtsavetimer*3)
+							end
+							if g > 255 then
+								g = 255
+							end
+							if b > 172 then
+								b = b - math.floor(mtsavetimer*3)
+							end
+							if b < 172 then
+								b = 172
+							end
+							if a > 72 then
+								a = a - math.floor(mtsavetimer*3)
+							end
+							if a < 72 then
+								a = 72
+							end
+							love.graphics.setColor(r, g, b, a)
+							if r ==172 and g ==255 and b ==172 and a == 72 then
+								mtsavehighlighttime = 5
+								mtsavetimer = 0
+								mtjustsaved = false
+								r = 255
+								g = 112
+								b = 112
+								a = 128
+							end
+							mtsavecolors = {r, g, b, a}
+						end
+						love.graphics.rectangle("fill",math.floor((lx1-xscroll-1)*16*scale), ((ly1-yscroll-1)*16+8)*scale, (lx2-lx1)*16*scale+16*scale, (ly2-ly1)*16*scale+16*scale)
+					end
+				elseif middlemode[1] then
+					love.graphics.push()
+					love.graphics.translate(-xscroll*16*scale, -yscroll*16*scale)
+					if editentities and editenemies then
+						for i = 1, #enemies do
+							if enemies[i] == currenttile then
+								currenttile = i
+								break
+							end
+						end
+						local offy = math.ceil(currenttile/22)-1
+						local offx = currenttile-offy*22
+						local cox, coy = getMouseTile(middlemode[2], middlemode[3]-8*scale)
+						for i = 1, #enemies do
+							local v = enemiesdata[ enemies[i] ]
+							love.graphics.setColor(255, 255, 255, 50)
+							if i == currenttile then
+								love.graphics.setColor(255, 255, 255, 200)
+							end
+							local t = "setStencil"
+							local action = nil
+							local int = nil
+							
+							if loveVersion > 9 then
+								t = "stencil"
+								action = "replace"
+								int = 1
+							end
+							love.graphics[t](function() love.graphics.rectangle("fill", (math.mod((i-1), 22)-offx)*17*scale+cox*16*scale+scale, (math.floor((i-1)/22)-offy)*17*scale+coy*16*scale-8*scale, 16*scale, 16*scale) end, action, int)
+							
+							if loveVersion > 9 then
+								love.graphics.setStencilTest("greater", 0)
+							end
+							love.graphics.drawq(v.graphic, v.quad, (math.mod((i-1), 22)-offx)*17*scale+cox*16*scale+scale, (math.floor((i-1)/22)-offy)*17*scale+coy*16*scale-8*scale, 0, scale, scale)
+							
+							if loveVersion > 9 then
+								love.graphics.setStencilTest()
+							else
+								love.graphics.setStencil()
+							end
+							
+							if i == currenttile then
+								love.graphics.setColor(255, 0, 0, 155)
+								drawrectangle((math.mod((i-1), 22)-offx)*17+cox*16, (math.floor((i-1)/22)-offy)*17+coy*16-9, 18, 18)
+							end
+						end
+						currenttile = enemies[currenttile]
+					elseif editentities then
+						local list, id = 1, 1
+						for i, v in ipairs(entitylistitems) do
+							for j, w in ipairs(v.entries) do
+								if w.i == currenttile then
+									list = i
+									id = j
+								end
+							end
+						end
+						
+						local offy = list-1
+						local offx = id
+						local cox, coy = getMouseTile(middlemode[2], middlemode[3]-8*scale)
+						for i2, v in ipairs(entitylistitems) do
+							for j, w in ipairs(v.entries) do
+								local i = (i2-1)*22+j
+								love.graphics.setColor(255, 255, 255, 50)
+								if w.i == currenttile then
+									love.graphics.setColor(255, 255, 255, 200)
+								end
+								love.graphics.drawq(entityquads[w.i].image, entityquads[w.i].quad, (math.mod((i-1), 22)-offx)*17*scale+cox*16*scale+scale, (math.floor((i-1)/22)-offy)*17*scale+coy*16*scale-8*scale, 0, scale, scale)
+								if w.i == currenttile then
+									love.graphics.setColor(255, 0, 0, 155)
+									drawrectangle((math.mod((i-1), 22)-offx)*17+cox*16, (math.floor((i-1)/22)-offy)*17+coy*16-9, 18, 18)
+								end
+							end
+						end
+					else
+						local offy = math.ceil(currenttile/22)-1
+						local offx = currenttile-offy*22
+						local cox, coy = getMouseTile(middlemode[2], middlemode[3]-8*scale)
+						for a = 1, tilelistcount+1 do
+							local i = a+tileliststart-1
+							love.graphics.setColor(255, 255, 255, 50)
+							if i == currenttile then
+								love.graphics.setColor(255, 255, 255, 200)
+							end
+							love.graphics.drawq(tilequads[i].image, tilequads[i]:quad(), (math.mod((i-1), 22)-offx)*17*scale+cox*16*scale+scale, (math.floor((i-1)/22)-offy)*17*scale+coy*16*scale-8*scale, 0, scale, scale)
+							if i == currenttile then
+								love.graphics.setColor(255, 0, 0, 155)
+								drawrectangle((math.mod((i-1), 22)-offx)*17+cox*16, (math.floor((i-1)/22)-offy)*17+coy*16-9, 18, 18)
+							end
+						end
+					end
+					love.graphics.pop()
+				elseif pastingtiles == false then
+					love.graphics.setColor(255, 255, 255, 200)
+					local cox, coy = middlemode[2], middlemode[3]
+					if love.mouse.isDown("m") then
+						cox, coy = getMouseTile(love.mouse.getX(), love.mouse.getY()-8*scale)
+					end
+					if editentities == false then
+						local quad = tilequads[currenttile]:quad()
+						if currenttile > 10000 then
+							quad = tilequads[currenttile]:quad()
+						end
+						for t1 = 1, brush[1] do
+							for t2 = 1, brush[2] do
+								love.graphics.drawq(tilequads[currenttile].image, quad, math.floor((cox-xscroll-1+(t1-1))*16*scale), math.floor(((coy-yscroll-1+(t2-1))*16+8)*scale), 0, scale, scale)
+							end
+						end
+					elseif editenemies == false then
+						for t1 = 1, brush[1] do
+							for t2 = 1, brush[2] do
+								love.graphics.drawq(entityquads[currenttile].image, entityquads[currenttile].quad, math.floor((cox-xscroll-1+(t1-1))*16*scale), math.floor(((coy-yscroll-1+(t2-1))*16+8)*scale), 0, scale, scale)
+							end
+						end
+					else
+						local v = enemiesdata[currenttile]
+						local xoff, yoff = (((v.spawnoffsetx or 0)+v.width/2-.5)*16 - v.offsetX + v.quadcenterX)*scale, (((v.spawnoffsety or 0)-v.height+1)*16-v.offsetY - v.quadcenterY)*scale
+						for t1 = 1, brush[1] do
+							for t2 = 1, brush[2] do
+								love.graphics.drawq(v.graphic, v.quad, math.floor((cox-xscroll-1+(t1-1))*16*scale+xoff), math.floor(((coy-yscroll+(t2-1))*16)*scale+yoff), 0, scale, scale)
+							end
+						end
+					end
 				end
 			end
 		end
@@ -593,7 +1088,7 @@ function editor_draw()
 							elseif tablecontains(outputsi, map[x][y][2]) then
 								love.graphics.setColor(255, 255, 150, 150)
 							end
-							love.graphics.rectangle("fill", math.floor((x-xscroll-1)*16*scale), ((y-1-yscroll)*16-8)*scale, 16*scale, 16*scale)
+							love.graphics.rectangle("fill", math.floor((x-1-xscroll)*16*scale), ((y-1-yscroll)*16-8)*scale, 16*scale, 16*scale)
 						end
 					end
 				end
@@ -808,9 +1303,28 @@ function editor_draw()
 					if editenemies then
 						for i = 1, #enemies do
 							local v = enemiesdata[enemies[i]]
-							love.graphics.setScissor(math.mod((i-1), 22)*17*scale+5*scale, math.floor((i-1)/22)*17*scale+38*scale-tilesoffset, 16*scale, 16*scale)
+							local t = "setStencil"
+							local action = nil
+							local int = nil
+							
+							if loveVersion > 9 then
+								t = "stencil"
+								action = "replace"
+								int = 1
+							end
+							
+							love.graphics[t](function() love.graphics.rectangle("fill", math.mod((i-1), 22)*17*scale+5*scale, math.floor((i-1)/22)*17*scale+38*scale-tilesoffset, 16*scale, 16*scale) end, action, int)
+							
+							if loveVersion > 9 then
+								love.graphics.setStencilTest("greater", 0)
+							end
+							
 							love.graphics.drawq(v.graphic, v.quad, math.mod((i-1), 22)*17*scale+5*scale, math.floor((i-1)/22)*17*scale+38*scale-tilesoffset, 0, scale, scale)
-							love.graphics.setScissor()
+							if loveVersion > 9 then
+								love.graphics.setStencilTest()
+							else
+								love.graphics.setStencil()
+							end
 						end	
 					else
 						--ENTITIES
@@ -881,21 +1395,73 @@ function editor_draw()
 						properprint("total time: " .. t, 3*scale, 215*scale)
 					end
 				else
-					if tile and tilequads[tile+tileliststart-1] then
-						if tilequads[tile+tileliststart-1]:getproperty("collision") then
-							properprint("collision: true", 3*scale, 205*scale)
-						else
-							properprint("collision: false", 3*scale, 205*scale)
+					if tile and tilequads[tile+tileliststart-1] and tile+tileliststart-1 <= tilelistcount+tileliststart then
+						--Local variables
+						local propertylist = {"collision", "invisible", "breakable", "coinblock", "coin", "slantupleft", "slantupright", "mirror", "grate", "platform", "water", "bridge", "spikesleft", "spikestop","spikesright", "spikesbottom", "foreground"}
+						local propertytable = {}
+						local longestpropertylength = 0
+						local propertycount = -10
+						local s = ""
+						--2*2 Tile
+						if tile+tileliststart-1 == 136 then
+							table.insert(propertytable, "2*2 tile")
+							propertycount = propertycount + 10
+							if 8 >= longestpropertylength then
+								longestpropertylength = 8
+							end
 						end
-						
-						if tilequads[tile+tileliststart-1]:getproperty("collision") and tilequads[tile+tileliststart-1]:getproperty("portalable") then
-							properprint("portalable: true", 3*scale, 215*scale)
-						else
-							properprint("portalable: false", 3*scale, 215*scale)
+						--Unportalable
+						if not tilequads[tile+tileliststart-1]:getproperty("portalable") then
+							table.insert(propertytable, "unportalable")
+							propertycount = propertycount + 10
+							if 12 >= longestpropertylength then
+								longestpropertylength = 12
+							end
 						end
+						--Properties
+						for i = 1, 18 do
+							if tilequads[tile+tileliststart-1]:getproperty(propertylist[i]) then
+								table.insert(propertytable, propertylist[i])
+								propertycount = propertycount + 10
+								if string.len(propertylist[i]) >= longestpropertylength then
+									longestpropertylength = string.len(propertylist[i])
+								end
+							end
+						end
+						--Eraser
+						if tile+tileliststart-1 == 1 then
+							table.insert(propertytable, "eraser")
+							propertycount = propertycount + 10
+							if 6 >= longestpropertylength then
+								longestpropertylength = 6
+							end
+						end
+						--I should probably remove this
+						if propertycount == -10 then
+							table.insert(propertytable, "none")
+							propertycount = 0
+							longestpropertylength = 4
+						end
+						--Generate property string
+						for i = 1, #propertytable do
+							local addspaces = ""
+							for i = 1, -(string.len(propertytable[i]) - longestpropertylength) do
+								addspaces = addspaces .. " "
+							end
+							s = s .. addspaces .. propertytable[i] .. "|"
+						end
+						--Cutoff prevention
+						local y = love.mouse.getY()-8*scale - (propertycount/2)*scale + 5*scale
+						local x = love.mouse.getX() - (longestpropertylength)*8*scale
+						if x <= 0 then
+							x = 0
+						end
+						--Finally actually draw it
+						properprint("tile id: " .. tile+tileliststart-1, 3*scale, 205*scale)
+						properprintbackground(s, x, y, false)
+						properprint(s, x, y)
 					end
 				end
-				
 				love.graphics.setColor(255, 255, 255)
 			elseif editorstate == "main" then		
 				--MINIMAP
@@ -969,6 +1535,8 @@ function editor_draw()
 					v.y = v.starty - scroll
 					v:draw()
 				end
+				
+				properprint("-", 351*scale, 22*scale)
 				love.graphics.setScissor()
 			elseif editorstate == "tools" then
 				love.graphics.setColor(255, 255, 255)
@@ -982,6 +1550,12 @@ function editor_draw()
 				else
 					properprint(mariolivecount, 210*scale, 106*scale)
 				end
+				
+				properprint("editor settings:", 149*scale, 121*scale)
+				
+				love.graphics.setColor(127, 127, 127)
+				love.graphics.setLineStyle("rough")
+				love.graphics.line(148*scale, 118*scale, 397*scale, 118*scale)
 			
 			elseif editorstate == "animations" then
 				if #animations > 0 then
@@ -1061,6 +1635,30 @@ function editor_draw()
 					love.graphics.setColor(90, 90, 90)
 					drawrectangle(animationguiarea[1]-10, animationguiarea[4], 10, 10)
 				end
+			elseif editorstate == "objects" then
+				local mtbutton = getmtbutton(love.mouse.getX())
+				for i = 1, #multitileobjects do
+					love.graphics.setColor(255, 255, 255, 255)
+					if math.floor(i-1)*17*scale+42*scale-multitilesoffset < 200*scale then
+						properprint(multitileobjectnames[i], 8*scale, math.floor(i-1)*17*scale+42*scale-multitilesoffset)
+					end
+					properprint("_dir4", 333*scale, math.floor(i-1)*17*scale+42*scale-multitilesoffset)
+					properprint("_dir6", 348*scale, math.floor(i-1)*17*scale+42*scale-multitilesoffset)
+					properprint("x", 363*scale, math.floor(i-1)*17*scale+42*scale-multitilesoffset)
+				end
+				if mtbutton == 1 then
+					properprint("move up", 10*scale, 210*scale)
+				elseif mtbutton == 2 then
+					properprint("move down", 10*scale, 210*scale)
+				elseif mtbutton == 3 then
+					properprint("delete", 10*scale, 210*scale)
+				end	
+			elseif editorstate == "lightdrawcustomize" then
+				love.graphics.setColor(127,127,127)
+				properprint("more coming soon", 5*scale, 55*scale)
+				guielements["tabtools"].textcolor = {math.random(0,255),math.random(0,255),math.random(0,255)}
+				guielements["tabtools"].fillcolor = {math.random(0,255),math.random(0,255),math.random(0,255)}
+				guielements["tabtools"].bordercolor = {math.random(0,255),math.random(0,255),math.random(0,255)}				
 			end
 		end
 	end
@@ -1080,7 +1678,7 @@ function editor_draw()
 			end
 		end
 	else
-		for i, v in pairs({"tabmain", "tabtiles", "tabtools", "tabmaps", "tabanimations", "autoscrollcheckbox"}) do
+		for i, v in pairs({"tabmain", "tabtiles", "tabtools", "tabmaps", "tabanimations", "tabobjects", "autoscrollcheckbox"}) do
 			guielements[v]:draw()
 		end
 	end
@@ -1124,11 +1722,13 @@ function maintab()
 	guielements["tabtools"].fillcolor = {63, 63, 63}
 	guielements["tabmaps"].fillcolor = {63, 63, 63}
 	guielements["tabanimations"].fillcolor = {63, 63, 63}
+	guielements["tabobjects"].fillcolor = {63, 63, 63}
 	guielements["tabmain"].active = true
 	guielements["tabtiles"].active = true
 	guielements["tabtools"].active = true
 	guielements["tabmaps"].active = true
 	guielements["tabanimations"].active = true
+	guielements["tabobjects"].active = true
 	
 	guielements["colorsliderr"].active = true
 	guielements["colorsliderg"].active = true
@@ -1175,11 +1775,13 @@ function tilestab()
 	guielements["tabtools"].fillcolor = {63, 63, 63}
 	guielements["tabmaps"].fillcolor = {63, 63, 63}
 	guielements["tabanimations"].fillcolor = {63, 63, 63}
+	guielements["tabobjects"].fillcolor = {63, 63, 63}
 	guielements["tabmain"].active = true
 	guielements["tabtiles"].active = true
 	guielements["tabtools"].active = true
 	guielements["tabmaps"].active = true
 	guielements["tabanimations"].active = true
+	guielements["tabobjects"].active = true
 	
 	guielements["tilesscrollbar"].active = true
 	
@@ -1211,11 +1813,13 @@ function toolstab()
 	guielements["tabtools"].fillcolor = {0, 0, 0}
 	guielements["tabmaps"].fillcolor = {63, 63, 63}
 	guielements["tabanimations"].fillcolor = {63, 63, 63}
+	guielements["tabobjects"].fillcolor = {63, 63, 63}
 	guielements["tabmain"].active = true
 	guielements["tabtiles"].active = true
 	guielements["tabtools"].active = true
 	guielements["tabmaps"].active = true
 	guielements["tabanimations"].active = true
+	guielements["tabobjects"].active = true
 	
 	guielements["selectionbutton"].active = true
 	guielements["lightdrawbutton"].active = true
@@ -1226,6 +1830,16 @@ function toolstab()
 	
 	guielements["livesdecrease"].active = true
 	guielements["livesincrease"].active = true
+	
+	guielements["pastemodedropdown"].active = true
+	guielements["clipboardcheckbox"].active = true
+	guielements["linktoolkindabutnotreally"].active = true
+	guielements["editordebugcheckbox"].active = true
+	guielements["levelscreencheckbox"].active = true
+	
+	if guielements["editauthor"].value == "willware" or guielements["editauthor"].value == "turretbot" then
+		guielements["secretcheckbox"].active = true
+	end
 	
 	for i, v in pairs(mapbuttons) do
 		v.active = false
@@ -1247,11 +1861,18 @@ function mapstab()
 	guielements["tabtools"].fillcolor = {63, 63, 63}
 	guielements["tabmaps"].fillcolor = {0, 0, 0}
 	guielements["tabanimations"].fillcolor = {63, 63, 63}
+	guielements["tabobjects"].fillcolor = {63, 63, 63}
 	guielements["tabmain"].active = true
 	guielements["tabtiles"].active = true
 	guielements["tabtools"].active = true
 	guielements["tabmaps"].active = true
 	guielements["tabanimations"].active = true
+	guielements["tabobjects"].active = true
+	guielements["mapsnewlevel"].active = true
+	guielements["mapsnewlevel"].textcolor = {0, 255, 0}
+	guielements["mapsworldbox"].active = true
+	guielements["mapslevelbox"].active = true
+	
 	guielements["mapscrollbar"].active = true
 	
 	for i, v in pairs(mapbuttons) do
@@ -1274,11 +1895,13 @@ function animationstab()
 	guielements["tabtools"].fillcolor = {63, 63, 63}
 	guielements["tabmaps"].fillcolor = {63, 63, 63}
 	guielements["tabanimations"].fillcolor = {0, 0, 0}
+	guielements["tabobjects"].fillcolor = {63, 63, 63}
 	guielements["tabmain"].active = true
 	guielements["tabtiles"].active = true
 	guielements["tabtools"].active = true
 	guielements["tabmaps"].active = true
 	guielements["tabanimations"].active = true
+	guielements["tabobjects"].active = true
 	
 	guielements["animationsscrollbarver"].active = true
 	guielements["animationsscrollbarhor"].active = true
@@ -1293,6 +1916,64 @@ function animationstab()
 	end
 end
 
+function objectstab()
+	if _G["from" .. editorstate .. "tab"] then
+		_G["from" .. editorstate .. "tab"]()
+	end
+
+	editorstate = "objects"
+	for i, v in pairs(guielements) do
+		v.active = false
+	end
+	
+	guielements["tabmain"].fillcolor = {63, 63, 63}
+	guielements["tabtiles"].fillcolor = {63, 63, 63}
+	guielements["tabtools"].fillcolor = {63, 63, 63}
+	guielements["tabmaps"].fillcolor = {63, 63, 63}
+	guielements["tabanimations"].fillcolor = {63, 63, 63}
+	guielements["tabobjects"].fillcolor = {0, 0, 0}
+	guielements["tabmain"].active = true
+	guielements["tabtiles"].active = true
+	guielements["tabtools"].active = true
+	guielements["tabmaps"].active = true
+	guielements["tabanimations"].active = true
+	guielements["tabobjects"].active = true
+	
+	guielements["objectscrollbar"].active = true	
+	objectscrollbarheight = math.max(0, math.ceil((#multitileobjects))*17 - 1 - (17*9) - 12)
+	
+	for i, v in pairs(mapbuttons) do
+		v.active = false
+	end
+end
+
+function powerlinestab()
+	if _G["from" .. editorstate .. "tab"] then
+		_G["from" .. editorstate .. "tab"]()
+	end
+
+	editorstate = "lightdrawcustomize"
+	for i, v in pairs(guielements) do
+		v.active = false
+	end
+	
+	guielements["tabtools"].text = "party"
+	guielements["tabmain"].active = true
+	guielements["tabtiles"].active = true
+	guielements["tabtools"].active = true
+	guielements["tabmaps"].active = true
+	guielements["tabanimations"].active = true
+	guielements["tabobjects"].active = true
+	
+	for i = 1, drawtools do
+		guielements["drawtool" .. i].active = true
+	end
+	
+	for i, v in pairs(mapbuttons) do
+		v.active = false
+	end
+end
+
 function fromanimationstab()
 	saveanimation()
 end
@@ -1300,6 +1981,15 @@ end
 function frommapstab()
 	for i, v in pairs(mapbuttons) do
 		v.active = false
+	end
+end
+
+function fromlightdrawcustomizetab() --the name for this tab is all over the place
+	guielements["tabtools"].text = "tools"
+	guielements["tabtools"].textcolor = {255,255,255}
+	guielements["tabtools"].bordercolor = {127,127,127}
+	for i = 1, drawtools do
+		guielements["drawtool" .. i].active = false
 	end
 end
 
@@ -1318,7 +2008,7 @@ function generateentitylist()
 			end
 			
 			if cati == 0 then
-				table.insert(entitylistitems, {t=cat, entries={}})
+				table.insert(entitylistitems, {t=cat, entries={}}) --cat??
 				cati = #entitylistitems
 			end
 			
@@ -1490,6 +2180,47 @@ function addanimationaction()
 	table.insert(animationguilines.actions, animationguiline:new({}, "action"))
 end
 
+function loadmtobjects()
+	-- get multitile objects!
+	multitileobjects = nil
+	multitileobjects = {}
+	multitileobjectnames = nil
+	multitileobjectnames = {}
+	if love.filesystem.exists("mappacks/" .. mappack .. "/objects.txt") then
+		local data = love.filesystem.read("mappacks/" .. mappack .. "/objects.txt")
+		if #data > 0 then
+			data = string.sub(data, 1, -2)
+			--print(data)
+			local split1 = data:split("\n")
+			local split2, split3
+			for i = 1, #split1 do
+				-- objects
+				split2 = split1[i]:split("=")
+				table.insert(multitileobjectnames, split2[1])
+				-- rows
+				if string.find(split1[i],":") then
+					split3 = split2[2]:split(":")
+				else
+					split3 = {split2[2]}
+				end
+				local ox = {}
+				local oo = {}
+				for j = 1, #split3 do
+					ox = {}
+					local split4 = split3[j]:split(",")
+					for u = 1, #split4 do
+						table.insert(ox, tonumber(split4[u]))
+						--print(split4[u]..",")
+					end
+					table.insert(oo, ox)
+					--print(":")
+				end
+				table.insert(multitileobjects, oo)
+			end
+		end
+	end
+end
+
 function openchangewidth()
 	for i, v in pairs(guielements) do
 		v.active = false
@@ -1528,7 +2259,7 @@ function mapwidthapply()
 				newmap[x][y] = map[oldx][oldy]
 				newcoinmap[x][y] = coinmap[oldx][oldy]
 			else
-				newmap[x][y] = {1, gels={}, portaloverride={}}
+				newmap[x][y] = {1, gels={}, portaloverride={0, 0}}
 			end
 			
 			if tilequads[newmap[x][y][1]]:getproperty("collision", x, y) then
@@ -1580,15 +2311,15 @@ function mapwidthapply()
 	objects["screenboundary"]["right"].x = mapwidth
 	generatespritebatch()
 	
-	editorclose()
+	--editorclose()
 	
-	--maintab()
+	maintab()
 end
 
 function mapwidthcancel()
 	changemapwidthmenu = false
-	editorclose()
-	--maintab()
+	--editorclose()
+	maintab()
 end
 
 function changenewmapsize(side, dir)
@@ -1749,7 +2480,7 @@ function tilesenemies()
 	guielements["tilesenemies"].textcolor = {255, 255, 255}
 	
 	animatedtilelist = false
-	tilescrollbarheight = math.max(0, math.ceil((#enemiesdata)/22)*17 - 1 - (17*9) - 12)
+	tilescrollbarheight = math.max(0, math.ceil((#enemies)/22)*17 - 1 - (17*9) - 12)
 	editentities = true
 	editenemies = true
 	
@@ -1826,6 +2557,11 @@ function editorclose()
 	for i, v in pairs(guielements) do
 		v.active = false
 	end
+	if mapbuttons then
+		for i, v in pairs(mapbuttons) do
+			v.active = false
+		end
+	end
 	
 	if editorstate == "animations" then
 		saveanimation()
@@ -1851,28 +2587,33 @@ function editoropen()
 	guirepeattimer = 0
 	getmaps()
 	
+	pastingtiles = false
+	mtclipboard = {}
 	selectionx, selectiony, selectionwidth, selectionheight = nil, nil, nil, nil
 	
 	if editorstate == "main" then
 		maintab()
 	elseif editorstate == "tiles" then
 		tilestab()
-	elseif editorstate == "tools" then
+	elseif editorstate == "tools" or editorstate == "lightdrawcustomize" then
 		toolstab()
 	elseif editorstate == "maps" then
 		mapstab()
 	elseif editorstate == "animations" then
 		animationstab()
+	elseif editorstate == "objects" then
+		objectstab()
 	end
 end
 
 function mapnumberclick(i, j, k)
 	if editormode then
-		marioworld = i
-		mariolevel = j
+		marioworld = tonumber(i)
+		mariolevel = tonumber(j)
 		editorloadopen = true
-		if k ~= 0 then
-			loadlevel(k)
+		if k then
+			k = tonumber(k)
+			loadlevel(i .. "-" .. j .. "_" .. k)
 		else
 			loadlevel(i .. "-" .. j)
 		end
@@ -1882,8 +2623,145 @@ end
 
 function getmaps()
 	existingmaps = {}
+	largestworld = 0
 	mapbuttons = {}
-	local yadd = 0 
+	local yadd = 2
+	local worlds
+	local levels
+	local sublevels
+	local files = love.filesystem.getDirectoryItems("mappacks/" .. mappack)
+	for i = #files, 1, -1 do
+		if files[i] ~= nil and not (string.match(files[i], "(%d+)-(%d+).txt") or string.match(files[i], "(%d+)-(%d+)_(%d+).txt")) then
+			table.remove(files, i)
+		end
+	end
+	table.sort(files, mapsort)
+	for i = 1, #files do
+		if string.match(files[i], "(%d+)-(%d+).txt") then
+			worlds, levels = string.match(files[i], "(%d+)-(%d+).txt")
+			worlds = tonumber(worlds)
+			levels = tonumber(levels)
+			sublevels = "0"
+			mapbuttons["text" .. worlds .. "-" .. levels] = guielement:new("text", 4, yadd+21, "world " .. worlds .. "-" .. levels)
+			mapbuttons["text" .. worlds .. "-" .. levels].starty = yadd+21
+			mapbuttons["plus" .. worlds .. "-" .. levels] = guielement:new("button", 62+(string.len(worlds)+string.len(levels))*8, yadd+19, "+", mapnumberclick, 0, {worlds, levels, 1})
+			mapbuttons["plus" .. worlds .. "-" .. levels].starty = yadd+19
+			yadd = yadd + 10
+			if love.filesystem.exists("mappacks/" .. mappack .. "/" .. worlds .. "-" .. levels .. ".png") then
+				mapbuttons[worlds .. "-" .. levels .. "_" .. sublevels or 0] = guielement:new("button", 4, yadd+21, love.graphics.newImage("mappacks/" .. mappack .. "/" .. worlds .. "-" .. levels .. ".png"), mapnumberclick, 0, {worlds, levels})
+			else
+				mapbuttons[worlds .. "-" .. levels .. "_" .. sublevels or 0] = guielement:new("button", 4, yadd+21, "no preview", mapnumberclick, 0, {worlds, levels})
+			end
+			mapbuttons[worlds .. "-" .. levels .. "_" .. sublevels].starty = yadd+21
+			yadd = yadd + 20
+			if largestworld < worlds then
+				largestworld = worlds
+			end
+			if existingmaps[worlds] == nil or existingmaps[worlds] < levels then
+				existingmaps[worlds] = levels
+			end
+		elseif string.match(files[i], "(%d+)-(%d+)_(%d+).txt") then
+			worlds, levels, sublevels = string.match(files[i], "(%d+)-(%d+)_(%d+).txt")
+			worlds = tonumber(worlds)
+			levels = tonumber(levels)
+			sublevels = tonumber(sublevels)
+			if not mapbuttons["text" .. worlds .. "-" .. levels] then
+				mapbuttons["text" .. worlds .. "-" .. levels] = guielement:new("text", 4, yadd+21, "world " .. worlds .. "-" .. levels, {127, 127, 127})
+				mapbuttons["text" .. worlds .. "-" .. levels].starty = yadd+21
+				yadd = yadd + 10
+			end
+			mapbuttons["text" .. worlds .. "-" .. levels .. "_" .. sublevels] = guielement:new("text", 4, yadd+26, "sub " .. sublevels, {127, 127, 127})
+			mapbuttons["text" .. worlds .. "-" .. levels .. "_" .. sublevels].starty = yadd+26
+			xadd = 50
+			if love.filesystem.exists("mappacks/" .. mappack .. "/" .. worlds .. "-" .. levels .. "_" .. sublevels ..".png") then
+				mapbuttons[worlds .. "-" .. levels .. "_" .. sublevels] = guielement:new("button", 54, yadd+21, love.graphics.newImage("mappacks/" .. mappack .. "/" .. worlds .. "-" .. levels .. "_" .. sublevels .. ".png"), mapnumberclick, 0, {worlds, levels, sublevels})
+				mapbuttons[worlds .. "-" .. levels .. "_" .. sublevels].starty = yadd+21
+			else
+				mapbuttons[worlds .. "-" .. levels .. "_" .. sublevels] = guielement:new("button", 54, yadd+21, "no preview", mapnumberclick, 0, {worlds, levels, sublevels})
+				mapbuttons[worlds .. "-" .. levels .. "_" .. sublevels].starty = yadd+24
+			end
+			yadd = yadd + 20
+			
+			if mapbuttons["plus" .. worlds .. "-" .. levels].arguments[3] < sublevels + 1 then
+				mapbuttons["plus" .. worlds .. "-" .. levels].arguments[3] = sublevels + 1
+			end
+		end
+	end
+
+	mapsymissing = math.max(0, yadd-200)
+end
+
+function mapsort(a, b)
+	aw = string.match(a, "(%d+)-")
+	bw = string.match(b, "(%d+)-")
+	if tonumber(aw) > 9 and tonumber(bw) > 9 then
+		if a < b then
+			return true
+		end
+	elseif tonumber(bw) > 9 then
+		return true
+	elseif tonumber(aw) > 9 then
+		return false
+	elseif a < b then
+		return true
+	end
+end
+
+function newlevel()	
+	i = tonumber(guielements["mapsworldbox"].value)
+	j = tonumber(guielements["mapslevelbox"].value)
+	
+	if i ~= nil and j ~= nil then
+		mapnumberclick(i, j)
+	elseif i == nil and j ~= nil then
+		mapnumberclick(marioworld, j)
+	elseif i ~= nil and j == nil then
+		mapnumberclick(i, (existingmaps[i] or 0)+1)
+	else
+		mapnumberclick(marioworld, existingmaps[marioworld]+1)
+	end
+end
+
+function savestate()
+	while #savestates >= maxstates do
+		table.remove(savestates, 1)
+	end
+	local t = {}
+	for x = 1, #map do
+		t[x] = {}
+		for y = 1, #map[x] do
+			t[x][y] = {}
+			for i, v in pairs(map[x][y]) do
+				t[x][y][i] = v
+			end
+		end
+	end
+	table.insert(savestates, t)
+end
+
+function loadstate(s)
+	local s = s or currentstate
+	currentstate = s
+	
+	local v = savestates[s]
+	map = {}
+	for x = 1, #v do
+		map[x] = {}
+		for y = 1, #v[x] do
+			map[x][y] = {}
+			for i, w in pairs(v[x][y]) do
+				map[x][y][i] = w
+			end
+		end
+	end
+	
+	generatespritebatch()
+end
+
+--[[function getmaps() VANILLA GETMAPS
+	existingmaps = {}
+	mapbuttons = {}
+	local yadd = 0
 	for i = 1, 8 do --world
 		existingmaps[i] = {}
 		for j = 1, 4 do --level
@@ -1921,7 +2799,7 @@ function getmaps()
 	end
 	
 	mapsymissing = math.max(0, yadd-200)
-end
+end]]
 
 function editor_mousepressed(x, y, button)
 	if regiondragging then
@@ -1941,6 +2819,11 @@ function editor_mousepressed(x, y, button)
 		end
 	end
 	
+	if button == "l" or button == "r" then
+		while currentstate < #savestates do
+			table.remove(savestates)
+		end
+	end
 	
 	if changemapwidthmenu then
 		return
@@ -1963,14 +2846,108 @@ function editor_mousepressed(x, y, button)
 				selectionstart()
 			else
 				local cox, coy = getMouseTile(x, y+8*scale)
-				if inmap(cox, coy) then
-					if coinmap[cox][coy] then
-						editorcoinstart = true
-					else
-						editorcoinstart = false
-					end
+				if inmap(cox, coy) then					
+					local lx1, ly1, lx2, ly2, slx1, sly1, slx2, sly2
+					lx1 = math.min(tileselectionclick1x, tileselectionclick2x)
+					ly1 = math.min(tileselectionclick1y, tileselectionclick2y)
+					lx2 = math.max(tileselectionclick1x, tileselectionclick2x)
+					ly2 = math.max(tileselectionclick1y, tileselectionclick2y)
 					
-					placetile(x, y)
+					slx1 = math.floor((lx1-xscroll-1)*16*scale)
+					sly1 = ((ly1-yscroll-1)*16+8)*scale
+					slx2 = slx1 + ((lx2-lx1)*16*scale+16*scale)
+					sly2 = sly1 + (ly2-ly1)*16*scale+16*scale
+					
+					-- left click on the selected area
+					if tileselectionclick1 == true and tileselectionclick2 == true and x > slx1 and x < slx2 and y > sly1 and y < sly2 then
+						-- if tiles are selected and click is inside area: move
+						mtclipboard = getTiles({slx1+8*scale, sly1+8*scale},{slx2+8*scale, sly2+8*scale})
+						emptySelection()
+						-- get x, y of the click inside the selection
+						pastecenter =  {-(math.floor((x-slx1)/(16*scale))),-(math.floor((y-sly1)/(16*scale)))}
+						--print(pastecenter[1], pastecenter[2])
+						--print(x, y, slx1, sly1)
+						pastingtiles = true
+						editentities = false
+						
+						-- clear selection
+						tileselectionclick1 = false
+						tileselectionclick1x = 0
+						tileselectionclick1y = 0	
+						tileselectionclick2 = false
+						tileselectionclick2x = 0
+						tileselectionclick2y = 0
+						
+						allowdrag = false
+						
+					elseif pastingtiles then
+						for i, v in pairs(mtclipboard) do
+							for j, w in pairs(v) do
+								if w == 1 and pastemode == false then
+									-- nothing
+								else
+									currenttile = mtclipboard[i][j]
+									placetile(x+(i-1 + pastecenter[1])*16*scale, y+(j-1 + pastecenter[2])*16*scale)
+								end
+							end
+						end
+						allowdrag = false
+					elseif tileselection and pastingtiles == false then
+						local xx, yy = getMouseTile(love.mouse.getX(), love.mouse.getY()-8*scale)
+						if tileselectionclick1 == false then
+							tileselectionclick1x = xx
+							tileselectionclick1y = yy
+							tileselectionclick1 = true
+						elseif tileselectionclick2 == false then
+							tileselectionclick2x = xx
+							tileselectionclick2y = yy
+							tileselectionclick2 = true
+						else
+							if not pastingtiles then
+								-- reset tile selection
+								tileselectionclick1 = false
+								tileselectionclick1x = 0
+								tileselectionclick1y = 0	
+								tileselectionclick2 = false
+								tileselectionclick2x = 0
+								tileselectionclick2y = 0
+							end
+							allowdrag = false
+						end
+					elseif not (pastingtiles or tileselection) then
+						if tileswitcherpressed then
+							local cox, coy = getMouseTile(love.mouse.getX(), love.mouse.getY()+8*scale)
+							if inmap(cox, coy) == false then
+								-- not much
+							else
+								editentities = false
+								tilesall()
+								-- now replace everything thats == map[cox][coy][1] to: currenttile
+								local mousetile = map[cox][coy][1]
+								for i, v in ipairs(map) do
+									for j, w in ipairs(v) do
+										if w[1] == mousetile then
+											map[i][j][1] = currenttile
+										end
+									end
+								end
+								generatespritebatch()
+								--local x, y = love.mouse.getPosition()
+								--placetile(x, y)
+							end
+						else
+							if coinmap[cox][coy] then
+								editorcoinstart = true
+							else
+								editorcoinstart = false
+							end
+							for t1 = 1, brush[1] do
+								for t2 = 1, brush[2] do
+									placetile(x+(t1-1)*16*scale, y+(t2-1)*16*scale)
+								end
+							end
+						end
+					end
 				end
 			end
 		else
@@ -2010,20 +2987,49 @@ function editor_mousepressed(x, y, button)
 						toggleautoscroll(false)
 					end
 				end
+			elseif editorstate == "objects" then
+				local tile = getlistpos(x, y)
+				local mtbutton = getmtbutton(x)
+				--editmtobjects = false
+				--editentities = false
+				print(tile)
+				if tile then
+					if mtbutton == 0 then
+						allowdrag = false
+						editorclose()
+						mtclipboard = multitileobjects[tile+1]
+						--for i, v in pairs(mtclipboard) do
+							--for j, w in pairs(v) do
+								--print(w)
+							--end
+						--end
+						pastecenter = {0, 0}
+						pastingtiles = true
+						editentities = false
+						editenemies = false
+					else
+						if mtbutton == 1 then
+							moveline("mappacks/" .. mappack .. "/objects.txt",tile+1,"up")
+							loadmtobjects()
+						elseif mtbutton == 2 then
+							moveline("mappacks/" .. mappack .. "/objects.txt",tile+1,"down")
+							loadmtobjects()
+						elseif mtbutton == 3 then
+							deleteline("mappacks/" .. mappack .. "/objects.txt", tile+1)
+							loadmtobjects()
+						end
+					end
+				end
 			end
 		end
 	elseif button == "m" then
-		local cox, coy = getMouseTile(x, y+8*scale)
-		if inmap(cox, coy) == false then
-			return
-		end
-		editentities = false
-		tilesall()
-		currenttile = map[cox][coy][1]
-		
+		middlemode = {false, x, y}
 	elseif button == "wu" then
 		if not editormenuopen then
-			if editentities then
+			if love.keyboard.isDown("lshift") or love.keyboard.isDown("rshift") then
+				brush[1] = math.min(brushmax, brush[1]+1)
+				brush[2] = math.min(brushmax, brush[2]+1)
+			elseif editentities then
 				if editenemies then
 					--get which current tile
 					local curr = 1
@@ -2036,6 +3042,19 @@ function editor_mousepressed(x, y, button)
 					end
 					
 					currenttile = enemies[curr-1]
+				else
+					local list = 1
+					local id = 1
+					for i, v in ipairs(entitylistitems) do
+						for j, w in ipairs(v.entries) do
+							if w.i == currenttile then
+								list = i
+								id = j
+							end
+						end
+					end
+					id = math.min(id+1, #entitylistitems[list].entries)
+					currenttile = entitylistitems[list].entries[id].i
 				end
 			elseif animatedtilelist then
 				if currenttile > 10000 then
@@ -2056,7 +3075,10 @@ function editor_mousepressed(x, y, button)
 		
 	elseif button == "wd" then
 		if not editormenuopen then
-			if editentities then
+			if love.keyboard.isDown("lshift") or love.keyboard.isDown("rshift") then
+				brush[1] = math.max(1, brush[1]-1)
+				brush[2] = math.max(1, brush[2]-1)
+			elseif editentities then
 				if editenemies then
 					--get which current tile
 					local curr = 1
@@ -2069,6 +3091,19 @@ function editor_mousepressed(x, y, button)
 					end
 					
 					currenttile = enemies[curr+1]
+				else
+					local list = 1
+					local id = 1
+					for i, v in ipairs(entitylistitems) do
+						for j, w in ipairs(v.entries) do
+							if w.i == currenttile then
+								list = i
+								id = j
+							end
+						end
+					end
+					id = math.max(1, id-1)
+					currenttile = entitylistitems[list].entries[id].i
 				end
 			elseif animatedtilelist then
 				if currenttile <= 10000+animatedtilecount then
@@ -2141,6 +3176,11 @@ function editor_mousereleased(x, y, button)
 		return
 	end
 	
+	if button == "l" or button == "r" then
+		savestate()
+		currentstate = #savestates
+	end
+	
 	if button == "l" then
 		if selectiondragging then
 			selectionend()
@@ -2151,8 +3191,39 @@ function editor_mousereleased(x, y, button)
 		end
 		guirepeattimer = 0
 		minimapdragging = false
+	elseif button == "m" then
+		if middlemode[1] == false then
+			local cox, coy = getMouseTile(love.mouse.getX(), love.mouse.getY()+8*scale)
+			print("cox, coy = " .. cox .. ", " .. coy)
+			if inmap(cox, coy) == false then
+				return
+			end
+			print("Tile selected")
+			if not editentities then
+				tilesall()
+				currenttile = map[cox][coy][1]
+			elseif not editenemies then
+				tilesentities()
+				generateentitylist()
+				currenttile = map[cox][coy][2]
+				if type(currenttile) ~= "number" then currenttile = 1 end
+			else
+				tilesenemies()
+				currenttile = map[cox][coy][2]
+				local ok = false
+				for i, v in ipairs(enemies) do
+					if v == currenttile then
+						ok = true
+					end
+				end
+				if not ok then currenttile = enemies[1] end
+			end
+		end
+		middlemode[1] = false
 	end
 	allowdrag = true
+	hprev = 0
+	vprev = 0
 	
 	if animationguilines and editormenuopen and not changemapwidthmenu then
 		for i, v in pairs(animationguilines) do
@@ -2183,6 +3254,72 @@ function editor_keypressed(key)
 		rightclickm:keypressed(key)
 	end
 	
+	if ctrlpressed then
+		if key == "s" then
+			if tileselectionclick1 and tileselectionclick2 then
+				local lx1, ly1, lx2, ly2, slx1, sly1, slx2, sly2
+				lx1 = math.min(tileselectionclick1x, tileselectionclick2x)
+				ly1 = math.min(tileselectionclick1y, tileselectionclick2y)
+				lx2 = math.max(tileselectionclick1x, tileselectionclick2x)
+				ly2 = math.max(tileselectionclick1y, tileselectionclick2y)
+				
+				slx1 = math.floor((lx1-xscroll-1)*16*scale)
+				sly1 = ((ly1-yscroll-1)*16+8)*scale
+				slx2 = slx1 + ((lx2-lx1)*16*scale+16*scale)
+				sly2 = sly1 + (ly2-ly1)*16*scale+16*scale
+				
+				savemtobject(getTiles({slx1+8*scale, sly1+8*scale},{slx2+8*scale, sly2+8*scale}))
+				loadmtobjects()
+				notice.new("Saved as object!", notice.white, 2)
+			end
+		elseif key == "c" or key == "x" then
+			local lx1, ly1, lx2, ly2, slx1, sly1, slx2, sly2
+			
+			if tileselectionclick1 == true and tileselectionclick2 == true then
+				lx1 = math.min(tileselectionclick1x, tileselectionclick2x)
+				ly1 = math.min(tileselectionclick1y, tileselectionclick2y)
+				lx2 = math.max(tileselectionclick1x, tileselectionclick2x)
+				ly2 = math.max(tileselectionclick1y, tileselectionclick2y)
+				
+				slx1 = math.floor((lx1-xscroll-1)*16*scale)
+				sly1 = ((ly1-yscroll-1)*16+8)*scale
+				slx2 = slx1 + ((lx2-lx1)*16*scale+16*scale)
+				sly2 = sly1 + (ly2-ly1)*16*scale+16*scale
+				mtclipboard = getTiles({slx1+8*scale, sly1+8*scale},{slx2+8*scale, sly2+8*scale})
+				if clipboardenabled then
+					objectclipboardcopy(getTiles({slx1+8*scale, sly1+8*scale},{slx2+8*scale, sly2+8*scale}))
+				end
+				
+				if key == "x" then
+					emptySelection()
+				end
+				
+				notice.new("Copied to clipboard!", notice.white, 2)
+			end
+		elseif key == "v" then
+			if pastingtiles == false and next(mtclipboard) ~= nil then
+				pastecenter = {0, 0}
+				pastingtiles = true
+				editentities = false
+				-- clear selection
+				tileselectionclick1 = false
+				tileselectionclick1x = 0
+				tileselectionclick1y = 0	
+				tileselectionclick2 = false
+				tileselectionclick2x = 0
+				tileselectionclick2y = 0
+			end
+		elseif key == "a" then
+			tileselection = true
+			tileselectionclick1 = true
+			tileselectionclick1x = 1
+			tileselectionclick1y = 0	
+			tileselectionclick2 = true
+			tileselectionclick2x = mapwidth
+			tileselectionclick2y = 14
+		end
+	end
+	
 	if animationguilines then
 		for i, v in pairs(animationguilines) do
 			for k, w in pairs(v) do
@@ -2192,7 +3329,16 @@ function editor_keypressed(key)
 	end
 	
 	if key == "escape" then
-		if rightclickm then
+		if tileselection or pastingtiles then
+			tileselection = false
+			pastingtiles = false
+			tileselectionclick1 = false
+			tileselectionclick1x = 0
+			tileselectionclick1y = 0	
+			tileselectionclick2 = false
+			tileselectionclick2x = 0
+			tileselectionclick2y = 0
+		elseif rightclickm then
 			closerightclickmenu()
 		elseif changemapwidthmenu then
 			mapwidthcancel()
@@ -2201,6 +3347,58 @@ function editor_keypressed(key)
 				editorclose()
 			else
 				editoropen()
+			end
+		end
+	end
+	
+	if not editormenuopen then
+		local shiftpressed = ((love.keyboard.isDown("lshift") or love.keyboard.isDown("rshift")) and true) or false
+		if key == "q" then
+			currenttile = 1
+			if editentities and editenemies then
+				tilesall()
+			elseif editentities then
+				tilesenemies()
+				currenttile = enemies[1]
+			else
+				generateentitylist()
+				tilesentities()
+			end
+		elseif key == "left" and shiftpressed then
+			brush[1] = math.max(1, brush[1]-1)
+		elseif key == "right" and shiftpressed then
+			brush[1] = math.min(brushmax, brush[1]+1)
+		elseif key == "up" and shiftpressed then
+			brush[2] = math.max(1, brush[2]-1)
+		elseif key == "down" and shiftpressed then
+			brush[2] = math.min(brushmax, brush[2]+1)
+		elseif key == "z" and ctrlpressed then
+			local ok = (currentstate > 1 and true) or false
+			currentstate = math.max(1, currentstate-1)
+			loadstate()
+			if ok then
+				notice.new("Changes undone!", notice.white, 1)
+			end
+		elseif key == "y" and ctrlpressed then
+			local ok = (currentstate < #savestates and true) or false
+			currentstate = math.min(#savestates, currentstate+1)
+			loadstate()
+			if ok then
+				notice.new("Changes redone!", notice.white, 1)
+			end
+		end
+	end
+end
+
+function editor_textinput(text)
+	if rightclickm then
+		rightclickm:textinput(text)
+	end
+
+	if animationguilines then
+		for i, v in pairs(animationguilines) do
+			for k, w in pairs(v) do
+				w:textinput(text)
 			end
 		end
 	end
@@ -2251,6 +3449,24 @@ function togglebonusstage(var)
 	guielements["bonusstagecheckbox"].var = bonusstage
 end
 
+function toggleclipboardenabled(var)
+	if var ~= nil then
+		clipboardenabled = var
+	else
+		clipboardenabled = not clipboardenabled
+	end
+	guielements["clipboardcheckbox"].var = clipboardenabled
+end
+
+function toggledrawalllinks(var)
+	if var ~= nil then
+		drawalllinks = var
+	else
+		drawalllinks = not drawalllinks
+	end
+	guielements["linktoolkindabutnotreally"].var = drawalllinks
+end
+
 function togglecustombackground(var)
 	if custombackground then
 		custombackground = false
@@ -2262,6 +3478,40 @@ function togglecustombackground(var)
 	end
 	
 	guielements["custombackgroundcheckbox"].var = custombackground ~= false
+end
+
+function toggleeditordebug(var)
+	if var ~= nil then
+		editordebug = var
+	else
+		editordebug = not editordebug
+	end
+	
+	physicsdebug = editordebug
+	portalwalldebug = editordebug
+	
+	guielements["editordebugcheckbox"].var = editordebug
+end
+
+function toggleskiplevelscreen(var)
+	if var ~= nil then
+		skiplevelscreen = var
+	else
+		skiplevelscreen = not skiplevelscreen
+	end
+	
+	guielements["levelscreencheckbox"].var = skiplevelscreen
+end
+
+function changepastemode(var)
+--	pastemode = var
+--	guielements["pastemodedropdown"].var = var
+	if var ~= nil then
+		pastemode = var
+	else
+		pastemode = not pastemode
+	end
+	guielements["pastemodedropdown"].var = pastemode
 end
 
 function togglecustomforeground(var)
@@ -2363,7 +3613,18 @@ function test_level()
 	startlevel()
 end
 
-function lightdrawbutton()
+function drawpowerlines()
+	mushroomplatform = false
+
+	editorstate = "lightdraw"
+	lightdrawX = nil
+	lightdrawY = nil
+	editorclose()
+end
+
+function drawmushrooms()
+	mushroomplatform = true
+
 	editorstate = "lightdraw"
 	lightdrawX = nil
 	lightdrawY = nil
@@ -2386,6 +3647,83 @@ function gettilelistpos(x, y)
 	return false
 end
 
+function getlistpos(x, y)
+	if x >= 5*scale and y >= 38*scale and x < 378*scale and y < 203*scale then
+		x = (x - 5*scale)/scale
+		y = y + multitilesoffset
+		y = (y - 38*scale)/scale
+		
+		
+		--out = math.floor(x/17)+1
+		--out = out + math.floor(y/17)*22
+		out = math.floor(y/17)
+		--print(out)
+		if out <= #multitileobjects-1 then
+			return out
+		end
+	end
+	
+	return false
+end
+
+function getmtbutton(x)
+	local button = 0
+	if x >= 333*scale and x < 347*scale then
+		button = 1
+	elseif x >= 348*scale and x < 362*scale then
+		button = 2
+	elseif x >= 363*scale and x < 377*scale then
+		button = 3
+	end
+	
+	return button
+end
+
+function emptySelection()
+	--print("del")
+	local lx1, ly1, lx2, ly2, slx1, sly1, slx2, sly2
+	lx1 = math.min(tileselectionclick1x, tileselectionclick2x)
+	ly1 = math.min(tileselectionclick1y, tileselectionclick2y)
+	lx2 = math.max(tileselectionclick1x, tileselectionclick2x)
+	ly2 = math.max(tileselectionclick1y, tileselectionclick2y)
+	
+	slx1 = math.floor((lx1-xscroll-1)*16*scale)
+	sly1 = ((ly1-yscroll-1)*16+8)*scale
+	slx2 = slx1 + ((lx2-lx1)*16*scale+16*scale)
+	sly2 = sly1 + (ly2-ly1)*16*scale+16*scale
+	
+	local tile1x,tile1y = getMouseTile(slx1+8*scale, sly1+8*scale)
+	local tile2x,tile2y = getMouseTile(slx2+8*scale, sly2+8*scale)
+	local xnum = tile2x - tile1x
+	local ynum = tile2y - tile1y
+	
+	for i = 1, xnum do
+		for j = 1, ynum do
+			map[tile1x + i - 1][tile1y + j - 1] = {1}
+			map[tile1x + i - 1][tile1y + j - 1]["gels"] = {}
+		end
+	end
+	generatespritebatch()
+end
+
+function getTiles(pos1, pos2)
+	local objecttable = {}
+	local tx = {}
+	local tile1x,tile1y = getMouseTile(pos1[1], pos1[2])
+	local tile2x,tile2y = getMouseTile(pos2[1], pos2[2])
+	local xnum = tile2x - tile1x
+	local ynum = tile2y - tile1y
+	for i = 1, xnum do
+		tx = {}
+		for j = 1, ynum do
+			table.insert(tx, map[tile1x + i - 1][tile1y + j - 1][1])
+			--print(map[tile1x + i - 1][tile1y + j - 1][1])
+		end
+		table.insert(objecttable, tx)
+	end
+	return objecttable
+end
+
 function savesettings()
 	local s = ""
 	s = s .. "name=" .. guielements["edittitle"].value .. "\n"
@@ -2401,6 +3739,151 @@ function savesettings()
 	love.filesystem.createDirectory( "mappacks/" .. mappack )
 	
 	love.filesystem.write("mappacks/" .. mappack .. "/settings.txt", s)
+	notice.new("Saved settings!", notice.white, 2)
+end
+
+--DELIMITERS old: ,-;*=   new: ¤×¸·¨
+--BLOCKDELIMITER = "¤"
+--LAYERDELIMITER = "×"
+--CATEGORYDELIMITER = "¸"
+--MULTIPLYDELIMITER = "·"
+--EQUALSIGN = "¨"
+function savemtobject(objecttable, name)
+	-- 1 read objects file
+	local data, data2, datalines, objectname
+	if love.filesystem.exists("mappacks/" .. mappack .. "/objects.txt") then
+		data = love.filesystem.read("mappacks/" .. mappack .. "/objects.txt")
+	else
+		data = ""
+	end
+	if name then
+		data = data .. name .. "="
+	else
+		datalines = data:split("\n")
+		data = data .. "object " .. tostring(#datalines) .. " } mtobjsize="
+	end
+	-- 2 append new object (with \n at the end!)
+	local s, m, n
+	for i = 1, #objecttable do
+		s = objecttable[i] -- x's
+		for j = 1, #s do
+			data = data .. s[j] .. ","
+			n = j
+		end
+		data = string.sub(data, 1, -2)
+		data = data .. ":"
+		m = i
+	end
+	data = string.sub(data, 1, -2)
+	data = string.gsub(data, "mtobjsize", m .. " * " .. n)
+	data = data .. "\n"
+	love.filesystem.write("mappacks/" .. mappack .. "/objects.txt", data)
+	mtjustsaved = true
+end
+
+function objectclipboardcopy(objecttable)
+	local data, data2, datalines, objectname
+	data = ""
+	-- 2 append new object (with \n at the end!)
+	local s, m, n
+	for i = 1, #objecttable do
+		s = objecttable[i] -- x's
+		for j = 1, #s do
+			data = data .. s[j] .. ","
+			n = j
+		end
+		data = string.sub(data, 1, -2)
+		data = data .. ":"
+		m = i
+	end
+	data = string.sub(data, 1, -2)
+	love.system.setClipboardText(data)
+end
+
+function moveline(file, line, direction)
+	if love.filesystem.exists(file) == false then
+		return false
+	end
+	if direction ~= "up" then
+		direction = "down"
+	end
+	
+	-- cant move first one up
+	if line == 1 and direction == "up" then
+		return false
+	end
+	
+	line = tonumber(line)
+	
+	local data, newdata, split1, changeto, linetmp1, linetmp2
+	
+	data = love.filesystem.read(file)
+	data = string.sub(data, 1, -2)
+	newdata = ""
+	split1 = data:split("\n")
+	
+	-- cant move last one down
+	if line == #split1 and direction == "down" then
+		return false
+	end
+	
+	linetmp1 = split1[line]
+	if direction == "up" then
+		changeto = line-1
+		linetmp2 = split1[changeto]
+	else
+		changeto = line+1
+		linetmp2 = split1[changeto]
+	end
+	
+	for i, v in ipairs(split1) do
+		if i == line then
+			newdata = newdata .. linetmp2 .. "\n"
+		elseif i == changeto then
+			newdata = newdata .. linetmp1 .. "\n"
+		else
+			newdata = newdata .. split1[i] .. "\n"
+		end
+	end
+	love.filesystem.write(file, newdata)
+end
+
+function deleteline(file, line)
+	if love.filesystem.exists(file) == false then
+		return false
+	end
+	line = tonumber(line)
+	local data, newdata, split1
+	data = love.filesystem.read(file)
+	data = string.sub(data, 1, -2)
+	newdata = ""
+	split1 = data:split("\n")
+	for i, v in ipairs(split1) do
+		if i ~= line then
+			newdata = newdata .. split1[i] .. "\n"
+		end
+	end
+	love.filesystem.write(file, newdata)
+end
+
+function changeline(file, linenumber, newstring)
+	if love.filesystem.exists(file) == false then
+		return false
+	end
+	line = tonumber(line)
+	local data, newdata, split1
+	data = love.filesystem.read(file)
+	data = string.sub(data, 1, -2)
+	newdata = ""
+	split1 = data:split("\n")
+	for i, v in ipairs(split1) do
+		if i ~= line then
+			newdata = newdata .. split1[i] .. "\n"
+		else
+			newdata = newdata .. newstring .. "\n"
+		end
+	end
+	love.filesystem.write(file, newdata)
 end
 
 function livesdecrease()
@@ -2752,4 +4235,13 @@ function selectiongettiles(x, y, width, height)
 	end
 	
 	return out
+end
+
+function editorexit()
+	toggleclipboardenabled(false)
+	toggledrawalllinks(false)
+	toggleeditordebug(false)
+	toggleskiplevelscreen(false)
+	
+	menu_load()
 end

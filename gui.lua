@@ -661,13 +661,27 @@ function guielement:click(x, y, button)
 	end
 end
 
+function guielement:textinput(text)
+	if self.type == "input" and self.inputting then
+		local ok = true
+		for i = 1, string.len(text) do
+			if not fontquads[text:sub(i, i)] then
+				ok = false
+			end
+		end
+		if not ok then return end -- Can you believe this is taken from Minecraft?
+		self.value = self.value .. text
+		self.cursorpos = self.cursorpos + string.len(text)
+	end
+end
+
 function guielement:keypress(key)
 	if self.active then
 		if self.type == "input" then
 			if self.inputting then
-				if key == "-" or key == "," or key == ":" or key == ";" then
+				--[[if key == "-" or key == "," or key == ":" or key == ";" then
 					return
-				end
+				end]]
 				if key == "escape" then
 					self.inputting = false
 				elseif (key == "return" or key == "enter" or key == "kpenter") then
@@ -684,7 +698,7 @@ function guielement:keypress(key)
 					if self.offset > 0 and self.offset > string.len(self.value)-self.width+1 then
 						self.offset = self.offset - 1
 					end
-				else
+				--[[else
 					if string.len(self.value) < self.maxlength or self.maxlength == 0 then
 						local found = false
 						for i = 1, string.len(fontglyphs) do
@@ -707,7 +721,7 @@ function guielement:keypress(key)
 								self.offset = self.offset + 1
 							end
 						end
-					end
+					end]]
 				end
 				
 				return true
