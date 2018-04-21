@@ -1,0 +1,38 @@
+{
+	"nopointing": true,
+
+	"smalloffsetX": 0,
+	"smalloffsetY": 3,
+	"smallquadcenterX": 12,
+	"smallquadcenterY": 11,
+	"smallquadwidth": 22,
+	"smallquadheight": 18,
+	"smallimgwidth": 286,
+	"smallimgheight": 18,
+
+	"shrinkquadcenterX": 12,
+	"shrinkquadcenterY": 11,
+	"shrinkoffsetY": 0,
+	"shrinkquadcenterY2": 12,
+
+	"growquadcenterY": 11,
+	"growquadcenterY2": 12,
+
+	"duckquadcenterY": 13,
+	"duckoffsetY": 3,
+
+	"runframes": 3,
+	"rundelay": 5,
+	"jumpframes": 2,
+	"jumpdelay": 10,
+	"customframes": 1,
+
+	"bigquadcenterX": 13,
+	"bigquadcenterY": 12,
+	"bigoffsetX": 0,
+	"bigoffsetY": -8,
+	"bigquadwidth": 24,
+	"bigquadheight": 21,
+	"bigimgwidth": 312,
+	"bigimgheight": 21
+}

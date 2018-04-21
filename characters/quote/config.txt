@@ -1,0 +1,62 @@
+{
+	"defaulthat": 0,
+
+	"smalloffsetX": 6,
+	"smalloffsetY": 6,
+	"smallquadcenterX": 11,
+	"smallquadcenterY": 10,
+
+	"shrinkquadcenterX": 9,
+	"shrinkquadcenterY": 32,
+	"shrinkoffsetY": -3,
+	"shrinkquadcenterY2": 16,
+
+	"growquadcenterY": 3,
+	"growquadcenterY2": -2,
+
+	"duckquadcenterY": 16,
+	"duckoffsetY": 10,
+
+	"runframes": 3,
+	"jumpframes": 1,
+	"customframes": 3,
+
+	"smallquadwidth": 21,
+	"smallquadheight": 23,
+	"smallimgwidth": 256,
+	"smallimgheight": 114,
+
+	"bigquadcenterY": 16,
+	"bigquadcenterX": 16,
+	"bigoffsetY": -1,
+	"bigoffsetX": 6,
+
+	"bigquadwidth": 37,
+	"bigquadheight": 32,
+	"bigimgwidth": 439,
+	"bigimgheight": 160,
+
+	"hatoffsets": {
+		"idle": [0,0],
+		"running": [[0,0],[0,0],[-1,-1]],
+		"sliding": [0,0],
+		"jumping": [[0,-1]],
+		"falling": [0,0],
+		"climbing": [[2,0],[2,-1]],
+		"swimming": [[1,-1],[1,-1]],
+		"grow": [-6,0]
+	},
+	
+	"bighatoffsets": {
+		"idle": [-4,-2],
+		"fire": [-5,-4],
+		"running": [[-5,-4],[-4,-3],[-3,-2]],
+		"sliding": [-5,-2],
+		"jumping": [[-4,-4]],
+		"falling": [-4,-2],
+		"climbing": [[-4,-4],[-4,-4]],
+		"swimming": [[-5,-4],[-5,-4]],
+		"ducking": [-5,-12],
+		"grow": [-6,0]
+	}
+}
