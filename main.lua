@@ -593,7 +593,7 @@ function love.load(arg)
 	imagelist = {"blockdebris", "coinblockanimation", "coinanimation", "coinblock", "coin", "axe", "spring", "toad", "peach", "platform", 
 	"platformbonus", "scaffold", "seesaw", "vine", "bowser", "decoys", "box", "flag", "castleflag", "bubble", "fizzle", "emanceparticle", "emanceside", "doorpiece", "doorcenter", 
 	"button", "pushbutton", "wallindicator", "walltimer", "lightbridge", "lightbridgeglow", "lightbridgeside", "laser", "laserside", "excursionbase", "excursionfunnel", "excursionfunnel2", "excursionfunnelend", 
-	"excursionfunnelend2", "faithplateplate", "laserdetector", "gel1", "gel2", "gel3", "gel4", "gel0", "gel1ground", "gel2ground", "gel3ground", "gel4ground", "geldispenser", "cubedispenser", "panel", "pedestalbase",
+	"excursionfunnelend2", "faithplateplate", "laserdetector", "gel1", "gel2", "gel3", "gel4", "gel5", "gel1ground", "gel2ground", "gel3ground", "gel4ground", "geldispenser", "cubedispenser", "panel", "pedestalbase",
 	"pedestalgun", "actionblock", "portal", "markbase", "markoverlay", "andgate", "notgate", "orgate", "squarewave", "rsflipflop", "portalglow", "fireball", "musicentity", "smbtiles", "portaltiles",
 	"animatedtiletrigger", "delayer"}
 	
