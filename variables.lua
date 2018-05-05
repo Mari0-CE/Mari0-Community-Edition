@@ -382,8 +382,8 @@ gelcannonspeed = 30
 infinitetime = false
 infinitelives = false
 
-pausemenuoptions = {"resume", "suspend", "volume", "quit to", "quit to"}
-pausemenuoptions2 = {"", "", "", "menu", "desktop"}
+pausemenuoptions = {"resume", "suspend", "game volume", "music volume", "quit to", "quit to"}
+pausemenuoptions2 = {"", "", "", "", "menu", "desktop"}
 
 guirepeatdelay = 0.07
 mappackhorscrollrange = 220

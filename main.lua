@@ -551,7 +551,7 @@ function love.load(arg)
 	playertypei = 1
 	playertype = playertypelist[playertypei] --portal, gelcannon
 	
-	if volume == 0 then
+	if volumesfx == 0 then
 		soundenabled = false
 	else
 		soundenabled = true
@@ -1015,9 +1015,11 @@ function love.update(dt)
 				v.source:setPitch( speed )
 			end
 			music.pitch = speed
-			love.audio.setVolume(volume)
+			love.audio.setVolume(volumesfx)
+			music:setVolume(volumemusic)
 		else	
 			love.audio.setVolume(0)
+			music:setVolume(0)
 		end
 	end
 	
@@ -1171,7 +1173,8 @@ function saveconfig()
 	s = s .. "shader1:" .. shaderlist[currentshaderi1] .. ";"
 	s = s .. "shader2:" .. shaderlist[currentshaderi2] .. ";"
 	
-	s = s .. "volume:" .. volume .. ";"
+	s = s .. "volume:" .. volumesfx .. ";"
+	s = s .. "musicvolume:" .. volumemusic .. ";"
 	s = s .. "mouseowner:" .. mouseowner .. ";"
 	
 	s = s .. "mappack:" .. mappack .. ";"
@@ -1286,8 +1289,10 @@ function loadconfig()
 				end
 			end
 		elseif s2[1] == "volume" then
-			volume = tonumber(s2[2])
-			love.audio.setVolume( volume )
+			volumesfx = tonumber(s2[2])
+			love.audio.setVolume( volumesfx )
+		elseif s2[1] == "musicvolume" then
+			volumemusic = tonumber(s2[2])
 		elseif s2[1] == "mouseowner" then
 			mouseowner = tonumber(s2[2])
 		elseif s2[1] == "mappack" then
@@ -1415,7 +1420,8 @@ function defaultconfig()
 	
 	--options
 	scale = 2
-	volume = 1
+	volumesfx = 1
+	volumemusic = 1
 	mappack = "smb"
 	vsync = false
 	currentshaderi1 = 1

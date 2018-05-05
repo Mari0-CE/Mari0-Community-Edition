@@ -2330,24 +2330,28 @@ function game_draw()
 		love.graphics.rectangle("fill", 0, 0, width*16*scale, height*16*scale)
 		
 		love.graphics.setColor(0, 0, 0)
-		love.graphics.rectangle("fill", (width*8*scale)-50*scale, (112*scale)-75*scale, 100*scale, 150*scale)
+		
+		local menuwidth = 120
+		local menuheight = 170
+		love.graphics.rectangle("fill", (width*8*scale)-menuwidth/2*scale, (96*scale)-75*scale, menuwidth*scale, menuheight*scale)
 		love.graphics.setColor(255, 255, 255)
-		drawrectangle(width*8-49, 112-74, 98, 148)
+		drawrectangle(width*8-(menuwidth/2)+1, 96-74, menuwidth-2, menuheight-2)
 		
 		for i = 1, #pausemenuoptions do
 			love.graphics.setColor(100, 100, 100, 255)
 			if pausemenuselected == i and not menuprompt and not desktopprompt then
 				love.graphics.setColor(255, 255, 255, 255)
-				properprint(">", (width*8*scale)-45*scale, (112*scale)-60*scale+(i-1)*25*scale)
+				properprint(">", (width*8*scale)-(menuwidth/2-5)*scale, (96*scale)-60*scale+(i-1)*25*scale)
 			end
-			properprint(pausemenuoptions[i], (width*8*scale)-35*scale, (112*scale)-60*scale+(i-1)*25*scale)
-			properprint(pausemenuoptions2[i], (width*8*scale)-35*scale, (112*scale)-50*scale+(i-1)*25*scale)
+			properprint(pausemenuoptions[i], (width*8*scale)-(menuwidth/2-15)*scale, (96*scale)-60*scale+(i-1)*25*scale)
+			properprint(pausemenuoptions2[i], (width*8*scale)-(menuwidth/2-15)*scale, (96*scale)-50*scale+(i-1)*25*scale)
 			
-			if pausemenuoptions[i] == "volume" then
-				drawrectangle((width*8)-34, 68+(i-1)*25, 74, 1)
-				drawrectangle((width*8)-34, 65+(i-1)*25, 1, 7)
-				drawrectangle((width*8)+40, 65+(i-1)*25, 1, 7)
-				love.graphics.draw(volumesliderimg, math.floor(((width*8)-35+74*volume)*scale), (112*scale)-47*scale+(i-1)*25*scale, 0, scale, scale)
+			if pausemenuoptions[i] == "music volume" or pausemenuoptions[i] == "game volume" then
+				drawrectangle((width*8)-42, 52+(i-1)*25, 74, 1)
+				drawrectangle((width*8)-42, 49+(i-1)*25, 1, 7)
+				drawrectangle((width*8)+32, 49+(i-1)*25, 1, 7)
+				love.graphics.draw(volumesliderimg, math.floor(((width*8)-43+74*(pausemenuoptions[i] == "music volume" and volumemusic or volumesfx))*scale),
+									(96*scale)-47*scale+(i-1)*25*scale, 0, scale, scale)
 			end
 		end
 		
@@ -3952,20 +3956,28 @@ function game_keypressed(key)
 			saveconfig()
 			love.audio.resume()
 		elseif (key == "right" or key == "d") then
-			if pausemenuoptions[pausemenuselected] == "volume" then
-				if volume < 0.99 then
-					volume = volume + 0.1
-					love.audio.setVolume( volume )
-					soundenabled = true
-					playsound("coin")
-				end
+			if pausemenuoptions[pausemenuselected] == "music volume" then
+				volumemusic = math.min(1, volumemusic + 0.1)
+				love.audio.setVolume( volumesfx )
+				music:setVolume( volumemusic )
+			elseif pausemenuoptions[pausemenuselected] == "game volume" then
+				volumesfx = math.min(1, volumesfx + 0.1)
+				love.audio.setVolume( volumesfx )
+				music:setVolume( volumemusic )
+				soundenabled = true
+				playsound("coin")
 			end
 			
 		elseif (key == "left" or key == "a") then
-			if pausemenuoptions[pausemenuselected] == "volume" then
-				volume = math.max(volume - 0.1, 0)
-				love.audio.setVolume( volume )
-				if volume == 0 then
+			if pausemenuoptions[pausemenuselected] == "music volume" then
+				volumemusic = math.max(volumemusic - 0.1, 0)
+				love.audio.setVolume( volumesfx )
+				music:setVolume( volumemusic )
+			elseif pausemenuoptions[pausemenuselected] == "game volume" then
+				volumesfx = math.max(volumesfx - 0.1, 0)
+				love.audio.setVolume( volumesfx )
+				music:setVolume( volumemusic )
+				if volumesfx == 0 then
 					soundenabled = false
 				end
 				playsound("coin")

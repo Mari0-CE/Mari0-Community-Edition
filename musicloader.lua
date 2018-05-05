@@ -68,6 +68,7 @@ function music:play(name, fast)
 		if soundenabled then
 			self.loaded[name]:stop()
 			self.loaded[name]:rewind()
+			self.loaded[name]:setVolume(volumemusic or 1)
 			self.loaded[name]:play()
 		end
 	end
@@ -89,5 +90,11 @@ end
 function music:update()
 	for filepath, source in pairs(self.loaded) do
 		source:setPitch(self.pitch)
+	end
+end
+
+function music:setVolume(n)
+	for i, v in pairs(self.loaded) do
+		v:setVolume(volumemusic or 1)
 	end
 end
