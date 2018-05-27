@@ -4026,6 +4026,8 @@ function game_keypressed(key)
 			mariolevel = testlevellevel
 			testlevel = false
 			editormode = true
+			xpan = false
+			ypan = false
 			
 			if mariosublevel > 0 then
 				loadlevel(marioworld .. "-" .. mariolevel .. "_" .. mariosublevel)
