@@ -13,8 +13,8 @@
 	
 	"notkilledfromblocksbelow": true,
 	
-	"quadno": 1,
-	"nospritesets": true,
+	"quadno": 4,
+	"nospritesets": false,
 	
 	"width": 0.75,
 	"height": 0.75,

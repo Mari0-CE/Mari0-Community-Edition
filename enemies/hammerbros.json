@@ -46,6 +46,9 @@
 	"jumptime": 3,
 	"jumpforce": 19,
 	"jumpforcedown": 6,
+	
+	"chasetime": 44,
+	"chasespeed": 1.5,
 
 	"spawnsenemy": "hammer",
 	"spawnenemydelays": [0.6, 1.6],
@@ -55,7 +58,5 @@
 	"spawnenemyspeedxtowardsplayer": true,
 	
 	"throwquadoffset": 2,
-	"throwpreparetime": 0.5,
-	
-	"ignorefaithplates": true
+	"throwpreparetime": 0.5
 }

@@ -15,11 +15,11 @@
 	"animationstart": 1,
 	"animationspeed": 0.35,
 	
-	"nospritesets": true,
+	"nospritesets": false,
 	
 	"speedx": -1,
 	
-	"quadno": 1,
+	"quadno": 4,
 	
 	"width": 0.75,
 	"height": 0.75,

@@ -3,8 +3,8 @@
 
 	"movement": "truffleshuffle",
 	"stompable": true,
-	"killsonbottom": true,
 	"killsonsides": true,
+	"killsonbottom": true,
 	
 	"animationtype": "mirror",
 	"animationspeed": 0.2,

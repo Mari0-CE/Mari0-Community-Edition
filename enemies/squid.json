@@ -16,8 +16,7 @@
 	
 	"gravity": 0,
 	
-	"nospritesets": true,
-	
+	"nospritesets": false,
 	
 	"quadno": 1,
 	
