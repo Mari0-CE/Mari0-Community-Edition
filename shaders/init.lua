@@ -1,5 +1,7 @@
-local supported = love.graphics.isSupported and love.graphics.isSupported("canvas") and love.graphics.isSupported("shader")
-local supports_npo2 = love.graphics.isSupported and love.graphics.isSupported("npot") or false -- on the safe side
+--thanks to https://github.com/radgeRayden/future-mari0 0.10.0 port
+
+local supported = true --love.graphics.isSupported and love.graphics.isSupported("canvas") and love.graphics.isSupported("shader")
+local supports_npo2 = true --love.graphics.isSupported and love.graphics.isSupported("npot") or false -- on the safe side
 if not supported then 
 	shaderssupported = false
 	print("post-processing shaders not supported")
@@ -66,8 +68,9 @@ local function CreateShaderPass()
 	
 	function pass:predraw()
 		if supported and self.on and self.canvas then
-			self.canvas.canvas:clear(love.graphics.getBackgroundColor())
+			--self.canvas.canvas:clear(love.graphics.getBackgroundColor())
 			love.graphics.setCanvas(self.canvas.canvas)
+			love.graphics.clear(love.graphics.getBackgroundColor()) --0.10.0
 			return self.canvas.canvas
 		end
 	end
@@ -237,7 +240,7 @@ function shaders:postdraw()
 	if not supported or not self.curcanvas then return end
 	
 	local blendmode = love.graphics.getBlendMode()
-	love.graphics.setBlendMode("premultiplied")
+	love.graphics.setBlendMode("alpha", "premultiplied")
 	love.graphics.setColor(255, 255, 255)
 	
 	local activepasses = {}
