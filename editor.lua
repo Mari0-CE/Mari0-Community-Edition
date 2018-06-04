@@ -2375,6 +2375,10 @@ function tilesall()
 	tileliststart = 1
 	tilelistcount = smbtilecount + portaltilecount + customtilecount -1
 	
+	if editentities or editenemies then
+		currenttile = 1
+	end
+	
 	tilescrollbarheight = math.max(0, math.ceil((smbtilecount + portaltilecount + customtilecount)/22)*17 - 1 - (17*9) - 12)
 	editentities = false
 	editenemies = false
@@ -2392,6 +2396,10 @@ function tilessmb()
 	animatedtilelist = false
 	tileliststart = 1
 	tilelistcount = smbtilecount-1
+	
+	if editentities or editenemies then
+		currenttile = 1
+	end
 	
 	tilescrollbarheight = math.max(0, math.ceil((smbtilecount)/22)*17 - 1 - (17*9) - 12)
 	editentities = false
@@ -2411,6 +2419,10 @@ function tilesportal()
 	tileliststart = smbtilecount + 1
 	tilelistcount = portaltilecount - 1
 	
+	if editentities or editenemies then
+		currenttile = 1
+	end
+	
 	tilescrollbarheight = math.max(0, math.ceil((portaltilecount)/22)*17 - 1 - (17*9) - 12)
 	editentities = false
 	editenemies = false
@@ -2429,6 +2441,10 @@ function tilescustom()
 	tileliststart = smbtilecount + portaltilecount + 1
 	tilelistcount = customtilecount - 1
 	
+	if editentities or editenemies then
+		currenttile = 1
+	end
+	
 	tilescrollbarheight = math.max(0, math.ceil((customtilecount)/22)*17 - 1 - (17*9) - 12)
 	editentities = false
 	editenemies = false
@@ -2446,6 +2462,10 @@ function tilesanimated()
 	animatedtilelist = true
 	tileliststart = 1
 	tilelistcount = animatedtilecount - 1
+	
+	if editentities or editenemies then
+		currenttile = 1
+	end
 	
 	tilescrollbarheight = math.max(0, math.ceil((customtilecount)/22)*17 - 1 - (17*9) - 12)
 	editentities = false
