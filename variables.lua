@@ -1,9 +1,9 @@
 --DELIMITERS old: ,-;*=   new: ¤×¸·¨
-BLOCKDELIMITER = "¤"
-LAYERDELIMITER = "×"
-CATEGORYDELIMITER = "¸"
-MULTIPLYDELIMITER = "·"
-EQUALSIGN = "¨"
+BLOCKDELIMITER = {"¤",","}
+LAYERDELIMITER = {"×","-"}
+CATEGORYDELIMITER = {"¸",";"}
+MULTIPLYDELIMITER = {"·","*"}
+EQUALSIGN = {"¨","="}
 
 --HUGO'S VARIABLES
 portalbouncethreshold = 256

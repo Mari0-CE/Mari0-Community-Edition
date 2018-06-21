@@ -3191,15 +3191,24 @@ function loadmap(filename, createobjects)
 		return false
 	end
 	local s = love.filesystem.read( "mappacks/" .. mappack .. "/" .. filename .. ".txt" )
-	local s2 = s:split(CATEGORYDELIMITER)
+	
+	local v = string.match(s, BLOCKDELIMITER[1]) and 1 or 2
+	
+	local blockdelimiter = BLOCKDELIMITER[v]
+	local layerdelimiter = LAYERDELIMITER[v]
+	local categorydelimiter = CATEGORYDELIMITER[v]
+	local multipledelimiter = MULTIPLYDELIMITER[v]
+	local equalsign = EQUALSIGN[v]
+	
+	local s2 = s:split(categorydelimiter)
 	
 	local t
-	if string.find(s2[1], BLOCKDELIMITER) then
+	if string.find(s2[1], blockdelimiter) then
 		mapheight = 15
-		t = s2[1]:split(BLOCKDELIMITER)
+		t = s2[1]:split(blockdelimiter)
 	else
 		mapheight = tonumber(s2[1])
-		t = s2[2]:split(BLOCKDELIMITER)
+		t = s2[2]:split(blockdelimiter)
 	end
 	
 	map = {}
@@ -3219,7 +3228,7 @@ function loadmap(filename, createobjects)
 	--get mapwidth
 	local entries = 0
 	for i = 1, #t do
-		local s = t[i]:split(MULTIPLYDELIMITER)
+		local s = t[i]:split(multipledelimiter)
 		if s[2] then
 			entries = entries + tonumber(s[2])
 		else
@@ -3248,8 +3257,8 @@ function loadmap(filename, createobjects)
 	
 	local x, y = 1, 1
 	for i = 1, #t do
-		if string.find(t[i], MULTIPLYDELIMITER) then --new stuff!
-			local r = tostring(t[i]):split(MULTIPLYDELIMITER)
+		if string.find(t[i], multipledelimiter) then --new stuff!
+			local r = tostring(t[i]):split(multipledelimiter)
 			
 			local coin = false
 			if string.sub(r[1], -1) == "c" then
@@ -3282,7 +3291,7 @@ function loadmap(filename, createobjects)
 			end
 			
 		else --Old stuff.
-			local r = tostring(t[i]):split(LAYERDELIMITER)
+			local r = tostring(t[i]):split(layerdelimiter)
 			
 			if string.sub(r[1], -1) == "c" then
 				r[1] = string.sub(r[1], 1, -2)
@@ -3598,7 +3607,7 @@ function loadmap(filename, createobjects)
 	
 	--MORE STUFF
 	for i = 3, #s2 do
-		s3 = s2[i]:split(EQUALSIGN)
+		s3 = s2[i]:split(equalsign)
 		if s3[1] == "backgroundr" then
 			background[1] = tonumber(s3[2])
 		elseif s3[1] == "backgroundg" then
@@ -4771,9 +4780,10 @@ end
 
 function savemap(filename)
 	local s = ""
+	local v = 1
 	
 	--mapheight
-	local s = s .. mapheight .. CATEGORYDELIMITER
+	local s = s .. mapheight .. CATEGORYDELIMITER[v]
 	
 	local mul = 1
 	local prev = nil
@@ -4788,24 +4798,24 @@ function savemap(filename)
 					mul = mul + 1
 				elseif prev == current and y == mapheight and x == mapwidth then
 					mul = mul + 1
-					s = s .. prev .. MULTIPLYDELIMITER .. mul
+					s = s .. prev .. MULTIPLYDELIMITER[v] .. mul
 				else
 					if prev then
 						if mul > 1 then
-							s = s .. prev .. MULTIPLYDELIMITER .. mul
+							s = s .. prev .. MULTIPLYDELIMITER[v] .. mul
 						else
 							s = s .. prev
 						end
 						
 						if y ~= mapheight or x ~= mapwidth then
-							s = s .. BLOCKDELIMITER
+							s = s .. BLOCKDELIMITER[v]
 						end
 					end
 					prev = current
 					mul = 1
 					if y == mapheight and x == mapwidth then
 						if prev then
-							s = s .. BLOCKDELIMITER
+							s = s .. BLOCKDELIMITER[v]
 						end
 						s = s .. prev
 					end
@@ -4813,12 +4823,12 @@ function savemap(filename)
 			else
 				if prev then
 					if mul > 1 then
-						s = s .. prev .. MULTIPLYDELIMITER .. mul
+						s = s .. prev .. MULTIPLYDELIMITER[v] .. mul
 					else
 						s = s .. prev
 					end
 					
-					s = s .. BLOCKDELIMITER
+					s = s .. BLOCKDELIMITER[v]
 				end
 				prev = nil
 				mul = 1
@@ -4835,54 +4845,54 @@ function savemap(filename)
 					end
 					
 					if i ~= #map[x][y] then
-						s = s .. LAYERDELIMITER
+						s = s .. LAYERDELIMITER[v]
 					end
 				end
 				
 				if y ~= mapheight or x ~= mapwidth then
-					s = s .. BLOCKDELIMITER
+					s = s .. BLOCKDELIMITER[v]
 				end
 			end
 		end
 	end
 	
 	--options
-	s = s .. CATEGORYDELIMITER .. "backgroundr" .. EQUALSIGN ..  background[1]
-	s = s .. CATEGORYDELIMITER .. "backgroundg" .. EQUALSIGN ..  background[2]
-	s = s .. CATEGORYDELIMITER .. "backgroundb" .. EQUALSIGN ..  background[3]
-	s = s .. CATEGORYDELIMITER .. "spriteset" .. EQUALSIGN ..  spriteset
+	s = s .. CATEGORYDELIMITER[v] .. "backgroundr" .. EQUALSIGN[v] ..  background[1]
+	s = s .. CATEGORYDELIMITER[v] .. "backgroundg" .. EQUALSIGN[v] ..  background[2]
+	s = s .. CATEGORYDELIMITER[v] .. "backgroundb" .. EQUALSIGN[v] ..  background[3]
+	s = s .. CATEGORYDELIMITER[v] .. "spriteset" .. EQUALSIGN[v] ..  spriteset
 	if musicname then
-		s = s .. CATEGORYDELIMITER .. "music" .. EQUALSIGN ..  musicname
+		s = s .. CATEGORYDELIMITER[v] .. "music" .. EQUALSIGN[v] ..  musicname
 	end
 	if intermission then
-		s = s .. CATEGORYDELIMITER .. "intermission"
+		s = s .. CATEGORYDELIMITER[v] .. "intermission"
 	end
 	if bonusstage then
-		s = s .. CATEGORYDELIMITER .. "bonusstage"
+		s = s .. CATEGORYDELIMITER[v] .. "bonusstage"
 	end
 	if haswarpzone then
-		s = s .. CATEGORYDELIMITER .. "haswarpzone"
+		s = s .. CATEGORYDELIMITER[v] .. "haswarpzone"
 	end
 	if underwater then
-		s = s .. CATEGORYDELIMITER .. "underwater"
+		s = s .. CATEGORYDELIMITER[v] .. "underwater"
 	end
 	if custombackground then
 		if custombackground == true then
-			s = s .. CATEGORYDELIMITER .. "custombackground"
+			s = s .. CATEGORYDELIMITER[v] .. "custombackground"
 		else
-			s = s .. CATEGORYDELIMITER .. "custombackground" .. EQUALSIGN ..  custombackground
+			s = s .. CATEGORYDELIMITER[v] .. "custombackground" .. EQUALSIGN[v] ..  custombackground
 		end
 	end
 	if customforeground then
 		if customforeground == true then
-			s = s .. CATEGORYDELIMITER .. "customforeground"
+			s = s .. CATEGORYDELIMITER[v] .. "customforeground"
 		else
-			s = s .. CATEGORYDELIMITER .. "customforeground" .. EQUALSIGN ..  customforeground
+			s = s .. CATEGORYDELIMITER[v] .. "customforeground" .. EQUALSIGN[v] ..  customforeground
 		end
 	end
-	s = s .. CATEGORYDELIMITER .. "timelimit" .. EQUALSIGN ..  mariotimelimit
-	s = s .. CATEGORYDELIMITER .. "scrollfactor" .. EQUALSIGN ..  scrollfactor
-	s = s .. CATEGORYDELIMITER .. "fscrollfactor" .. EQUALSIGN ..  fscrollfactor
+	s = s .. CATEGORYDELIMITER[v] .. "timelimit" .. EQUALSIGN[v] ..  mariotimelimit
+	s = s .. CATEGORYDELIMITER[v] .. "scrollfactor" .. EQUALSIGN[v] ..  scrollfactor
+	s = s .. CATEGORYDELIMITER[v] .. "fscrollfactor" .. EQUALSIGN[v] ..  fscrollfactor
 	if not portalsavailable[1] or not portalsavailable[2] then
 		local ptype = "none"
 		if portalsavailable[1] then
@@ -4891,11 +4901,11 @@ function savemap(filename)
 			ptype = "orange"
 		end
 		
-		s = s .. CATEGORYDELIMITER .. "portalgun" .. EQUALSIGN ..  ptype
+		s = s .. CATEGORYDELIMITER[v] .. "portalgun" .. EQUALSIGN[v] ..  ptype
 	end
 	
 	if levelscreenbackname then
-		s = s .. CATEGORYDELIMITER .. "levelscreenback" .. EQUALSIGN ..  levelscreenbackname
+		s = s .. CATEGORYDELIMITER[v] .. "levelscreenback" .. EQUALSIGN[v] ..  levelscreenbackname
 	end
 	
 	--tileset
