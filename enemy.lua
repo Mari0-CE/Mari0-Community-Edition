@@ -911,12 +911,12 @@ function enemy:customtimeraction(action, arg)
 		if type(self[parameter]) ~= "number" then return end
 		self[parameter] = -self[parameter]
 	elseif string.sub(action, 0, 3) == "add" then
-		local parameter = string.sub(action, 8, string.len(action))
+		local parameter = string.sub(action, 4, string.len(action))
 		if not self[parameter] or not arg or tonumber(arg) == nil then return end
 		if type(self[parameter]) ~= "number" then return end
 		self[parameter] = self[parameter] + arg
 	elseif string.sub(action, 0, 8) == "multiply" then
-		local parameter = string.sub(action, 8, string.len(action))
+		local parameter = string.sub(action, 9, string.len(action))
 		if not self[parameter] or not arg or tonumber(arg) == nil then return end
 		if type(self[parameter]) ~= "number" then return end
 		self[parameter] = self[parameter] * arg
