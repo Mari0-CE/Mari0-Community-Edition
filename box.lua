@@ -188,7 +188,11 @@ function box:floorcollide(a, b)
 	end
 	
 	if a == "enemy" and b.killedbyboxes then
-		b:stomp()
+		if b.stompable then
+			b:stomp()
+		else
+			b:shotted("right", false, false, false)
+		end
 		addpoints(200, self.x, self.y)
 		playsound("stomp")
 		self.falling = true
