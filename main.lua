@@ -23,6 +23,10 @@
 	0. You just DO WHAT THE FUCK YOU WANT TO.
 ]]
 
+PROF_CAPTURE = true
+prof = require("jprof")
+prof.connect(true)
+
 function love.run()
 	if love._version_minor < 9 then
 		--Cheap af but I don't care, COMPATIBILITY!!!
@@ -64,11 +68,13 @@ function love.run()
 		love.math.random() 
 	end
 	
-    love.load(arg)
+	love.load(arg)
 
     -- Main loop time.
-    while true do
+	while true do
+		prof.push("frame")
         -- Process events.
+		prof.push("update")
 		love.event.pump()
 		for e,a,b,c,d in love.event.poll() do
 			if e == "quit" then
@@ -85,7 +91,10 @@ function love.run()
 		local dt = love.timer.getDelta()
 
         -- Call update and draw
-        love.update(dt) -- will pass 0 if love.timer is disabled
+		love.update(dt) -- will pass 0 if love.timer is disabled
+		prof.pop("update")
+
+		prof.push("draw")
 		love.graphics.clear()
 		love.graphics.origin()
 		--Fullscreen hack
@@ -115,9 +124,14 @@ function love.run()
 			love.graphics.setScissor()
 			love.draw()
 		end
-		
+
+		prof.push("love.graphics.present")
 		love.graphics.present()
+		prof.pop("love.graphics.present")
+		prof.pop("draw")
+
 		love.timer.sleep(0.001)
+		prof.pop("frame")
     end
 end
 
@@ -1033,21 +1047,33 @@ function love.update(dt)
 			end
 		end
 		
+		prof.push("keyprompt_update")
 		keyprompt_update()
+		prof.pop("keyprompt_update")
 		
 		if gamestate == "menu" or gamestate == "mappackmenu" or gamestate == "onlinemenu" or gamestate == "options" or gamestate == "lobby" then
+			prof.push("menu_update")
 			menu_update(dt)
+			prof.pop("menu_update")
 		elseif gamestate == "levelscreen" or gamestate == "gameover" or gamestate == "sublevelscreen" or gamestate == "mappackfinished" then
+			prof.push("levelscreen_update")
 			levelscreen_update(dt)
+			prof.pop("levelscreen_update")
 		elseif gamestate == "game" then
-			game_update(dt)	
+			prof.push("game_update")
+			game_update(dt)
+			prof.pop("game_update")
 		elseif gamestate == "intro" then
-			intro_update(dt)	
+			prof.push("intro_update")
+			intro_update(dt)
+			prof.pop("intro_update")
 		end
 		
+		prof.push("guielements")
 		for i, v in pairs(guielements) do
 			v:update(dt)
 		end
+		prof.pop("guielements")
 		
 		--netplay_update(dt)
 		
@@ -1058,24 +1084,36 @@ function love.update(dt)
 end
 
 function love.draw()
+	prof.push("shaders:predraw")
 	shaders:predraw()
+	prof.pop("shaders:predraw")
 	
 	--mycamera:attach()
 	if gamestate == "menu" or gamestate == "mappackmenu" or gamestate == "onlinemenu" or gamestate == "options" or gamestate == "lobby" then
+		prof.push("menu_draw")
 		menu_draw()
+		prof.pop("menu_draw")
 	elseif gamestate == "levelscreen" or gamestate == "gameover" or gamestate == "mappackfinished" then
+		prof.push("levelscreen_draw")
 		levelscreen_draw()
+		prof.pop("levelscreen_draw")
 	elseif gamestate == "game" then
+		prof.push("game_draw")
 		game_draw()
+		prof.pop("game_draw")
 	elseif gamestate == "intro" then
+		prof.push("intro_draw")
 		intro_draw()
+		prof.pop("intro_draw")
 	end
 	
 	notice.draw()
 	
 	--mycamera:detach()
 	
+	prof.push("shaders:postdraw")
 	shaders:postdraw()
+	prof.pop("shaders:postdraw")
 		
 	love.graphics.setColor(255, 255,255)
 	
@@ -2189,7 +2227,8 @@ function loadcustomtiles()
 end
 
 function love.quit()
-	
+	prof.popAll()
+	prof.write("prof.mpack")
 end
 
 function savestate(i)

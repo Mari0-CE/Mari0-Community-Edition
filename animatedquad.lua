@@ -43,6 +43,7 @@ function animatedquad:updateproperties()
 	self.props = self.properties[self.quadi]
 	
 	if oldcol ~= self.props.collision then
+		prof.push("collision check")
 		for x = 1, mapwidth do
 			for y = 1, mapheight do
 				if map[x][y][1] == self.number then
@@ -55,9 +56,11 @@ function animatedquad:updateproperties()
 				end
 			end
 		end
+		prof.pop("collision check")
 	end
 	
 	if oldportalable ~= self.props.portalable then
+		prof.push("portalable check")
 		for x = 1, mapwidth do
 			for y = 1, mapheight do
 				if map[x][y][1] == self.number then
@@ -69,6 +72,7 @@ function animatedquad:updateproperties()
 				end
 			end
 		end
+		prof.pop("portalable check")
 	end
 end
 
@@ -81,7 +85,9 @@ function animatedquad:update(dt)
 			self.quadi = 1
 		end
 		if objects and not self.triggered then
+			prof.push("update properties")
 			self:updateproperties()
+			prof.pop("update properties")
 		end
 	end
 end

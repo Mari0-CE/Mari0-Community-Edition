@@ -73,7 +73,9 @@ function game_update(dt)
 	--------
 	
 	--animationS
+	prof.push("animations")
 	animationsystem_update(dt)
+	prof.pop("animations")
 	
 	
 	--earthquake reset
@@ -88,10 +90,14 @@ function game_update(dt)
 	end
 	
 	--Animate animated tiles because I say so
+	prof.push("animated tiles")
 	for i = 1, #animatedtiles do
+		prof.push("TILE" .. i)
 		animatedtiles[i]:update(dt)
+		prof.pop("TILE" .. i)
 	end
-	
+	prof.pop("animated tiles")
+
 	for i = 1, #animatedtimerlist do
 		animatedtimerlist[i]:update(dt)
 	end
