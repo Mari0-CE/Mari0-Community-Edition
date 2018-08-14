@@ -4743,7 +4743,7 @@ function nextlevel()
 	love.audio.stop()
 	
 	mariolevel = mariolevel + 1
-	if mariolevel > 4 then
+	if not love.filesystem.exists("mappacks/" .. mappack .. "/" .. marioworld .. "-" .. mariolevel .. ".txt") then
 		mariolevel = 1
 		marioworld = marioworld + 1
 	end
