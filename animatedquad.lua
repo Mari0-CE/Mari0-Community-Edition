@@ -37,8 +37,8 @@ function animatedquad:init(imgpath, s, number)
 end
 
 function animatedquad:updateproperties()
-	local oldcol = self.collision
-	local oldportalable = self.portalable
+	local oldcol = self.props.collision
+	local oldportalable = self.props.portalable
 	
 	self.props = self.properties[self.quadi]
 	
