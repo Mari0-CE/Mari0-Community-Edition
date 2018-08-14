@@ -171,6 +171,7 @@ function enemy:init(x, y, t, a)
 end
 
 function enemy:update(dt)
+	prof.push("enemy")
 	--Funnels and fuck
 	if self.funnel and not self.infunnel then
 		self:enteredfunnel(true)
@@ -190,6 +191,7 @@ function enemy:update(dt)
 			self:output()
 			self.dead = true
 			
+			prof.pop("enemy")
 			return true
 		end
 	end
@@ -198,6 +200,7 @@ function enemy:update(dt)
 		self:output()
 		self.dead = true
 		
+		prof.pop("enemy")
 		return true
 	end
 	
@@ -206,8 +209,10 @@ function enemy:update(dt)
 		if self.deathtimer > 0.5 then
 			self:output()
 			
+			prof.pop("enemy")
 			return true
 		else
+			prof.pop("enemy")
 			return false
 		end
 	end
@@ -222,6 +227,7 @@ function enemy:update(dt)
 		self.x = self.x+self.speedx*dt
 		self.y = self.y+self.speedy*dt
 		
+		prof.pop("enemy")
 		return false
 	end
 	
@@ -256,6 +262,7 @@ function enemy:update(dt)
 	if self.spawnsenemy then
 		if lakitoend and self.movement == "follow" then
 			self.speedx = -3
+			prof.pop("enemy")
 			return false
 		end
 		self.spawnenemytimer = self.spawnenemytimer + dt
@@ -732,6 +739,7 @@ function enemy:update(dt)
 				if inrange(v.x+v.width/2, self.x+self.width/2-(self.playerneardist or 3), self.x+self.width/2+(self.playerneardist or 3)) then
 					if self.transformtrigger == "playernear" then
 						self:transform(self.transformsinto)
+						prof.pop("enemy")
 						return
 					end
 				elseif self.transformtrigger == "playernotnear" then
@@ -744,10 +752,12 @@ function enemy:update(dt)
 			if #col > 0 then
 				if self.transformtrigger == "playernear" then
 					self:transform(self.transformsinto)
+					prof.pop("enemy")
 					return
 				end
 			elseif self.transformtrigger == "playernotnear" then
 				self:transform(self.transformsinto)
+				prof.pop("enemy")
 				return
 			end
 		end
@@ -788,6 +798,7 @@ function enemy:update(dt)
 				self.static = true
 			else
 				self:transform(self.transformsinto)
+				prof.pop("enemy")
 				return
 			end
 		else
@@ -795,6 +806,7 @@ function enemy:update(dt)
 				self.static = false
 			end
 		end
+	prof.pop("enemy")
 	end
 	
 	if self.rotatetowardsplayer then
@@ -821,6 +833,7 @@ function enemy:update(dt)
 			end
 		end
 	end
+	prof.pop("enemy")
 end
 
 function enemy:addoutput(a, t)

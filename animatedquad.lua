@@ -85,9 +85,7 @@ function animatedquad:update(dt)
 			self.quadi = 1
 		end
 		if objects and not self.triggered then
-			prof.push("update properties")
 			self:updateproperties()
-			prof.pop("update properties")
 		end
 	end
 end

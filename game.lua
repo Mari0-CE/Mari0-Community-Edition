@@ -295,7 +295,8 @@ function game_update(dt)
 	
 	
 	--UPDATE STUFFFFF
-	
+	prof.push("update objects")
+	prof.push("get objects")
 	local updatetable = {	pedestals, emancipationfizzles, emancipateanimations, dialogboxes, rocketlaunchers, emancipationgrills, fireworks, miniblocks, bubbles, platformspawners, seesaws, blockdebristable,
 							userects, rainbooms, coinblockanimations, itemanimations}
 							
@@ -304,6 +305,7 @@ function game_update(dt)
 			table.insert(updatetable, v)
 		end
 	end
+	prof.pop("get objects")
 	
 	for i, v in pairs(updatetable) do
 		delete = {}
@@ -330,13 +332,17 @@ function game_update(dt)
 			end
 		end
 	end
+	prof.pop("update objects")
 	
 	
 	--PHYSICS
+	prof.push("physics")
 	physicsupdate(dt)
+	prof.pop("physics")
 	
 	
 	--SCROLLING
+	prof.push("camera")
 	--HORIZONTAL
 	local oldxscroll = xscroll
 	local oldyscroll = yscroll
@@ -581,8 +587,10 @@ function game_update(dt)
 		
 		yscroll = ypanstart + ypandiff*i
 	end
-	
+	prof.pop("camera")
+
 	--enemy spawning
+	prof.push("enemy spawn")
 	if not editormode then
 		if round(xscroll) ~= round(oldxscroll) then
 			local xstart, xend
@@ -614,6 +622,7 @@ function game_update(dt)
 			end
 		end
 	end
+	prof.pop("enemy spawn")
 	
 	--SPRITEBATCH UPDATE and CASTLEREPEATS
 	if math.floor(xscroll) ~= spritebatchX[1] then
@@ -771,7 +780,9 @@ function game_update(dt)
 	
 	--Editor
 	if editormode then
+		prof.push("editor_update")
 		editor_update(dt)
+		prof.pop("editor_update")
 	end
 	
 	--Update pointing angle of players
@@ -812,6 +823,7 @@ function drawlevel()
 	end
 	
 	--custom background
+	prof.push("custom background")
 	if custombackground then
 		if custombackground == true then
 			local xscroll = xscroll / (scrollfactor + 1)
@@ -845,6 +857,7 @@ function drawlevel()
 			end
 		end
 	end
+	prof.pop("custom background")
 	
 	--castleflag
 	if levelfinished and levelfinishtype == "flag" and not custombackground then
@@ -857,11 +870,15 @@ function drawlevel()
 	end
 	
 	--TILES
+	prof.push("tiles")
+
+	prof.push("spritebatches")
 	love.graphics.draw(smbspritebatch, math.floor(-math.mod(xscroll, 1)*16*scale), math.floor(-math.mod(yscroll, 1)*16*scale))
 	love.graphics.draw(portalspritebatch, math.floor(-math.mod(xscroll, 1)*16*scale), math.floor(-math.mod(yscroll, 1)*16*scale))
 	if customtiles then
 		love.graphics.draw(customspritebatch, math.floor(-math.mod(xscroll, 1)*16*scale), math.floor(-math.mod(yscroll, 1)*16*scale))
 	end
+	prof.pop("spritebatches")
 	
 	local lmap = map
 	
@@ -879,6 +896,7 @@ function drawlevel()
 		flooredyscroll = math.ceil(yscroll)
 	end
 	
+	prof.push("tiles loop")
 	for y = 1, ytodraw do
 		for x = 1, xtodraw do
 			if inmap(flooredxscroll+x, flooredyscroll+y) then
@@ -993,6 +1011,8 @@ function drawlevel()
 			end
 		end
 	end
+	prof.pop("tiles loop")
+	prof.pop("tiles")
 	
 	love.graphics.setColor(255, 255, 255)
 	--textentities
@@ -1236,14 +1256,20 @@ function game_draw()
 	love.graphics.setColor(255, 255, 255, 255)
 	
 	--THIS IS WHERE MAP DRAWING AND SHIT BEGINS
-	
 	function scenedraw()
+		prof.push("scenedraw")
+
+		prof.push("level")
 		drawlevel()
+		prof.pop("level")
 		
 		if bdrawui then
+			prof.push("UI")
 			drawui()
+			prof.pop("UI")
 		end
-		
+
+		prof.push("entities beneath")
 		love.graphics.setColor(255, 255, 255)
 		--vines
 		for j, w in pairs(objects["vine"]) do
@@ -1432,8 +1458,10 @@ function game_draw()
 		end
 		
 		love.graphics.setColor(255, 255, 255)
+		prof.pop("entities beneath")
 		
 		--OBJECTS
+		prof.push("objects table")
 		for j, w in pairs(objects) do	
 			if j ~= "tile" then
 				for i, v in pairs(w) do
@@ -1690,7 +1718,9 @@ function game_draw()
 				end
 			end
 		end
+		prof.pop("objects table")
 		
+		prof.push("entities above")
 		love.graphics.setColor(255, 255, 255)
 		
 		--bowser
@@ -1784,6 +1814,7 @@ function game_draw()
 		end
 		
 		love.graphics.setColor(255, 255, 255)
+		prof.pop("entities above")
 		
 		--portals
 		for i, v in pairs(portals) do
@@ -1956,8 +1987,12 @@ function game_draw()
 		for i, v in pairs(rainbooms) do
 			v:draw()
 		end
-		
+
+		prof.push("foreground")
 		drawforeground()
+		prof.pop("foreground")
+
+		prof.pop("scenedraw")
 	end --SCENE DRAW FUNCTION END
 	
 	if players == 1 and (loveVersion > 9 or love.graphics.isSupported("canvas")) and seethroughportals then
@@ -2311,7 +2346,9 @@ function game_draw()
 	end
 	
 	if editormode then
+		prof.push("editor draw")
 		editor_draw()
+		prof.pop("editor draw")
 	end
 	
 	--speed gradient
@@ -2331,6 +2368,7 @@ function game_draw()
 	end
 	
 	--pause menu
+	prof.push("pause menu")
 	if pausemenuopen then
 		love.graphics.setColor(0, 0, 0, 100)
 		love.graphics.rectangle("fill", 0, 0, width*16*scale, height*16*scale)
@@ -2425,6 +2463,7 @@ function game_draw()
 			end
 		end
 	end
+	prof.pop("pause menu")
 end
 
 function drawreplay(j, i)

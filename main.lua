@@ -25,7 +25,7 @@
 
 PROF_CAPTURE = true
 prof = require("jprof")
-prof.connect(true)
+--prof.connect(true)
 
 function love.run()
 	if love._version_minor < 9 then
@@ -75,7 +75,10 @@ function love.run()
 		prof.push("frame")
         -- Process events.
 		prof.push("update")
+		prof.push("event pump")
 		love.event.pump()
+		prof.pop("event pump")
+		prof.push("event poll")
 		for e,a,b,c,d in love.event.poll() do
 			if e == "quit" then
 				if not love.quit() then
@@ -85,6 +88,7 @@ function love.run()
 			end
 			love.handlers[e](a,b,c,d)
 		end
+		prof.pop("event poll")
 
         -- Update dt, as we'll be passing it to update
 		love.timer.step()
@@ -991,9 +995,13 @@ function love.load(arg)
 end
 
 function love.update(dt)
+	prof.push("music update")
 	if music then
 		music:update()
 	end
+	prof.pop("music update")
+
+	prof.push("delta time logic")
 	realdt = dt
 	dt = math.min(0.5, dt) --ignore any dt higher than half a second
 	
@@ -1003,14 +1011,18 @@ function love.update(dt)
 	
 	steptimer = steptimer + dt
 	dt = targetdt
+	prof.pop("delta time logic")
 	
 	if skipupdate then
+		prof.push("skipped update!")
 		steptimer = 0
 		skipupdate = false
+		prof.pop("skipped update!")
 		return
 	end
 	
 	--speed
+	prof.push("bullettime")
 	if bullettime and speed ~= speedtarget then
 		if speed > speedtarget then
 			speed = math.max(speedtarget, speed+(speedtarget-speed)*dt*5)
@@ -1034,10 +1046,12 @@ function love.update(dt)
 			music:setVolume(0)
 		end
 	end
+	prof.pop("bullettime")
 	
 	while steptimer >= targetdt do
 		steptimer = steptimer - targetdt
 		
+		prof.push("frameskip")
 		if frameskip then
 			if frameskip > skippedframes then
 				skippedframes = skippedframes + 1
@@ -1046,6 +1060,7 @@ function love.update(dt)
 				skippedframes = 0
 			end
 		end
+		prof.pop("frameskip")
 		
 		prof.push("keyprompt_update")
 		keyprompt_update()
