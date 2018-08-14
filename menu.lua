@@ -232,7 +232,7 @@ function menu_draw()
 	drawforeground()
 	
 	if gamestate == "menu" then
-		love.graphics.draw(titleimage, 40*scale, 24*scale, 0, scale, scale)
+		love.graphics.draw(titleimg, 40*scale, 24*scale, 0, scale, scale)
 		
 		if updatenotification then
 			love.graphics.setColor(255, 0, 0)
@@ -241,15 +241,15 @@ function menu_draw()
 		end
 		
 		if selection == 0 then
-			love.graphics.draw(menuselection, 73*scale, (137+(selection-1)*16)*scale, 0, scale, scale)
+			love.graphics.draw(menuselectimg, 73*scale, (137+(selection-1)*16)*scale, 0, scale, scale)
 		elseif selection == 1 then
-			love.graphics.draw(menuselection, 73*scale, (137+(selection-1)*16)*scale, 0, scale, scale)
+			love.graphics.draw(menuselectimg, 73*scale, (137+(selection-1)*16)*scale, 0, scale, scale)
 		elseif selection == 2 then
-			love.graphics.draw(menuselection, 81*scale, (137+(selection-1)*16)*scale, 0, scale, scale)
+			love.graphics.draw(menuselectimg, 81*scale, (137+(selection-1)*16)*scale, 0, scale, scale)
 		elseif selection == 3 then
-			love.graphics.draw(menuselection, 73*scale, (137+(selection-1)*16)*scale, 0, scale, scale)
+			love.graphics.draw(menuselectimg, 73*scale, (137+(selection-1)*16)*scale, 0, scale, scale)
 		elseif selection == 4 then
-			love.graphics.draw(menuselection, 98*scale, (137+(selection-1)*16)*scale, 0, scale, scale)
+			love.graphics.draw(menuselectimg, 98*scale, (137+(selection-1)*16)*scale, 0, scale, scale)
 		end
 		
 		if custombackground then

@@ -595,14 +595,13 @@ function love.load(arg)
 	"button", "pushbutton", "wallindicator", "walltimer", "lightbridge", "lightbridgeglow", "lightbridgeside", "laser", "laserside", "excursionbase", "excursionfunnel", "excursionfunnel2", "excursionfunnelend", 
 	"excursionfunnelend2", "faithplateplate", "laserdetector", "gel1", "gel2", "gel3", "gel4", "gel5", "gel1ground", "gel2ground", "gel3ground", "gel4ground", "geldispenser", "cubedispenser", "panel", "pedestalbase",
 	"pedestalgun", "actionblock", "portal", "markbase", "markoverlay", "andgate", "notgate", "orgate", "squarewave", "rsflipflop", "portalglow", "fireball", "musicentity", "smbtiles", "portaltiles",
-	"animatedtiletrigger", "delayer"}
+	"animatedtiletrigger", "delayer", "title", "menuselect"}
 	
 	for i, v in pairs(imagelist) do
 		_G["default" .. v .. "img"] = love.graphics.newImage("graphics/DEFAULT/" .. v .. ".png")
 		_G[v .. "img"] = _G["default" .. v .. "img"]
 	end
 	
-	menuselection = love.graphics.newImage("graphics/menuselect.png")
 	mappackback = love.graphics.newImage("graphics/mappackback.png")
 	mappacknoicon = love.graphics.newImage("graphics/mappacknoicon.png")
 	mappackoverlay = love.graphics.newImage("graphics/mappackoverlay.png")
@@ -730,7 +729,6 @@ function love.load(arg)
 		seesawquad[i] = love.graphics.newQuad((i-1)*16, 0, 16, 16, 64, 16)
 	end
 	
-	titleimage = love.graphics.newImage("graphics/title.png")
 	playerselectimg = love.graphics.newImage("graphics/playerselectarrow.png")
 	
 	starquad = {}
