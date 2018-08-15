@@ -892,10 +892,10 @@ function menu_draw()
 				love.graphics.setColor(100, 100, 100, 255)
 			end
 			properprint("game volume:", 30*scale, 105*scale)
-			drawrectangle(130, 108, 90, 1)
-			drawrectangle(130, 105, 1, 7)
-			drawrectangle(219, 105, 1, 7)
-			love.graphics.draw(volumesliderimg, math.floor((129+89*volumesfx)*scale), 105*scale, 0, scale, scale)
+			drawrectangle(138, 108, 90, 1)
+			drawrectangle(138, 105, 1, 7)
+			drawrectangle(227, 105, 1, 7)
+			love.graphics.draw(volumesliderimg, math.floor((137+89*volumesfx)*scale), 105*scale, 0, scale, scale)
 			
 			if optionsselection == 6 then
 				love.graphics.setColor(255, 255, 255, 255)
@@ -930,15 +930,15 @@ function menu_draw()
 				love.graphics.setColor(100, 100, 100, 255)
 			end
 			
-			properprint("vsync:", 30*scale, 175*scale)
+			properprint("vsync:", 30*scale, 165*scale)
 			if vsync then
-				properprint("on", (180-16)*scale, 175*scale)
+				properprint("on", (180-16)*scale, 165*scale)
 			else
-				properprint("off", (180-24)*scale, 175*scale)
+				properprint("off", (180-24)*scale, 165*scale)
 			end
 			
 			love.graphics.setColor(100, 100, 100, 255)
-			properprint("you can lock the|mouse with f12", 30*scale, 165*scale)
+			properprint("you can lock the|mouse with f12", 30*scale, 180*scale)
 			
 			love.graphics.setColor(255, 255, 255, 255)
 			properprint(versionstring, 134*scale, 207*scale)
