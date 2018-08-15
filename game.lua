@@ -799,7 +799,7 @@ function drawlevel()
 		ytodraw = math.ceil(mapheight)
 	else
 		if mapheight > height and yscroll < mapheight-height then
-			ytodraw = height+1
+			ytodraw = height+2
 		else
 			ytodraw = height
 		end

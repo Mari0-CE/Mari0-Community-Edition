@@ -2136,7 +2136,7 @@ end
 function loadanimatedtiles()
 	if animatedtilecount then
 		for i = 1, animatedtilecount do
-			tilequads["a" .. i] = nil
+			tilequads[i + 10000] = nil
 		end
 	end
 	
