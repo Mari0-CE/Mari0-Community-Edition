@@ -3328,6 +3328,12 @@ function loadmap(filename, createobjects)
 	for x = 1, mapwidth do
 		animatedtimers[x] = {}
 	end
+
+	for i = 1, #animatedtiles do
+		if animatedtiles[i].cache then
+			animatedtiles[i].cache = {}
+		end
+	end
 	
 	for y = 1, mapheight do
 		for x = 1, mapwidth do
@@ -3336,6 +3342,8 @@ function loadmap(filename, createobjects)
 			if r[1] > 10000 then
 				if tilequads[r[1]].triggered then
 					animatedtimers[x][y] = animatedtimer:new(x, y, r[1])
+				elseif tilequads[r[1]].cache then
+					table.insert(tilequads[r[1]].cache, {x=x,y=y})
 				end
 			end
 			
