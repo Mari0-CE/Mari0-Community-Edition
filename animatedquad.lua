@@ -23,6 +23,13 @@ function animatedquad:init(imgpath, s, number)
 	if self.delays[1] == "triggered" then
 		self.triggered = true
 		table.remove(self.delays, 1)
+	else
+		for i, v in ipairs(self.properties) do
+			if self.props.collision ~= v.collision or self.props.portalable ~= v.portalable then
+				self.cache = {}
+				break
+			end
+		end
 	end
 	
 	for i = 1, #self.delays do
@@ -42,32 +49,30 @@ function animatedquad:updateproperties()
 	
 	self.props = self.properties[self.quadi]
 	
-	if oldcol ~= self.props.collision then
+	if self.cache then
 		prof.push("collision check")
-		for x = 1, mapwidth do
-			for y = 1, mapheight do
-				if map[x][y][1] == self.number then
-					if self.props.collision then
-						objects["tile"][x .. "-" .. y] = tile:new(x-1, y-1)
-					else
-						objects["tile"][x .. "-" .. y] = nil
-						checkportalremove(x, y)
-					end
+		if oldcol ~= self.props.collision then
+			for i, v in ipairs(self.cache) do
+				local x = v.x
+				local y = v.y
+				if self.props.collision then
+					objects["tile"][x .. "-" .. y] = tile:new(x-1, y-1)
+				else
+					objects["tile"][x .. "-" .. y] = nil
+					checkportalremove(x, y)
 				end
 			end
 		end
 		prof.pop("collision check")
-	end
-	
-	if oldportalable ~= self.props.portalable then
+		
 		prof.push("portalable check")
-		for x = 1, mapwidth do
-			for y = 1, mapheight do
-				if map[x][y][1] == self.number then
-					if oldportalable ~= self.portalable then
-						if not self.props.portalable then
-							checkportalremove(x, y)
-						end
+		if oldportalable ~= self.props.portalable then
+			for i, v in ipairs(self.cache) do
+				local x = v.x
+				local y = v.y
+				if oldportalable ~= self.portalable then
+					if not self.props.portalable then
+						checkportalremove(x, y)
 					end
 				end
 			end

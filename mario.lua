@@ -1021,7 +1021,7 @@ function mario:update(dt)
 	end
 	
 	if self.controlsenabled then
-		--check for pipe pipe pipe²
+		--check for pipe pipe pipeï¿½
 		if inmap(math.floor(self.x+30/16), math.floor(self.y+self.height+20/16)) and downkey(self.playernumber) and self.falling == false and self.jumping == false then
 			local t2 = map[math.floor(self.x+30/16)][math.floor(self.y+self.height+20/16)][2]
 			if t2 and entitylist[t2] and entitylist[t2].t == "pipe" then
@@ -1192,7 +1192,7 @@ function mario:updateangle()
 		return
 	end
 	
-	if self.vine or self.animation then
+	if self.vine or (self.animation and self.animation ~= "invincible") then
 		return
 	end
 	--UPDATE THE PLAYER ANGLE
