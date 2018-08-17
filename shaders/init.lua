@@ -138,7 +138,7 @@ function shaders:init(numpasses)
 		local filename, filetype = v:match("(.+)%.(.-)$")
 		if filetype == "frag" then
 			local name = "shaders".."/"..v
-			if love.filesystem.getInfo(name).type == "file" then
+			if love.filesystem.getInfo(name, "file") then
 				local str = love.filesystem.read(name)
 				local success, effect = pcall(love.graphics.newShader, str)
 				if success then

@@ -72,10 +72,10 @@ end
 function menu_update(dt)
 	--coinanimation
 	coinanimation = coinanimation + dt*6.75
-	while coinanimation > 6 do
+	while coinanimation >= 6 do
 		coinanimation = coinanimation - 5
 	end	
-	coinframe = math.floor(coinanimation)
+	coinframe = math.max(1, math.floor(coinanimation))
 	
 	--Animate animated tiles because I say so
 	for i = 1, #animatedtiles do
@@ -1135,7 +1135,7 @@ function loadbackground(backgroundlevel)
 	itemanimations = {}
 	textentities = {}
 	
-	if love.filesystem.getInfo("mappacks/" .. mappack .. "/" .. backgroundlevel) == false then
+	if not love.filesystem.getInfo("mappacks/" .. mappack .. "/" .. backgroundlevel) then
 		return false
 	else
 		loadmap(backgroundlevel:sub(1, -5))

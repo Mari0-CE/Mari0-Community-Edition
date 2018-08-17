@@ -102,7 +102,7 @@ function game_update(dt)
 		coinanimation = coinanimation - 5
 	end	
 	
-	coinframe = math.floor(coinanimation)
+	coinframe = math.max(1, math.floor(coinanimation))
 	
 	--SCROLLING SCORES
 	local delete = {}
@@ -3209,7 +3209,7 @@ end
 function loadmap(filename, createobjects)
 	print("**************************" .. string.rep("*", #(mappack .. filename)))
 	print("* Loading mappacks/" .. mappack .. "/" .. filename .. ".txt *")
-	if love.filesystem.getInfo("mappacks/" .. mappack .. "/" .. filename .. ".txt") == false then
+	if not love.filesystem.getInfo("mappacks/" .. mappack .. "/" .. filename .. ".txt") then
 		print("mappacks/" .. mappack .. "/" .. filename .. ".txt not found!")
 		return false
 	end
@@ -4995,10 +4995,10 @@ function renderpreview()
 			local id = map[x][y+yadd][1]
 			if id ~= nil and id ~= 0 and rgblist[id] and tilequads[id]:getproperty("invisible", x, y+yadd) == false then
 				local r, g, b = unpack(rgblist[id])
-				out:setPixel(x-1, y-1, r, g, b, 255)
+				out:setPixel(x-1, y-1, r, g, b, 1)
 			else
 				local r, g, b = unpack(background)
-				out:setPixel(x-1, y-1, r, g, b, 255)
+				out:setPixel(x-1, y-1, r, g, b, 1)
 			end
 		end
 	end

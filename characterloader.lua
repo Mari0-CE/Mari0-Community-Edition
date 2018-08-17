@@ -175,7 +175,7 @@ end
 characterlist = {}
 characters = {}
 for i, v in pairs(love.filesystem.getDirectoryItems("characters/")) do
-	if love.filesystem.getInfo("characters/" .. v).type == "directory" then
+	if love.filesystem.getInfo("characters/" .. v, "directory") then
 		local temp = loadcharacter(v)
 		if temp then
 			characters[v] = temp

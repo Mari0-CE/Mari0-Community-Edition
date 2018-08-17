@@ -3837,7 +3837,7 @@ function objectclipboardcopy(objecttable)
 end
 
 function moveline(file, line, direction)
-	if love.filesystem.getInfo(file) == false then
+	if not love.filesystem.getInfo(file) then
 		return false
 	end
 	if direction ~= "up" then
@@ -3885,7 +3885,7 @@ function moveline(file, line, direction)
 end
 
 function deleteline(file, line)
-	if love.filesystem.getInfo(file) == false then
+	if not love.filesystem.getInfo(file) then
 		return false
 	end
 	line = tonumber(line)
@@ -3903,7 +3903,7 @@ function deleteline(file, line)
 end
 
 function changeline(file, linenumber, newstring)
-	if love.filesystem.getInfo(file) == false then
+	if not love.filesystem.getInfo(file) then
 		return false
 	end
 	line = tonumber(line)

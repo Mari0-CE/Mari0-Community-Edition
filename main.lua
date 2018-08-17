@@ -1460,7 +1460,7 @@ function loadcustomimages(path)
 	local fl = love.filesystem.getDirectoryItems(path)
 	for i = 1, #fl do
 		local v = fl[i]
-		if love.filesystem.getInfo(path .. "/" .. v) and love.filesystem.getInfo(path .. "/" .. v).type == "file" then
+		if love.filesystem.getInfo(path .. "/" .. v, "file") then
 			local s = string.sub(v, 1, -5)
 			if tablecontains(imagelist, s) then
 				_G[s .. "img"] = love.graphics.newImage(path .. "/" .. v)
@@ -2093,7 +2093,7 @@ function loadcustombackgrounds()
 	for i = 1, #fl do
 		local v = "mappacks/" .. mappack .. "/backgrounds/" .. fl[i]
 		
-		if love.filesystem.getInfo(v).type == "file" and v ~= ".DS_STORE" and v ~= ".DS_S" then
+		if love.filesystem.getInfo(v, "file") and v ~= ".DS_STORE" and v ~= ".DS_S" then
 			if string.sub(v, -5, -5) == "1" then
 				local name = string.sub(fl[i], 1, -6)
 				local bg = string.sub(v, 1, -6)
@@ -2131,7 +2131,7 @@ function loadlevelscreens()
 	
 	for i = 1, #fl do
 		local v = "mappacks/" .. mappack .. "/levelscreens/" .. fl[i]
-		if love.filesystem.getInfo(v).type == "file" then
+		if love.filesystem.getInfo(v, "file") then
 			table.insert(levelscreens, string.lower(string.sub(fl[i], 1, -5)))
 		end
 	end
@@ -2162,8 +2162,8 @@ function loadanimatedtiles()
 		local i = 1
 		while love.filesystem.getInfo(folder .. "/" .. i .. ".png") do
 			local v = folder .. "/" .. i .. ".png"
-			if love.filesystem.getInfo(v).type == "file" and string.sub(v, -4) == ".png" then
-				if love.filesystem.getInfo(string.sub(v, 1, -5) .. ".txt") and love.filesystem.getInfo(string.sub(v, 1, -5) .. ".txt").type == "file" then
+			if love.filesystem.getInfo(v, "file") and string.sub(v, -4) == ".png" then
+				if love.filesystem.getInfo(string.sub(v, 1, -5) .. ".txt", "file") then
 					animatedtilecount = animatedtilecount + 1
 					local number = animatedtilecount+10000
 					local t = animatedquad:new(v, love.filesystem.read(string.sub(v, 1, -5) .. ".txt"), number)
