@@ -25,11 +25,11 @@ function levelscreen_load(reason, i)
 			respawnsublevel = mariosublevel or 0
 			
 			--check if next level doesn't exist
-			if mariosublevel > 0 and not love.filesystem.exists("mappacks/" .. mappack .. "/" .. marioworld .. "-" .. mariolevel .. "_" .. mariosublevel .. ".txt") then
+			if mariosublevel > 0 and not love.filesystem.getInfo("mappacks/" .. mappack .. "/" .. marioworld .. "-" .. mariolevel .. "_" .. mariosublevel .. ".txt") then
 				gamestate = "mappackfinished"
 				blacktime = gameovertime
 				music:play("princessmusic.ogg")
-			elseif not love.filesystem.exists("mappacks/" .. mappack .. "/" .. marioworld .. "-" .. mariolevel .. ".txt") then
+			elseif not love.filesystem.getInfo("mappacks/" .. mappack .. "/" .. marioworld .. "-" .. mariolevel .. ".txt") then
 				gamestate = "mappackfinished"
 				blacktime = gameovertime
 				music:play("princessmusic.ogg")
@@ -107,7 +107,7 @@ function levelscreen_draw()
 	--black background
 	love.graphics.setColor(0, 0, 0)
 	love.graphics.rectangle("fill", 0, 0, width*16*scale, height*16*scale)
-	love.graphics.setColor(255, 255, 255)
+	love.graphics.setColor(1, 1, 1)
 
 	if levelscreenback then
 		love.graphics.draw(levelscreenback, 0, 0, 0, scale, scale)
@@ -137,7 +137,7 @@ function levelscreen_draw()
 					
 					drawplayer(nil, x+6, y+11, scale,     v.smalloffsetX, v.smalloffsetY, 0, v.smallquadcenterX, v.smallquadcenterY, "idle", false, false, mariohats[i], v.animations, v.idle[angle], 0, false, false, mariocolors[i], 1, portalcolor[i][1], portalcolor[i][2], nil, nil, nil, nil, nil, nil, characters[mariocharacter[i]])
 					
-					love.graphics.setColor(255, 255, 255, 255)
+					love.graphics.setColor(1, 1, 1, 1)
 					if mariolivecount == false then
 						properprint("*  inf", (width/2*16)*scale-8*scale, y*scale+7*scale)
 					else

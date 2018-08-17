@@ -134,7 +134,7 @@ function portalprojectileparticle:update(dt)
 	self.x = self.x + self.speedx*dt
 	self.y = self.y + self.speedy*dt
 	
-	self.alpha = self.alpha - dt*300
+	self.alpha = self.alpha - dt*1.2
 	if self.alpha < 0 then
 		self.alpha = 0
 		return true

@@ -22,7 +22,7 @@ function getfilepath(name)
 	local musicpaths = {"sounds/", "mappacks/" .. mappack .. "/music/"}
 	
 	for i = 1, #musicpaths do
-		if love.filesystem.isFile(musicpaths[i] .. name) then
+		if love.filesystem.getInfo(musicpaths[i] .. name) and love.filesystem.getInfo(musicpaths[i] .. name).type == "file" then
 			return musicpaths[i] .. name
 		end
 	end

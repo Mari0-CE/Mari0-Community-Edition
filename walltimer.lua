@@ -68,7 +68,7 @@ function walltimer:update(dt)
 end
 
 function walltimer:draw()
-	love.graphics.setColor(255, 255, 255)
+	love.graphics.setColor(1, 1, 1)
 	
 	love.graphics.drawq(walltimerimg, walltimerquad[self.quad], math.floor((self.x-1-xscroll)*16*scale), ((self.y-yscroll-1)*16-8)*scale, 0, scale, scale)
 end

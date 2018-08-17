@@ -5,5 +5,5 @@ function love.conf(t)
 	t.modules.physics = false
 	t.release = false
 	t.window = false
-	t.console = true
+	t.console = false
 end

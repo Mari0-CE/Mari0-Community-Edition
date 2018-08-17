@@ -24,7 +24,21 @@
 ]]
 
 function love.run()
-	if love._version_minor < 9 then
+	--I can't believe I had to write this function in the first place
+	local function updateVersion()
+		local major, minor, revision, codename = love.getVersion()
+		if major > 0 then
+			return major
+		else
+			return minor
+		end
+	end
+
+	loveVersion = updateVersion()
+
+--[[	COMPATABILITY FOR LOVE2D 0.8.X
+
+	if loveVersion < 9 then
 		--Cheap af but I don't care, COMPATIBILITY!!!
 		love.math = {}
 		love.math.setRandomSeed = math.randomseed
@@ -59,16 +73,18 @@ function love.run()
 		
 		love.mouse.setGrabbed = love.mouse.setGrab
 	end
+]]
+
 	love.math.setRandomSeed(os.time())
 	for i=1, 2 do 
 		love.math.random() 
 	end
 	
-    love.load(arg)
+	love.load(arg)
 
-    -- Main loop time.
-    while true do
-        -- Process events.
+	-- Main loop time.
+	while true do
+		-- Process events.
 		love.event.pump()
 		for e,a,b,c,d in love.event.poll() do
 			if e == "quit" then
@@ -90,18 +106,20 @@ function love.run()
 		love.graphics.origin()
 		--Fullscreen hack
 		if not mkstation and fullscreen and gamestate ~= "intro" then
+		--[[	COMPATABILITY FOR LOVE2D 0.9.X AND BELOW
 			if loveVersion <= 9 then
 				completecanvas:clear()
 			else
-				love.graphics.setCanvas(completecanvas)
-				love.graphics.clear()
-			end
+		]]
+			love.graphics.setCanvas(completecanvas)
+			love.graphics.clear()
+		--	end
 			love.graphics.setScissor()
 			completecanvas:renderTo(love.draw)
 			love.graphics.setScissor()
-			if loveVersion > 9 then
+		--	if loveVersion > 9 then
 				love.graphics.setCanvas()
-			end
+		--	end
 			if fullscreenmode == "full" then
 				love.graphics.draw(completecanvas, 0, 0, 0, desktopsize.width/(width*16*scale), desktopsize.height/(height*16*scale))
 			else
@@ -109,7 +127,7 @@ function love.run()
 				love.graphics.setColor(0, 0, 0)
 				love.graphics.rectangle("fill", 0, 0, desktopsize.width, touchfrominsidemissing/2)
 				love.graphics.rectangle("fill", 0, desktopsize.height-touchfrominsidemissing/2, desktopsize.width, touchfrominsidemissing/2)
-				love.graphics.setColor(255, 255, 255, 255)
+				love.graphics.setColor(1, 1, 1, 1)
 			end
 		else
 			love.graphics.setScissor()
@@ -118,7 +136,7 @@ function love.run()
 		
 		love.graphics.present()
 		love.timer.sleep(0.001)
-    end
+	end
 end
 
 function love.errhand(msg)
@@ -156,7 +174,7 @@ function love.errhand(msg)
 		return
 	end
 
-	if not love.graphics.isCreated() or not love.window.isCreated() then
+	if not love.graphics.isCreated() or not love.window.isOpen() then
 		local success, status = pcall(love.window.setMode, 800, 600)
 		if not success or not status then
 			return
@@ -177,10 +195,10 @@ function love.errhand(msg)
 	end
 	if love.audio then love.audio.stop() end
 	love.graphics.reset()
-	love.graphics.setBackgroundColor(89, 157, 220)
+	love.graphics.setBackgroundColor(89 / 255, 157 / 255, 220 / 255)
 	local font = love.graphics.setNewFont(scale*7)
 
-	love.graphics.setColor(255, 255, 255, 255)
+	love.graphics.setColor(1, 1, 1, 1)
 
 	love.graphics.origin()
 	--love.graphics.clear()
@@ -192,14 +210,14 @@ function love.errhand(msg)
 
 	local function draw()
 		--love.graphics.clear()
-		love.graphics.setColor(0, 0, 0, 200)
+		love.graphics.setColor(0, 0, 0, 0.6)
 		love.graphics.rectangle("fill", 0, 0, love.graphics.getWidth(), love.graphics.getHeight())
 		love.graphics.setColor(0, 0, 0)
 		love.graphics.printf(p, 35*scale, 15*scale-1, love.graphics.getWidth() - 35*scale)
 		love.graphics.printf(p, 35*scale+1, 15*scale, love.graphics.getWidth() - 35*scale)
 		love.graphics.printf(p, 35*scale-1, 15*scale, love.graphics.getWidth() - 35*scale)
 		love.graphics.printf(p, 35*scale, 15*scale+1, love.graphics.getWidth() - 35*scale)
-		love.graphics.setColor(255, 255, 255, 255)
+		love.graphics.setColor(1, 1, 1, 1)
 		love.graphics.printf(p, 35*scale, 15*scale, love.graphics.getWidth() - 35*scale)
 		love.graphics.present()
 	end
@@ -236,21 +254,12 @@ end
 function love.load(arg)
 	marioversion = 1107
 	versionstring = "version 1.0se"
-	
-	--version check by checking for a const that was added in 0.8.0 --todo: change to 0.9.0
-	if love._version_major == nil or (love._version_minor and love._version_minor < 9) then 
-		--versionerror = true
-		--error("You have an outdated version of Love! Get 0.9.0 and retry.")
-		
-		--HOW ABOUT NO
-		--Leave backwards compatibility with Hugo!
-	end
 
 	math.mod = math.fmod
 	math.random = love.math.random
 	
 	--blame slime
-	if love._version_minor >= 9 then
+	if loveVersion >= 9 then
 		love.graphics.drawq = love.graphics.draw
 	end
 	
@@ -303,7 +312,7 @@ function love.load(arg)
 	--=================--
 	-- VERSION CONTROL --
 	--=================--
-	loveVersion = love._version_minor
+	
 	if loveVersion > 9 then
 		lkisDown = love.keyboard.isDown
 		lmisDown = love.mouse.isDown
@@ -319,11 +328,12 @@ function love.load(arg)
 		end
 	end
 	
-	
 	iconimg = love.image.newImageData("graphics/icon.png")
+--[[	COMPATABILITY FOR LOVE2D 0.8.X
 	if loveVersion < 9 then
 		iconimg = love.graphics.newImage("graphics/icon.png")
 	end
+]]
 	love.window.setIcon(iconimg)
 	
 	love.graphics.setDefaultFilter("nearest", "nearest")
@@ -395,7 +405,7 @@ function love.load(arg)
 	end
 	
 	love.graphics.clear()
-	love.graphics.setColor(100, 100, 100)
+	love.graphics.setColor(0.4, 0.4, 0.4)
 	loadingtexts = {"reticulating splines", "rendering important stuff", "01110000011011110110111001111001", "sometimes, i dream about cheese",
 					"baking cake", "happy explosion day", "raising coolness by a fifth", "yay facepunch", "stabbing myself", "sharpening knives",
 					"tanaka, thai kick", "slime will find you", "becoming self-aware", "it's a secret to everybody", "there is no minus world", 
@@ -421,12 +431,12 @@ function love.load(arg)
 		logoscale = 1
 	end
 	
-	love.graphics.setColor(255, 255, 255)
+	love.graphics.setColor(1, 1, 1)
 	
 	love.graphics.draw(logo, love.graphics.getWidth()/2, love.graphics.getHeight()/2, 0, logoscale, logoscale, 142, 150)
-	love.graphics.setColor(150, 150, 150)
+	love.graphics.setColor(0.6, 0.6, 0.6)
 	properprint("loading mari0 se..", love.graphics.getWidth()/2-string.len("loading mari0 se..")*4*scale, love.graphics.getHeight()/2-170*logoscale-7*scale)
-	love.graphics.setColor(50, 50, 50)
+	love.graphics.setColor(0.2, 0.2, 0.2)
 	properprint(loadingtext, love.graphics.getWidth()/2-string.len(loadingtext)*4*scale, love.graphics.getHeight()/2+165*logoscale)
 	love.graphics.present()
 	
@@ -576,15 +586,15 @@ function love.load(arg)
 	
 	--Backgroundcolors
 	backgroundcolor = {
-						{92, 148, 252},
-						{0, 0, 0},
-						{32, 56, 236},
-						{158, 219, 248},
-						{210, 159, 229},
-						{237, 241, 243},
-						{244, 178, 92},
-						{253, 246, 175},
-						{249, 183, 206},
+						{92 / 255,	148 / 255,	252 / 255},
+						{0 / 255,	0 / 255,	0 / 255},
+						{32 / 255,	56 / 255,	236 / 255},
+						{158 / 255,	219 / 255,	248 / 255},
+						{210 / 255,	159 / 255,	229 / 255},
+						{237 / 255,	241 / 255,	243 / 255},
+						{244 / 255,	178 / 255,	92 / 255},
+						{253 / 255,	246 / 255,	175 / 255},
+						{249 / 255,	183 / 255,	206 / 255},
 					}
 	add("Update Check, variables")
 	
@@ -939,6 +949,13 @@ function love.load(arg)
 		soundlist[v] = {}
 		soundlist[v].source = love.audio.newSource("sounds/" .. v .. ".ogg", "stream")
 		soundlist[v].lastplayed = 0
+	--[[	COMPATABILITY FOR LOVE2D 0.8.X
+		if loveVersion < 9 then
+			soundlist[v].isPlaying = function (self)
+				return not self:isStopped()
+			end
+		end
+	]]
 	end
 	
 	soundlist["scorering"].source:setLooping(true)
@@ -1077,7 +1094,7 @@ function love.draw()
 	
 	shaders:postdraw()
 		
-	love.graphics.setColor(255, 255,255)
+	love.graphics.setColor(1, 1, 1)
 	
 	if recording then
 		screenshotimagedata = love.graphics.newScreenshot( )
@@ -1123,7 +1140,7 @@ function saveconfig()
 		if #mariocolors[i] > 0 then
 			for j = 1, #mariocolors[i] do --colorsets (dynamic)
 				for k = 1, 3 do --R, G or B values
-					s = s .. mariocolors[i][j][k]
+					s = s .. mariocolors[i][j][k] * 255
 					if j == #mariocolors[i] and k == 3 then
 						s = s .. ";"
 					else
@@ -1213,7 +1230,7 @@ function loadconfig()
 	players = 1
 	defaultconfig()
 	
-	if not love.filesystem.exists("options.txt") then
+	if not love.filesystem.getInfo("options.txt") then
 		return
 	end
 	
@@ -1248,7 +1265,7 @@ function loadconfig()
 			s3 = s2[3]:split(",")
 			mariocolors[tonumber(s2[2])] = {}
 			for i = 1, #s3/3 do
-				mariocolors[tonumber(s2[2])][i] = {tonumber(s3[1+(i-1)*3]), tonumber(s3[2+(i-1)*3]), tonumber(s3[3+(i-1)*3])}
+				mariocolors[tonumber(s2[2])][i] = {tonumber(s3[1+(i-1)*3]) / 255, tonumber(s3[2+(i-1)*3]) / 255, tonumber(s3[3+(i-1)*3]) / 255}
 			end
 		elseif s2[1] == "portalhues" then
 			if portalhues[tonumber(s2[2])] == nil then
@@ -1294,7 +1311,7 @@ function loadconfig()
 		elseif s2[1] == "mouseowner" then
 			mouseowner = tonumber(s2[2])
 		elseif s2[1] == "mappack" then
-			if love.filesystem.exists("mappacks/" .. s2[2] .. "/settings.txt") then
+			if love.filesystem.getInfo("mappacks/" .. s2[2] .. "/settings.txt") then
 				mappack = s2[2]
 			end
 		elseif s2[1] == "gamefinished" then
@@ -1396,22 +1413,22 @@ function defaultconfig()
 	--3: skin (yellow-orange)
 	
 	mariocolors = {}
-	mariocolors[1] = {{224,  32,   0}, {136, 112,   0}, {252, 152,  56}}
-	mariocolors[2] = {{255, 255, 255}, {  0, 160,   0}, {252, 152,  56}}
-	mariocolors[3] = {{  0,   0,   0}, {200,  76,  12}, {252, 188, 176}}
-	mariocolors[4] = {{ 32,  56, 236}, {  0, 128, 136}, {252, 152,  56}}
+	mariocolors[1] = {{224 / 255,  32 / 255,   0 / 255}, {136 / 255, 112 / 255,   0 / 255}, {252 / 255, 152 / 255,  56 / 255}}
+	mariocolors[2] = {{255 / 255, 255 / 255, 255 / 255}, {  0 / 255, 160 / 255,   0 / 255}, {252 / 255, 152 / 255,  56 / 255}}
+	mariocolors[3] = {{  0 / 255,   0 / 255,   0 / 255}, {200 / 255,  76 / 255,  12 / 255}, {252 / 255, 188 / 255, 176 / 255}}
+	mariocolors[4] = {{ 32 / 255,  56 / 255, 236 / 255}, {  0 / 255, 128 / 255, 136 / 255}, {252 / 255, 152 / 255,  56 / 255}}
 	for i = 5, players do
 		mariocolors[i] = mariocolors[math.random(4)]
 	end
 	
 	--STARCOLORS
 	starcolors = {}
-	starcolors[1] = {{  0,   0,   0}, {200,  76,  12}, {252, 188, 176}}
-	starcolors[2] = {{  0, 168,   0}, {252, 152,  56}, {252, 252, 252}}
-	starcolors[3] = {{252, 216, 168}, {216,  40,   0}, {252, 152,  56}}
-	starcolors[4] = {{216,  40,   0}, {252, 152,  56}, {252, 252, 252}}
+	starcolors[1] = {{  0 / 255,   0 / 255,   0 / 255}, {200 / 255,  76 / 255,  12 / 255}, {252 / 255, 188 / 255, 176 / 255}}
+	starcolors[2] = {{  0 / 255, 168 / 255,   0 / 255}, {252 / 255, 152 / 255,  56 / 255}, {252 / 255, 252 / 255, 252 / 255}}
+	starcolors[3] = {{252 / 255, 216 / 255, 168 / 255}, {216 / 255,  40 / 255,   0 / 255}, {252 / 255, 152 / 255,  56 / 255}}
+	starcolors[4] = {{216 / 255,  40 / 255,   0 / 255}, {252 / 255, 152 / 255,  56 / 255}, {252 / 255, 252 / 255, 252 / 255}}
 	
-	flowercolor = {{252, 216, 168}, {216,  40,   0}, {252, 152,  56}}
+	flowercolor = {{252 / 255, 216 / 255, 168 / 255}, {216 / 255,  40 / 255,   0 / 255}, {252 / 255, 152 / 255,  56 / 255}}
 	
 	--CHARACTERS
 	mariocharacter = {"mario", "mario", "mario", "mario"}
@@ -1443,7 +1460,7 @@ function loadcustomimages(path)
 	local fl = love.filesystem.getDirectoryItems(path)
 	for i = 1, #fl do
 		local v = fl[i]
-		if love.filesystem.isFile(path .. "/" .. v) then
+		if love.filesystem.getInfo(path .. "/" .. v) and love.filesystem.getInfo(path .. "/" .. v).type == "file" then
 			local s = string.sub(v, 1, -5)
 			if tablecontains(imagelist, s) then
 				_G[s .. "img"] = love.graphics.newImage(path .. "/" .. v)
@@ -1461,7 +1478,7 @@ function loadcustomimages(path)
 	local width = math.floor(imgwidth/17)
 	local height = math.floor(imgheight/17)
 	local imgdata
-	if love.filesystem.isFile(path .. "/smbtiles.png") then
+	if love.filesystem.getInfo(path .. "/smbtiles.png") then
 		imgdata = love.image.newImageData(path .. "/smbtiles.png")
 	else
 		imgdata = love.image.newImageData("graphics/DEFAULT/smbtiles.png")
@@ -1481,7 +1498,7 @@ function loadcustomimages(path)
 	local width = math.floor(imgwidth/17)
 	local height = math.floor(imgheight/17)
 	local imgdata
-	if love.filesystem.isFile(path .. "/portaltiles.png") then
+	if love.filesystem.getInfo(path .. "/portaltiles.png") then
 		imgdata = love.image.newImageData(path .. "/portaltiles.png")
 	else
 		imgdata = love.image.newImageData("graphics/DEFAULT/portaltiles.png")
@@ -1527,7 +1544,7 @@ function suspendgame()
 end
 
 function continuegame()
-	if not love.filesystem.exists("suspend.txt") then
+	if not love.filesystem.getInfo("suspend.txt") then
 		return
 	end
 	
@@ -1604,11 +1621,12 @@ function changescale(s, init)
 		uispace = math.floor(width*16*scale/4)
 		love.window.setMode(width*16*scale, height*16*scale, {fullscreen=fullscreen, vsync=vsync--[[, fsaa=fsaa]]}) --25x14 blocks (15 blocks actual height)
 	end
-	
-	if loveVersion > 9 or love.graphics.isSupported("canvas") then
-		completecanvas = love.graphics.newCanvas()
-		completecanvas:setFilter("linear", "linear")
-	end
+
+--	COMPATABILITY FOR LOVE2D 0.8.X
+--	if loveVersion > 9 or love.graphics.isSupported("canvas") then
+	completecanvas = love.graphics.newCanvas()
+	completecanvas:setFilter("linear", "linear")
+--	end
 	
 	gamewidth, gameheight = love.window.getMode()
 	if shaders then
@@ -1828,7 +1846,7 @@ function round(num, idp) --Not by me
 end
 
 function getrainbowcolor(i)
-	local whiteness = 255
+	local whiteness = 1
 	local r, g, b
 	if i < 1/6 then
 		r = 1
@@ -1856,7 +1874,7 @@ function getrainbowcolor(i)
 		b = (1/6-(i-5/6))*6
 	end
 	
-	return {round(r*whiteness), round(g*whiteness), round(b*whiteness), 255}
+	return {round(r*whiteness), round(g*whiteness), round(b*whiteness), 1}
 end
 
 function newRecoloredImage(path, tablein, tableout)
@@ -1867,7 +1885,7 @@ function newRecoloredImage(path, tablein, tableout)
 		for x = 0, width-1 do
 			local oldr, oldg, oldb, olda = imagedata:getPixel(x, y)
 			
-			if olda > 128 then
+			if olda > 0.5 then
 				for i = 1, #tablein do
 					if oldr == tablein[i][1] and oldg == tablein[i][2] and oldb == tablein[i][3] then
 						local r, g, b = unpack(tableout[i])
@@ -1914,7 +1932,7 @@ function getaveragecolor(imgdata, cox, coy)
 	for x = xstart, xstart+15 do
 		for y = ystart, ystart+15 do
 			local pr, pg, pb, a = imgdata:getPixel(x, y)
-			if a > 127 then
+			if a > 0.5 then
 				r, g, b = r+pr, g+pg, b+pb
 				count = count + 1
 			end
@@ -2075,7 +2093,7 @@ function loadcustombackgrounds()
 	for i = 1, #fl do
 		local v = "mappacks/" .. mappack .. "/backgrounds/" .. fl[i]
 		
-		if love.filesystem.isFile(v) and v ~= ".DS_STORE" and v ~= ".DS_S" then
+		if love.filesystem.getInfo(v).type == "file" and v ~= ".DS_STORE" and v ~= ".DS_S" then
 			if string.sub(v, -5, -5) == "1" then
 				local name = string.sub(fl[i], 1, -6)
 				local bg = string.sub(v, 1, -6)
@@ -2085,7 +2103,7 @@ function loadcustombackgrounds()
 				custombackgroundwidth[name] = {}
 				custombackgroundheight[name] = {}
 					
-				while love.filesystem.exists(bg .. i .. ".png") do
+				while love.filesystem.getInfo(bg .. i .. ".png") do
 					custombackgroundimg[name][i] = love.graphics.newImage(bg .. i .. ".png")
 					custombackgroundwidth[name][i] = custombackgroundimg[name][i]:getWidth()/16
 					custombackgroundheight[name][i] = custombackgroundimg[name][i]:getHeight()/16
@@ -2113,7 +2131,7 @@ function loadlevelscreens()
 	
 	for i = 1, #fl do
 		local v = "mappacks/" .. mappack .. "/levelscreens/" .. fl[i]
-		if love.filesystem.isFile(v) then
+		if love.filesystem.getInfo(v).type == "file" then
 			table.insert(levelscreens, string.lower(string.sub(fl[i], 1, -5)))
 		end
 	end
@@ -2141,13 +2159,11 @@ function loadanimatedtiles()
 	end
 	
 	local function loadfolder(folder)
-		local fl = love.filesystem.getDirectoryItems(folder)
-		
 		local i = 1
-		while love.filesystem.isFile(folder .. "/" .. i .. ".png") do
+		while love.filesystem.getInfo(folder .. "/" .. i .. ".png") do
 			local v = folder .. "/" .. i .. ".png"
-			if love.filesystem.isFile(v) and string.sub(v, -4) == ".png" then
-				if love.filesystem.isFile(string.sub(v, 1, -5) .. ".txt") then
+			if love.filesystem.getInfo(v).type == "file" and string.sub(v, -4) == ".png" then
+				if love.filesystem.getInfo(string.sub(v, 1, -5) .. ".txt") and love.filesystem.getInfo(string.sub(v, 1, -5) .. ".txt").type == "file" then
 					animatedtilecount = animatedtilecount + 1
 					local number = animatedtilecount+10000
 					local t = animatedquad:new(v, love.filesystem.read(string.sub(v, 1, -5) .. ".txt"), number)
@@ -2166,7 +2182,7 @@ function loadanimatedtiles()
 end
 
 function loadcustomtiles()
-	if love.filesystem.exists("mappacks/" .. mappack .. "/tiles.png") then
+	if love.filesystem.getInfo("mappacks/" .. mappack .. "/tiles.png") then
 		customtiles = true
 		customtilesimg = love.graphics.newImage("mappacks/" .. mappack .. "/tiles.png")
 		local imgwidth, imgheight = customtilesimg:getWidth(), customtilesimg:getHeight()

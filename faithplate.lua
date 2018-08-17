@@ -129,7 +129,7 @@ function faithplate:draw()
 	
 	love.graphics.setColor(unpack(background))
 	love.graphics.rectangle("fill", math.floor((self.cox-1-xscroll)*16*scale), (self.coy-yscroll-1.5)*16*scale, 32*scale, 2*scale)
-	love.graphics.setColor(255, 255, 255)
+	love.graphics.setColor(1, 1, 1)
 	
 
 	if self.animationtimer < 1 then

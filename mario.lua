@@ -106,8 +106,8 @@ function mario:init(x, y, i, animation, size, t)
 	self.customscissor = false
 	
 	if players == 1 and not arcade then
-		self.portal1color = {60, 188, 252}
-		self.portal2color = {232, 130, 30}
+		self.portal1color = {60 / 255, 188 / 255, 252 / 255}
+		self.portal2color = {232 / 255, 130 / 255, 30 / 255}
 	else
 		self.portal1color = portalcolor[self.playernumber][1]
 		self.portal2color = portalcolor[self.playernumber][2]
@@ -1092,7 +1092,7 @@ function mario:update(dt)
 			end
 		end
 		
-		if not self.raccoonjump and self.raccoontimer == 0 and not soundlist["planemode"].source:isStopped() then
+		if not self.raccoonjump and self.raccoontimer == 0 and soundlist["planemode"].source:isPlaying() then
 			soundlist["planemode"].source:stop()
 		end
 		
@@ -3489,7 +3489,7 @@ end
 
 function mario:savereplaydata()
 	local i = 1
-	while love.filesystem.exists("replay" .. i .. ".txt") do
+	while love.filesystem.getInfo("replay" .. i .. ".txt") do
 		i = i + 1
 	end
 	

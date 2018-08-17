@@ -36,10 +36,10 @@ end
 
 function lobby_draw()
 	--STUFF
-	love.graphics.setColor(0, 0, 0, 200)
+	love.graphics.setColor(0, 0, 0, 0.8)
 	love.graphics.rectangle("fill", 3*scale, 3*scale, 233*scale, 104*scale)
 	
-	love.graphics.setColor(255, 255, 255, 255)
+	love.graphics.setColor(1, 1, 1, 1)
 	if usemagic and adjective and noun then
 		properprintbackground("magicdns: " .. adjective .. " " .. noun, 4*scale, 98*scale, true)
 	end
@@ -53,7 +53,7 @@ function lobby_draw()
 	
 	local missingpixels = math.max(0, (players*41-3)-104)
 	
-	love.graphics.setColor(0, 0, 0, 200)
+	love.graphics.setColor(0, 0, 0, 0.8)
 	love.graphics.rectangle("fill", 239*scale, 3*scale, 150*scale, 104*scale)
 	
 	love.graphics.translate(0, -missingpixels*guielements.playerscroll.value*scale)
@@ -76,9 +76,9 @@ function lobby_draw()
 	love.graphics.setScissor()
 	
 	--chat
-	love.graphics.setColor(0, 0, 0, 200)
+	love.graphics.setColor(0, 0, 0, 0.8)
 	love.graphics.rectangle("fill", 3*scale, 110*scale, 394*scale, 111*scale)
-	love.graphics.setColor(255, 255, 255, 255)
+	love.graphics.setColor(1, 1, 1, 1)
 	drawrectangle(4, 111, 392, 109)
 	
 	guielements.chatentry:draw()
@@ -99,7 +99,7 @@ function lobby_draw()
 		if pid ~= 0 then
 			local nick = playerlist[pid].nick
 			
-			local background = {255, 255, 255}
+			local background = {1, 1, 1}
 			
 			local adds = 0
 			for i = 1, 3 do
@@ -113,7 +113,7 @@ function lobby_draw()
 			love.graphics.setColor(unpack(playerlist[pid].colors[1]))
 			properprintbackground(nick, 8*scale, (196-(height*10))*scale, true, background)
 			
-			love.graphics.setColor(255, 255, 255)
+			love.graphics.setColor(1, 1, 1)
 			properprint(":" .. chatmessages[i].message, (8+(string.len(nick))*8)*scale, (196-(height*10))*scale)
 			height = height + 1
 		end

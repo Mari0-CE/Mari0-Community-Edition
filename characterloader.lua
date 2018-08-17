@@ -1,6 +1,6 @@
 function loadcharacter(charname)
 	local folder = "characters/" .. charname .. "/"
-	if not love.filesystem.exists(folder .. "config.txt") then
+	if not love.filesystem.getInfo(folder .. "config.txt") then
 		return false
 	end
 	
@@ -12,6 +12,16 @@ function loadcharacter(charname)
 	
 	local char = JSON:decode(s)
 	char.name = (char.name and string.lower(char.name)) or string.lower(charname)
+
+	if char.defaultcolors then
+		for i, colors in ipairs(char.defaultcolors) do
+			for j, color in ipairs (colors) do
+				for k = 1, 3 do
+					char.defaultcolors[i][j][k] = char.defaultcolors[i][j][k] / 255
+				end
+			end
+		end
+	end
 	
 	-----------------
 	--IMAGE LOADING--
@@ -28,10 +38,10 @@ function loadcharacter(charname)
 			curtype = "nogunbiganimations"
 		end
 		
-		if char.defaultcolors and love.filesystem.exists(folder .. curtype .. "1.png") then --MULTIPLE IMAGES
+		if char.defaultcolors and love.filesystem.getInfo(folder .. curtype .. "1.png") then --MULTIPLE IMAGES
 			local imagecount = #char.defaultcolors[1]
 			for i = 1, imagecount do
-				if not love.filesystem.exists(folder .. curtype .. i .. ".png") then
+				if not love.filesystem.getInfo(folder .. curtype .. i .. ".png") then
 					if t <= 2 then
 						return false
 					else
@@ -45,16 +55,16 @@ function loadcharacter(charname)
 			end
 			
 			--0 Image
-			if love.filesystem.exists(folder .. curtype .. "0.png") then
+			if love.filesystem.getInfo(folder .. curtype .. "0.png") then
 				char[curtype][0] = love.graphics.newImage(folder .. curtype .. "0.png")
 			end
 			
 			--Dot Image
-			if love.filesystem.exists(folder .. curtype .. "dot.png") then
+			if love.filesystem.getInfo(folder .. curtype .. "dot.png") then
 				char[curtype]["dot"] = love.graphics.newImage(folder .. curtype .. "dot.png")
 			end
 		else
-			if love.filesystem.exists(folder .. curtype .. ".png") then
+			if love.filesystem.getInfo(folder .. curtype .. ".png") then
 				char[curtype] = love.graphics.newImage(folder .. curtype .. ".png")
 			end
 		end
@@ -165,7 +175,7 @@ end
 characterlist = {}
 characters = {}
 for i, v in pairs(love.filesystem.getDirectoryItems("characters/")) do
-	if (love.filesystem.isDirectory("characters/" .. v)) then
+	if love.filesystem.getInfo("characters/" .. v).type == "directory" then
 		local temp = loadcharacter(v)
 		if temp then
 			characters[v] = temp

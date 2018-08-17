@@ -202,7 +202,7 @@ portalprojectileparticledelay = 0.002
 emanceparticlespeed = 3
 emanceparticlespeedmod = 0.3
 emanceimgwidth = 64
-emancelinecolor = {100, 100, 255, 10}
+emancelinecolor = {100/255, 100/255, 255/255, 10/255}
 
 boxfriction = 20
 boxfrictionair = 0
