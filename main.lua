@@ -40,6 +40,7 @@ function love.run()
 
 	loveVersion = updateVersion()
 
+	COLORSPACE = loveVersion < 11 and 255 or 1
 	COLORCONVERT = loveVersion < 11 and 1 or 255
 
 	if loveVersion < 9 then
@@ -679,7 +680,7 @@ function love.load(arg)
 		for x = 1, width do
 			table.insert(tilequads, quad:new(smbtilesimg, imgdata, x, y, imgwidth, imgheight))
 			local r, g, b = getaveragecolor(imgdata, x, y)
-			table.insert(rgblist, {r, g, b})
+			table.insert(rgblist, {r / COLORSPACE, g / COLORSPACE, b / COLORSPACE})
 		end
 	end
 	smbtilecount = width*height
@@ -694,7 +695,7 @@ function love.load(arg)
 		for x = 1, width do
 			table.insert(tilequads, quad:new(portaltilesimg, imgdata, x, y, imgwidth, imgheight))
 			local r, g, b = getaveragecolor(imgdata, x, y)
-			table.insert(rgblist, {r, g, b})
+			table.insert(rgblist, {r / COLORSPACE, g / COLORSPACE, b / COLORSPACE})
 		end
 	end
 	portaltilecount = width*height
@@ -1532,7 +1533,7 @@ function loadcustomimages(path)
 		for x = 1, width do
 			table.insert(tilequads, quad:new(smbtilesimg, imgdata, x, y, imgwidth, imgheight))
 			local r, g, b = getaveragecolor(imgdata, x, y)
-			table.insert(rgblist, {r, g, b})
+			table.insert(rgblist, {r / COLORSPACE, g / COLORSPACE, b / COLORSPACE})
 		end
 	end
 	smbtilecount = width*height
@@ -1552,7 +1553,7 @@ function loadcustomimages(path)
 		for x = 1, width do
 			table.insert(tilequads, quad:new(portaltilesimg, imgdata, x, y, imgwidth, imgheight))
 			local r, g, b = getaveragecolor(imgdata, x, y)
-			table.insert(rgblist, {r, g, b})
+			table.insert(rgblist, {r / COLORSPACE, g / COLORSPACE, b / COLORSPACE})
 		end
 	end
 	portaltilecount = width*height
@@ -1928,11 +1929,11 @@ function newRecoloredImage(path, tablein, tableout)
 		for x = 0, width-1 do
 			local oldr, oldg, oldb, olda = imagedata:getPixel(x, y)
 			
-			if olda > 0.5*COLORCONVERT then
+			if olda > 0.5*COLORSPACE then
 				for i = 1, #tablein do
 					if oldr == tablein[i][1] and oldg == tablein[i][2] and oldb == tablein[i][3] then
 						local r, g, b = unpack(tableout[i])
-						imagedata:setPixel(x, y, r, g, b, olda)
+						imagedata:setPixel(x, y, r * COLORSPACE, g * COLORSPACE, b * COLORSPACE, olda)
 					end
 				end
 			end
@@ -1975,7 +1976,7 @@ function getaveragecolor(imgdata, cox, coy)
 	for x = xstart, xstart+15 do
 		for y = ystart, ystart+15 do
 			local pr, pg, pb, a = imgdata:getPixel(x, y)
-			if a > 0.5*COLORCONVERT then
+			if a > 0.5*COLORSPACE then
 				r, g, b = r+pr, g+pg, b+pb
 				count = count + 1
 			end
@@ -2237,7 +2238,7 @@ function loadcustomtiles()
 			for x = 1, width do
 				table.insert(tilequads, quad:new(customtilesimg, imgdata, x, y, imgwidth, imgheight))
 				local r, g, b = getaveragecolor(imgdata, x, y)
-				table.insert(rgblist, {r, g, b})
+				table.insert(rgblist, {r / COLORSPACE, g / COLORSPACE, b / COLORSPACE})
 			end
 		end
 		customtilecount = width*height

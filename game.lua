@@ -4968,10 +4968,10 @@ function renderpreview()
 			local id = map[x][y+yadd][1]
 			if id ~= nil and id ~= 0 and rgblist[id] and tilequads[id]:getproperty("invisible", x, y+yadd) == false then
 				local r, g, b = unpack(rgblist[id])
-				out:setPixel(x-1, y-1, r, g, b, COLORCONVERT)
+				out:setPixel(x-1, y-1, r * COLORSPACE, g * COLORSPACE, b * COLORSPACE, COLORSPACE)
 			else
 				local r, g, b = unpack(background)
-				out:setPixel(x-1, y-1, r, g, b, COLORCONVERT)
+				out:setPixel(x-1, y-1, r * COLORSPACE, g * COLORSPACE, b * COLORSPACE, COLORSPACE)
 			end
 		end
 	end
