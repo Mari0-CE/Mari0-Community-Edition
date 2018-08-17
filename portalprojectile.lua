@@ -120,7 +120,7 @@ function portalprojectileparticle:init(x, y, color, r, g, b)
 	self.speedx = math.random(-10, 10)/70
 	self.speedy = math.random(-10, 10)/70
 	
-	self.alpha = 150
+	self.alpha = 0.6
 	
 	self.timer = 0
 end

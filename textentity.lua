@@ -78,7 +78,7 @@ end
 
 function textentity:draw()
 	if self.power then
-		love.graphics.setColor(self.red, self.green, self.blue)
+		love.graphics.setColor(self.red / 255, self.green / 255, self.blue / 255)
 		properprint(self.text, math.floor((self.x-xscroll)*16*scale), math.floor((self.y-yscroll-.5+0.25)*16*scale))
 	end
 end
