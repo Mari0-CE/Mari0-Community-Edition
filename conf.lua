@@ -4,5 +4,5 @@ function love.conf(t)
 	t.identity = "mari0_se"
 	t.modules.physics = false
 	t.window = false
-	t.console = true
+	t.console = false
 end
