@@ -26,17 +26,21 @@
 function love.run()
 	--I can't believe I had to write this function in the first place
 	local function updateVersion()
-		local major, minor, revision, codename = love.getVersion()
-		if major > 0 then
-			return major
+		if love.getVersion then
+			local major, minor, revision, codename = love.getVersion()
+			if major > 0 then
+				return major
+			else
+				return minor
+			end
 		else
-			return minor
+			return love._version_minor
 		end
 	end
 
 	loveVersion = updateVersion()
 
---[[	COMPATABILITY FOR LOVE2D 0.8.X
+	COLORCONVERT = loveVersion < 11 and 1 or 255
 
 	if loveVersion < 9 then
 		--Cheap af but I don't care, COMPATIBILITY!!!
@@ -73,7 +77,6 @@ function love.run()
 		
 		love.mouse.setGrabbed = love.mouse.setGrab
 	end
-]]
 
 	love.math.setRandomSeed(os.time())
 	for i=1, 2 do 
@@ -106,20 +109,22 @@ function love.run()
 		love.graphics.origin()
 		--Fullscreen hack
 		if not mkstation and fullscreen and gamestate ~= "intro" then
-		--[[	COMPATABILITY FOR LOVE2D 0.9.X AND BELOW
 			if loveVersion <= 9 then
 				completecanvas:clear()
 			else
-		]]
-			love.graphics.setCanvas(completecanvas)
-			love.graphics.clear()
-		--	end
+				love.graphics.setCanvas{completecanvas, stencil=true}
+				love.graphics.clear()
+			end
 			love.graphics.setScissor()
-			completecanvas:renderTo(love.draw)
+			-- Can't use Canvas:renderTo() anymore since 11.1 requires setting the stencil flag to use stencils
+			love.graphics.setCanvas{completecanvas, stencil=true}
+			love.draw()
+			love.graphics.setCanvas()
+
 			love.graphics.setScissor()
-		--	if loveVersion > 9 then
+			if loveVersion > 9 then
 				love.graphics.setCanvas()
-		--	end
+			end
 			if fullscreenmode == "full" then
 				love.graphics.draw(completecanvas, 0, 0, 0, desktopsize.width/(width*16*scale), desktopsize.height/(height*16*scale))
 			else
@@ -327,13 +332,54 @@ function love.load(arg)
 			return lmisDown(button)
 		end
 	end
+	if loveVersion < 11 then
+		lgsetColor = love.graphics.setColor
+		function love.graphics.setColor(...)
+			local args = {...}
+			local newColors = {}
+			if type(args[1]) == "table" then
+				args = args[1]
+			end
+			for i=1, #args do
+				table.insert(newColors, args[i] * 255)
+			end
+			return lgsetColor(unpack(newColors))
+		end
+		lgsetBackgroundColor = love.graphics.setBackgroundColor
+		function love.graphics.setBackgroundColor(...)
+			local args = {...}
+			local newColors = {}
+			if type(args[1]) == "table" then
+				args = args[1]
+			end
+			for i=1, #args do
+				table.insert(newColors, args[i] * 255)
+			end
+			return lgsetBackgroundColor(unpack(newColors))
+		end
+		lggetBackgroundColor = love.graphics.getBackgroundColor
+		function love.graphics.getBackgroundColor()
+			local rgba = {lggetBackgroundColor()}
+			for i=1, #rgba do
+				rgba[i] = rgba[i] / 255
+			end
+			return unpack(rgba)
+		end
+		function love.filesystem.getInfo(path, mode)
+			if not mode then
+				return love.filesystem.exists(path)
+			elseif mode == "directory" then
+				return love.filesystem.isDirectory(path)
+			else
+				return love.filesystem.isFile(path)
+			end
+		end
+	end
 	
 	iconimg = love.image.newImageData("graphics/icon.png")
---[[	COMPATABILITY FOR LOVE2D 0.8.X
 	if loveVersion < 9 then
 		iconimg = love.graphics.newImage("graphics/icon.png")
 	end
-]]
 	love.window.setIcon(iconimg)
 	
 	love.graphics.setDefaultFilter("nearest", "nearest")
@@ -949,13 +995,11 @@ function love.load(arg)
 		soundlist[v] = {}
 		soundlist[v].source = love.audio.newSource("sounds/" .. v .. ".ogg", "stream")
 		soundlist[v].lastplayed = 0
-	--[[	COMPATABILITY FOR LOVE2D 0.8.X
 		if loveVersion < 9 then
 			soundlist[v].isPlaying = function (self)
 				return not self:isStopped()
 			end
 		end
-	]]
 	end
 	
 	soundlist["scorering"].source:setLooping(true)
@@ -1594,7 +1638,7 @@ function changescale(s, init)
 				return
 			end
 			
-			if love.graphics.isSupported("canvas") then
+			if loveVersion >= 10 or love.graphics.isSupported("canvas") then
 				fullscreen = true
 			end
 			
@@ -1622,11 +1666,10 @@ function changescale(s, init)
 		love.window.setMode(width*16*scale, height*16*scale, {fullscreen=fullscreen, vsync=vsync--[[, fsaa=fsaa]]}) --25x14 blocks (15 blocks actual height)
 	end
 
---	COMPATABILITY FOR LOVE2D 0.8.X
---	if loveVersion > 9 or love.graphics.isSupported("canvas") then
-	completecanvas = love.graphics.newCanvas()
-	completecanvas:setFilter("linear", "linear")
---	end
+	if loveVersion > 9 or love.graphics.isSupported("canvas") then
+		completecanvas = love.graphics.newCanvas()
+		completecanvas:setFilter("linear", "linear")
+	end
 	
 	gamewidth, gameheight = love.window.getMode()
 	if shaders then
@@ -1885,7 +1928,7 @@ function newRecoloredImage(path, tablein, tableout)
 		for x = 0, width-1 do
 			local oldr, oldg, oldb, olda = imagedata:getPixel(x, y)
 			
-			if olda > 0.5 then
+			if olda > 0.5*COLORCONVERT then
 				for i = 1, #tablein do
 					if oldr == tablein[i][1] and oldg == tablein[i][2] and oldb == tablein[i][3] then
 						local r, g, b = unpack(tableout[i])
@@ -1932,7 +1975,7 @@ function getaveragecolor(imgdata, cox, coy)
 	for x = xstart, xstart+15 do
 		for y = ystart, ystart+15 do
 			local pr, pg, pb, a = imgdata:getPixel(x, y)
-			if a > 0.5 then
+			if a > 0.5*COLORCONVERT then
 				r, g, b = r+pr, g+pg, b+pb
 				count = count + 1
 			end

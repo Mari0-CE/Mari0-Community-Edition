@@ -1485,7 +1485,6 @@ function game_draw()
 						
 						--SCISSOR FOR ENTRY
 						if v.customscissor and v.portalable ~= false then
-						--[[	COMPATABILITY FOR LOVE2D 0.9.X AND BELOW
 							local t = "setStencil"
 							if v.invertedscissor then
 								t = "setInvertedStencil"
@@ -1503,9 +1502,6 @@ function game_draw()
 							if loveVersion > 9 then
 								love.graphics.setStencilTest((v.invertedscissor and "equal" or "greater"), 0)
 							end
-						]]
-							love.graphics.stencil(function() love.graphics.rectangle("fill", math.floor((v.customscissor[1]-xscroll)*16*scale), math.floor((v.customscissor[2]-.5-yscroll)*16*scale), v.customscissor[3]*16*scale, v.customscissor[4]*16*scale) end, "replace", 1)
-							love.graphics.setStencilTest((v.invertedscissor and "equal" or "greater"), 0)
 						end
 							
 						if v.static == false and v.portalable ~= false then
@@ -1584,7 +1580,6 @@ function game_draw()
 						
 						--portal duplication
 						if v.customscissor and v.portalable ~= false then
-						--[[	COMPATABILITY FOR LOVE2D 0.9.X AND BELOW
 							local t = "setStencil"
 							if v.invertedscissor then
 								t = "setInvertedStencil"
@@ -1602,9 +1597,6 @@ function game_draw()
 							if loveVersion > 9 then
 								love.graphics.setStencilTest((v.invertedscissor and "equal" or "greater"), 0)
 							end
-						]]
-							love.graphics.stencil(function() love.graphics.rectangle("fill", math.floor((v.customscissor[1]-xscroll)*16*scale), math.floor((v.customscissor[2]-.5-yscroll)*16*scale), v.customscissor[3]*16*scale, v.customscissor[4]*16*scale) end, "replace", 1)
-							love.graphics.setStencilTest((v.invertedscissor and "equal" or "greater"), 0)
 						end
 						
 						if v.static == false and (v.active or v.portaloverride) and v.portalable ~= false then
@@ -1683,13 +1675,11 @@ function game_draw()
 							end
 						end
 						love.graphics.setScissor(unpack(currentscissor))
-					--	if loveVersion > 9 then
-						love.graphics.setStencilTest()
-					--[[	COMPATABILITY FOR LOVE2D 0.9.X AND BELOW
+						if loveVersion > 9 then
+							love.graphics.setStencilTest()
 						else
 							love.graphics.setStencil()
 						end
-					]]
 					end
 				end
 			end
@@ -1972,9 +1962,9 @@ function game_draw()
 		
 		local pl = objects["player"][1]
 		scenecanvas:clear()
-		love.graphics.setCanvas(scenecanvas)
+		love.graphics.setCanvas{scenecanvas, stencil=true}
 		scenedraw()
-		love.graphics.setCanvas(completecanvas)
+		love.graphics.setCanvas{completecanvas, stencil=true}
 		love.graphics.draw(scenecanvas, 0, 0)
 		
 		if firstpersonview and firstpersonrotate then
@@ -2086,7 +2076,7 @@ function game_draw()
 						if (facing == "left" and facing2 == "right") or (facing == "right" and facing2 == "left") or (facing == "up" and facing2 == "down") or (facing == "down" and facing2 == "up") then
 							a = a - math.pi
 						end
-					--[[	COMPATABILITY FOR LOVE2D 0.9.X AND BELOW
+						
 						local t = "setStencil"
 						local action = nil
 						local int = nil
@@ -2103,11 +2093,6 @@ function game_draw()
 						if loveVersion > 9 then
 							love.graphics.setStencilTest("greater", 0)
 						end
-					]]
-						love.graphics.stencil(function()
-							love.graphics.polygon("fill", p1x*16*scale, p1y*16*scale, p2x*16*scale, p2y*16*scale, p4x*16*scale, p4y*16*scale, p3x*16*scale, p3y*16*scale)
-						end, "replace", 1) --feels like javascript
-						love.graphics.setStencilTest("greater", 0)
 						
 						love.graphics.setColor(unpack(background))
 						love.graphics.rectangle("fill", 0, 0, width*16*scale, height*16*scale)
@@ -2120,13 +2105,12 @@ function game_draw()
 						--love.graphics.setColor(r, g, b, 0.6)
 						--love.graphics.rectangle("fill", 0, 0, width*16*scale, height*16*scale)
 					
-					--	if v > 9 then
-						love.graphics.setStencilTest()
-					--[[	COMPATABILITY FOR LOVE2D 0.9.X AND BELOW I think, it's hard to tell, is the v supposed to be loveVersion??
+						if loveVersion > 9 then
+							love.graphics.setStencilTest()
 						else
 							love.graphics.setStencil()
 						end
-					]]
+
 						love.graphics.setColor(r, g, b)
 						love.graphics.line(p1x*16*scale, p1y*16*scale, p3x*16*scale, p3y*16*scale)
 						love.graphics.line(p2x*16*scale, p2y*16*scale, p4x*16*scale, p4y*16*scale)
@@ -2212,7 +2196,7 @@ function game_draw()
 				local yadd = math.sin(r)*dist
 				
 				love.graphics.setColor(1, 1, 1)
-			--[[	COMPATABILITY FOR LOVE2D 0.9.X AND BELOW
+				
 				local t = "setStencil"
 				local action = nil
 				local int = nil
@@ -2226,9 +2210,6 @@ function game_draw()
 				if loveVersion > 9 then
 					love.graphics.setStencilTest("greater", 0)
 				end
-			]]
-				love.graphics.stencil(function() love.graphics.circle("fill", math.floor((x*16+xadd)*scale), math.floor((y*16+yadd-.5)*scale), 13.5*scale) end, "stencil", 1)
-				love.graphics.setStencilTest("greater", 0)
 				
 				local playerx, playery = x*16+xadd, y*16+yadd+3
 				
@@ -2256,13 +2237,11 @@ function game_draw()
 				end
 				
 				drawplayer(i, playerx, playery)
-			--	if loveVersion > 9 then
-				love.graphics.setStencilTest()
-			--[[	COMPATABILITY FOR LOVE2D 0.9.X AND BELOW
+				if loveVersion > 9 then
+					love.graphics.setStencilTest()
 				else
 					love.graphics.setStencil()
 				end
-			]]
 				
 				love.graphics.setColor(v.colors[1] or {1, 1, 1})
 				love.graphics.draw(markoverlayimg, math.floor(x*16*scale), math.floor(y*16*scale), r, scale, scale, 0, 15)
@@ -3765,31 +3744,25 @@ end
 function generatespritebatch()
 	smbspritebatch:clear()
 	smbspritebatchfront:clear()
---[[	COMPATABILITY FOR LOVE2D 0.9.X AND BELOW
 	if loveVersion <= 9 then
 		smbspritebatch:bind()
 		smbspritebatchfront:bind()
 	end
-]]
 	
 	portalspritebatch:clear()
 	portalspritebatchfront:clear()
---[[	COMPATABILITY FOR LOVE2D 0.9.X AND BELOW
 	if loveVersion <= 9 then
 		portalspritebatch:bind()
 		portalspritebatchfront:bind()
 	end
-]]
 	
 	if customtiles then
 		customspritebatch:clear()
 		customspritebatchfront:clear()
-	--[[	COMPATABILITY FOR LOVE2D 0.9.X AND BELOW
 		if loveVersion <= 9 then
 			customspritebatch:bind()
 			customspritebatchfront:bind()
 		end
-	]]
 	end
 	
 	
@@ -3850,7 +3823,6 @@ function generatespritebatch()
 					
 					if not tilequads[tilenumber]:getproperty("foreground", cox, coy) then
 						if tilenumber ~= 0 and tilequads[tilenumber]:getproperty("invisible", cox, coy) == false and tilequads[tilenumber]:getproperty("coinblock", cox, coy) == false then
-						--[[	COMPATABILITY FOR LOVE2D 0.8.X
 							if loveVersion < 9 then
 								if tilenumber <= smbtilecount then
 									smbspritebatch:addq( tilequads[tilenumber]:quad(), (x-1)*16*scale, ((y)*16-8)*scale, 0, scale, scale )
@@ -3860,19 +3832,17 @@ function generatespritebatch()
 									customspritebatch:addq( tilequads[tilenumber]:quad(), (x-1)*16*scale, ((y)*16-8)*scale, 0, scale, scale )
 								end
 							else
-						]]
-							if tilenumber <= smbtilecount then
-								smbspritebatch:add( tilequads[tilenumber]:quad(), (x-1)*16*scale, ((y)*16-8)*scale, 0, scale, scale )
-							elseif tilenumber <= smbtilecount+portaltilecount then
-								portalspritebatch:add( tilequads[tilenumber]:quad(), (x-1)*16*scale, ((y)*16-8)*scale, 0, scale, scale )
-							elseif tilenumber <= smbtilecount+portaltilecount+customtilecount then
-								customspritebatch:add( tilequads[tilenumber]:quad(), (x-1)*16*scale, ((y)*16-8)*scale, 0, scale, scale )
+								if tilenumber <= smbtilecount then
+									smbspritebatch:add( tilequads[tilenumber]:quad(), (x-1)*16*scale, ((y)*16-8)*scale, 0, scale, scale )
+								elseif tilenumber <= smbtilecount+portaltilecount then
+									portalspritebatch:add( tilequads[tilenumber]:quad(), (x-1)*16*scale, ((y)*16-8)*scale, 0, scale, scale )
+								elseif tilenumber <= smbtilecount+portaltilecount+customtilecount then
+									customspritebatch:add( tilequads[tilenumber]:quad(), (x-1)*16*scale, ((y)*16-8)*scale, 0, scale, scale )
+								end
 							end
-						--	end
 						end
 					else
 						if tilenumber ~= 0 and tilequads[tilenumber]:getproperty("invisible", cox, coy) == false and tilequads[tilenumber]:getproperty("coinblock", cox, coy) == false then
-						--[[	COMPATABILITY FOR LOVE2D 0.8.X
 							if loveVersion < 9 then
 								if tilenumber <= smbtilecount then
 									smbspritebatchfront:addq( tilequads[tilenumber]:quad(), (x-1)*16*scale, ((y)*16-8)*scale, 0, scale, scale )
@@ -3882,15 +3852,14 @@ function generatespritebatch()
 									customspritebatchfront:addq( tilequads[tilenumber]:quad(), (x-1)*16*scale, ((y)*16-8)*scale, 0, scale, scale )
 								end
 							else
-						]]
-							if tilenumber <= smbtilecount then
-								smbspritebatchfront:add( tilequads[tilenumber]:quad(), (x-1)*16*scale, ((y)*16-8)*scale, 0, scale, scale )
-							elseif tilenumber <= smbtilecount+portaltilecount then
-								portalspritebatchfront:add( tilequads[tilenumber]:quad(), (x-1)*16*scale, ((y)*16-8)*scale, 0, scale, scale )
-							elseif tilenumber <= smbtilecount+portaltilecount+customtilecount then
-								customspritebatchfront:add( tilequads[tilenumber]:quad(), (x-1)*16*scale, ((y)*16-8)*scale, 0, scale, scale )
+								if tilenumber <= smbtilecount then
+									smbspritebatchfront:add( tilequads[tilenumber]:quad(), (x-1)*16*scale, ((y)*16-8)*scale, 0, scale, scale )
+								elseif tilenumber <= smbtilecount+portaltilecount then
+									portalspritebatchfront:add( tilequads[tilenumber]:quad(), (x-1)*16*scale, ((y)*16-8)*scale, 0, scale, scale )
+								elseif tilenumber <= smbtilecount+portaltilecount+customtilecount then
+									customspritebatchfront:add( tilequads[tilenumber]:quad(), (x-1)*16*scale, ((y)*16-8)*scale, 0, scale, scale )
+								end
 							end
-						--	end
 						end
 					end
 				end
@@ -3898,7 +3867,6 @@ function generatespritebatch()
 		end
 	end
 	
---[[	COMPATABILITY FOR LOVE2D 0.9.X AND BELOW
 	--Unbind spritebatches
 	if loveVersion <= 9 then
 		smbspritebatch:unbind()
@@ -3912,7 +3880,6 @@ function generatespritebatch()
 			customspritebatchfront:unbind()
 		end
 	end
-]]
 end
 
 function game_keypressed(key)
@@ -3992,7 +3959,11 @@ function game_keypressed(key)
 			if pausemenuoptions[pausemenuselected] == "resume" then
 				pausemenuopen = false
 				saveconfig()
-				love.audio.play(paused)
+				if loveVersion >= 11 then
+					love.audio.play(paused)
+				else
+					love.audio.resume()
+				end
 			elseif pausemenuoptions[pausemenuselected] == "suspend" then
 				suspendprompt = true
 				pausemenuselected2 = 1
@@ -4006,7 +3977,11 @@ function game_keypressed(key)
 		elseif key == "escape" then
 			pausemenuopen = false
 			saveconfig()
-			love.audio.play(paused)
+			if loveVersion >= 11 then
+				love.audio.play(paused)
+			else
+				love.audio.resume()
+			end
 		elseif (key == "right" or key == "d") then
 			if pausemenuoptions[pausemenuselected] == "music volume" then
 				volumemusic = math.min(1, volumemusic + 0.1)
@@ -4961,13 +4936,11 @@ function savemap(filename)
 	--preview
 	
 	previewimg = renderpreview()
---	if loveVersion > 9 then
-	previewimg:encode("png", "mappacks/" .. mappack .. "/" .. filename .. ".png")
---[[	COMPATABILITY FOR LOVE2D 0.9.X AND BELOW
+	if loveVersion > 9 then
+		previewimg:encode("png", "mappacks/" .. mappack .. "/" .. filename .. ".png")
 	else
 		previewimg:encode("mappacks/" .. mappack .. "/" .. filename .. ".png")
 	end
-]]
 	
 	print("Map saved as " .. "mappacks/" .. filename .. ".txt")
 	notice.new("Map saved!", notice.white, 2)
@@ -4995,10 +4968,10 @@ function renderpreview()
 			local id = map[x][y+yadd][1]
 			if id ~= nil and id ~= 0 and rgblist[id] and tilequads[id]:getproperty("invisible", x, y+yadd) == false then
 				local r, g, b = unpack(rgblist[id])
-				out:setPixel(x-1, y-1, r, g, b, 1)
+				out:setPixel(x-1, y-1, r, g, b, COLORCONVERT)
 			else
 				local r, g, b = unpack(background)
-				out:setPixel(x-1, y-1, r, g, b, 1)
+				out:setPixel(x-1, y-1, r, g, b, COLORCONVERT)
 			end
 		end
 	end

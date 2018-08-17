@@ -39,91 +39,91 @@ function getquadprops(imgdata, x, y)
 	--get collision
 	self.collision = false
 	local r, g, b, a = imgdata:getPixel(x*17-1, (y-1)*17)
-	if a > 0.5 then
+	if a > 0.5*COLORCONVERT then
 		self.collision = true
 	end
 	
 	--get invisible
 	self.invisible = false
 	local r, g, b, a = imgdata:getPixel(x*17-1, (y-1)*17+1)
-	if a > 0.5 then
+	if a > 0.5*COLORCONVERT then
 		self.invisible = true
 	end
 	
 	--get breakable
 	self.breakable = false
 	local r, g, b, a = imgdata:getPixel(x*17-1, (y-1)*17+2)
-	if a > 0.5 then
+	if a > 0.5*COLORCONVERT then
 		self.breakable = true
 	end
 	
 	--get coinblock
 	self.coinblock = false
 	local r, g, b, a = imgdata:getPixel(x*17-1, (y-1)*17+3)
-	if a > 0.5 then
+	if a > 0.5*COLORCONVERT then
 		self.coinblock = true
 	end
 	
 	--get coin
 	self.coin = false
 	local r, g, b, a = imgdata:getPixel(x*17-1, (y-1)*17+4)
-	if a > 0.5 then
+	if a > 0.5*COLORCONVERT then
 		self.coin = true
 	end
 	
 	--get not portalable
 	self.portalable = true
 	local r, g, b, a = imgdata:getPixel(x*17-1, (y-1)*17+5)
-	if a > 0.5 then
+	if a > 0.5*COLORCONVERT then
 		self.portalable = false
 	end
 	
 	--get left slant
 	self.slantupleft = false
 	local r, g, b, a = imgdata:getPixel(x*17-1, (y-1)*17+6)
-	if a > 0.5 then
+	if a > 0.5*COLORCONVERT then
 		self.slantupleft = true
 	end
 	
 	--get right slant
 	self.slantupright = false
 	local r, g, b, a = imgdata:getPixel(x*17-1, (y-1)*17+7)
-	if a > 0.5 then
+	if a > 0.5*COLORCONVERT then
 		self.slantupright = true
 	end
 	
 	--get mirror
 	self.mirror = false
 	local r, g, b, a = imgdata:getPixel(x*17-1, (y-1)*17+8)
-	if a > 0.5 then
+	if a > 0.5*COLORCONVERT then
 		self.mirror = true
 	end
 	
 	--get grate
 	self.grate = false
 	local r, g, b, a = imgdata:getPixel(x*17-1, (y-1)*17+9)
-	if a > 0.5 then
+	if a > 0.5*COLORCONVERT then
 		self.grate = true
 	end
 	
 	--get platform
 	self.platform = false
 	local r, g, b, a = imgdata:getPixel(x*17-1, (y-1)*17+10)
-	if a > 0.5 then
+	if a > 0.5*COLORCONVERT then
 		self.platform = true
 	end
 	
 	--get watertile
 	self.water = false
 	local r, g, b, a = imgdata:getPixel(x*17-1, (y-1)*17+11)
-	if a > 0.5 then
+	if a > 0.5*COLORCONVERT then
 		self.water = true
 	end
 	
 	--get bridge
 	self.bridge = false
 	local r, g, b, a = imgdata:getPixel(x*17-1, (y-1)*17+12)
-	if a > 0.5 then
+	if a > 0.5*COLORCONVERT then
 		self.bridge = true
 	end
 	
@@ -133,7 +133,7 @@ function getquadprops(imgdata, x, y)
 		local v = t[i]
 		self["spikes" .. v] = false
 		local r, g, b, a = imgdata:getPixel(x*17-1, (y-1)*17+12+i)
-		if a > 0.5 then
+		if a > 0.5*COLORCONVERT then
 			self["spikes" .. v] = true
 		end
 	end

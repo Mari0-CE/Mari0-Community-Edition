@@ -959,7 +959,7 @@ function editor_draw()
 							if i == currenttile then
 								love.graphics.setColor(1, 1, 1, 0.8)
 							end
-						--[[	COMPATABILITY FOR LOVE 0.9.X AND BELOW
+							
 							local t = "setStencil"
 							local action = nil
 							local int = nil
@@ -981,13 +981,6 @@ function editor_draw()
 							else
 								love.graphics.setStencil()
 							end
-						]]
-						love.graphics.stencil(function() love.graphics.rectangle("fill", (math.mod((i-1), 22)-offx)*17*scale+cox*16*scale+scale, (math.floor((i-1)/22)-offy)*17*scale+coy*16*scale-8*scale, 16*scale, 16*scale) end, "replace", 1)
-						love.graphics.setStencilTest("greater", 0)
-
-						love.graphics.drawq(v.graphic, v.quad, (math.mod((i-1), 22)-offx)*17*scale+cox*16*scale+scale, (math.floor((i-1)/22)-offy)*17*scale+coy*16*scale-8*scale, 0, scale, scale)
-
-						love.graphics.setStencilTest()
 							
 							if i == currenttile then
 								love.graphics.setColor(1, 0, 0, 0.6)
@@ -1138,7 +1131,7 @@ function editor_draw()
 						else
 							drawlinkline(x1, y1, x2, y2)
 						end
-						properprintbackground(t, math.floor(x2-string.len(t)*4*scale), y2+10*scale, true, {r, g, b, math.max(0, (1-rightclicka)*255)})
+						properprintbackground(t, math.floor(x2-string.len(t)*4*scale), y2+10*scale, true, {r, g, b, math.max(0, (1-rightclicka))})
 					end
 				end
 			end
@@ -1182,7 +1175,7 @@ function editor_draw()
 					drawlinkline(x1, y1, x2, y2)
 				end
 				
-				properprintbackground(t, math.floor(x2-string.len(t)*4*scale), y2+10*scale, true, {0, 0, 0, 255*rightclicka})
+				properprintbackground(t, math.floor(x2-string.len(t)*4*scale), y2+10*scale, true, {0, 0, 0, rightclicka})
 			end
 			
 			if linktoolt then
@@ -1311,7 +1304,7 @@ function editor_draw()
 					if editenemies then
 						for i = 1, #enemies do
 							local v = enemiesdata[enemies[i]]
-						--[[	COMPATABILITY FOR LOVE2D 0.9.X AND BELOW
+							
 							local t = "setStencil"
 							local action = nil
 							local int = nil
@@ -1334,13 +1327,6 @@ function editor_draw()
 							else
 								love.graphics.setStencil()
 							end
-						]]
-						love.graphics.stencil(function() love.graphics.rectangle("fill", math.mod((i-1), 22)*17*scale+5*scale, math.floor((i-1)/22)*17*scale+38*scale-tilesoffset, 16*scale, 16*scale) end, "replace", 1)
-						love.graphics.setStencilTest("greater", 0)
-
-						love.graphics.drawq(v.graphic, v.quad, math.mod((i-1), 22)*17*scale+5*scale, math.floor((i-1)/22)*17*scale+38*scale-tilesoffset, 0, scale, scale)
-
-						love.graphics.setStencilTest()
 						end
 					else
 						--ENTITIES
