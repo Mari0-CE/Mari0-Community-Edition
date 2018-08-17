@@ -1981,7 +1981,7 @@ end
 function love.focus(f)
 	--[[if not f and gamestate == "game"and not editormode and not levelfinished and not everyonedead  then
 		pausemenuopen = true
-		love.audio.pause()
+		paused = love.audio.pause()
 	end--]]
 end
 
