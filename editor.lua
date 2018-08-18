@@ -2167,7 +2167,11 @@ function saveanimation()
 	animations[currentanimation].actions = out.actions
 	
 	local json = JSON:encode_pretty(out)
-	love.filesystem.write(animations[currentanimation].filepath, json)
+	
+	ok, err = pcall(love.filesystem.write, animations[currentanimation].filepath, json)
+	if not ok then
+		print(err .. " - File: " .. animations[currentanimation].filepath)
+	end
 end
 
 function addanimationtrigger()

@@ -5283,6 +5283,9 @@ function playsound(sound)
 		end
 		
 		soundlist[sound].source:stop()
+		if loveVersion <= 8 then
+			soundlist[sound].source:rewind()
+		end
 		soundlist[sound].source:seek(0)
 		soundlist[sound].source:play()
 	end

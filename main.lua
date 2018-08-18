@@ -147,6 +147,7 @@ end
 
 function love.errhand(msg)
 	msg = tostring(msg)
+	uphold(msg)
 	local trace = debug.traceback()
 
 	local err = {}
@@ -155,7 +156,7 @@ function love.errhand(msg)
 	table.insert(err, "Mari0 Over.")
 	table.insert(err, "Crash = Very Yes.\n\n")
 	if not versionerror then
-		table.insert(err, "Send us a screenshot of this to crash@stabyourself.net, that'd be swell.\nAlso tell us what you were doing.\n")
+		table.insert(err, "Send us a screenshot of this to https://github.com/HugoBDesigner/Mari0-Community-Edition/issues , that'd be swell.\nAlso tell us what you were doing.\n")
 	end
 	table.insert(err, "Mari0 " .. (marioversion or "UNKNOWN") .. ", LOVE " .. (love._version or "UNKNOWN") .. " running on " .. (love._os or "UNKNOWN") .. "\n")
 	if love.graphics.getRendererInfo then
@@ -180,7 +181,7 @@ function love.errhand(msg)
 		return
 	end
 
-	if not love.graphics.isCreated() or not love.window.isOpen() then
+	if not love.graphics.isCreated() or (loveVersion > 8 and not love.window.isOpen()) then
 		local success, status = pcall(love.window.setMode, 800, 600)
 		if not success or not status then
 			return
@@ -194,7 +195,7 @@ function love.errhand(msg)
 		love.mouse.setVisible(true)
 		love.mouse.setGrabbed(false)
 	end
-	if love.joystick then -- Stop all joystick vibrations.
+	if love.joystick and love.joystick.getJoysticks then -- Stop all joystick vibrations.
 		for i,v in ipairs(love.joystick.getJoysticks()) do
 			v:setVibration()
 		end
