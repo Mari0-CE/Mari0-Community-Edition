@@ -436,7 +436,7 @@ function love.load(arg)
 	dlclist = {}
 	hatcount = #love.filesystem.getDirectoryItems("graphics/standardhats")
 	saveconfig()
-	love.window.setTitle( "Mari0 SE" )
+	love.window.setTitle( "Mari0: Community Edition" )
 	
 	love.graphics.setBackgroundColor(0, 0, 0)
 	
@@ -1116,7 +1116,8 @@ function love.update(dt)
 		
 		notice.update(dt)
 		
-		love.window.setTitle("FPS:" .. love.timer.getFPS() .. " - Send feedback/issues to crash@stabyourself.net")
+		--No longer needed
+		--love.window.setTitle("FPS:" .. love.timer.getFPS() .. " - Send feedback/issues to crash@stabyourself.net")
 	end
 end
 
