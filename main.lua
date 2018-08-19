@@ -1892,7 +1892,6 @@ function round(num, idp) --Not by me
 end
 
 function getrainbowcolor(i)
-	local whiteness = 1
 	local r, g, b
 	if i < 1/6 then
 		r = 1
@@ -1920,7 +1919,7 @@ function getrainbowcolor(i)
 		b = (1/6-(i-5/6))*6
 	end
 	
-	return {round(r*whiteness), round(g*whiteness), round(b*whiteness), 1}
+	return {r, g, b, 1}
 end
 
 function newRecoloredImage(path, tablein, tableout)
