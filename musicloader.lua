@@ -36,7 +36,7 @@ function music:load(name)
 	end
 	
 	if not self.loaded[filepath] then
-		local loaded, source = pcall(love.audio.newSource, filepath, "stream")
+		local loaded, source = pcall(love.audio.newSource, filepath, MUSICFIX)
 		if loaded then
 			-- all music should loop
 			source:setLooping(true)

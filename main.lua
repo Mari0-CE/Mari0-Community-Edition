@@ -43,6 +43,8 @@ function love.run()
 	COLORSPACE = loveVersion < 11 and 255 or 1
 	COLORCONVERT = loveVersion < 11 and 1 or 255
 
+	MUSICFIX = loveVersion < 11 and "static" or "stream"
+
 	if loveVersion < 9 then
 		--Cheap af but I don't care, COMPATIBILITY!!!
 		love.math = {}
@@ -995,7 +997,7 @@ function love.load(arg)
 	
 	for i, v in pairs(soundstoload) do
 		soundlist[v] = {}
-		soundlist[v].source = love.audio.newSource("sounds/" .. v .. ".ogg", "stream")
+		soundlist[v].source = love.audio.newSource("sounds/" .. v .. ".ogg", MUSICFIX)
 		soundlist[v].lastplayed = 0
 		if loveVersion < 9 then
 			soundlist[v].isPlaying = function (self)
