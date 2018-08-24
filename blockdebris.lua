@@ -1,6 +1,7 @@
 blockdebris = class("blockdebris")
 
 function blockdebris:init(x, y, speedx, speedy)
+	updateranges()
 	self.x = x
 	self.y = y
 	self.speedx = speedx
