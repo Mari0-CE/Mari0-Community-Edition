@@ -1993,9 +1993,10 @@ end
 
 function keyprompt_update()
 	if keyprompt then
+		local js = love.joystick:getJoysticks()
 		for i = 1, prompt.joysticks do
 			for j = 1, #prompt.joystick[i].validhats do
-				local dir = love.joystick.getHat(i, prompt.joystick[i].validhats[j])
+				local dir = js[i]:getHat(prompt.joystick[i].validhats[j])
 				if dir ~= "c" then
 					keypromptenter("joyhat", i, prompt.joystick[i].validhats[j], dir)
 					return
@@ -2003,7 +2004,7 @@ function keyprompt_update()
 			end
 			
 			for j = 1, prompt.joystick[i].axes do
-				local value = love.joystick.getAxis(i, j)
+				local value = js[i]:getAxis(j)
 				if value > prompt.joystick[i].axisposition[j] + joystickdeadzone then
 					keypromptenter("joyaxis", i, j, "pos")
 					return
