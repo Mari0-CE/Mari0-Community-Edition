@@ -75,9 +75,7 @@ function intro_mousepressed()
 		return
 	end
 	soundlist["stab"].source:stop()
-	if loveVersion <= 8 then
-		soundlist["stab"].source:rewind()
-	end
+	soundlist["stab"].source:seek(0)
 	menu_load()
 	shaders:set(1, shaderlist[currentshaderi1])
 	shaders:set(2, shaderlist[currentshaderi2])
@@ -88,9 +86,7 @@ function intro_keypressed()
 		return
 	end
 	soundlist["stab"].source:stop()
-	if loveVersion <= 8 then
-		soundlist["stab"].source:rewind()
-	end
+	soundlist["stab"].source:seek(0)
 	menu_load()
 	shaders:set(1, shaderlist[currentshaderi1])
 	shaders:set(2, shaderlist[currentshaderi2])

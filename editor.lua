@@ -846,10 +846,10 @@ function editor_draw()
 									-- well, do nothing
 									-- or better: draw empty tiles almost transparent
 									love.graphics.setColor(1, 1, 1, 0.03)
-									love.graphics.drawq(tilequads[w].image, quad, math.floor((x-xscroll-1 + pastecenter[1])*16*scale+(i-1)*16*scale), ((y-yscroll-1 + pastecenter[2])*16+8)*scale+((j-1)*16*scale), 0, scale, scale)
+									love.graphics.draw(tilequads[w].image, quad, math.floor((x-xscroll-1 + pastecenter[1])*16*scale+(i-1)*16*scale), ((y-yscroll-1 + pastecenter[2])*16+8)*scale+((j-1)*16*scale), 0, scale, scale)
 								else
 									love.graphics.setColor(1, 1, 1, 0.3)
-									love.graphics.drawq(tilequads[w].image, quad, math.floor((x-xscroll-1 + pastecenter[1])*16*scale+(i-1)*16*scale), ((y-yscroll-1 + pastecenter[2])*16+8)*scale+((j-1)*16*scale), 0, scale, scale)
+									love.graphics.draw(tilequads[w].image, quad, math.floor((x-xscroll-1 + pastecenter[1])*16*scale+(i-1)*16*scale), ((y-yscroll-1 + pastecenter[2])*16+8)*scale+((j-1)*16*scale), 0, scale, scale)
 								end
 							end
 						end
@@ -869,7 +869,7 @@ function editor_draw()
 							local quad = tilequads[currenttile]:quad() --[[tilequads[w].quad]]
 							if w[1] == mousetile then
 								--print(i,j,w[1],"SWITCHED")
-								love.graphics.drawq(tilequads[currenttile].image, quad, (i-1)*16*scale-xscroll*16*scale, (((j-1)*16*scale)-8*scale)-yscroll*16*scale, 0, scale, scale)
+								love.graphics.draw(tilequads[currenttile].image, quad, (i-1)*16*scale-xscroll*16*scale, (((j-1)*16*scale)-8*scale)-yscroll*16*scale, 0, scale, scale)
 							end
 						end
 					end
@@ -974,7 +974,7 @@ function editor_draw()
 							if loveVersion > 9 then
 								love.graphics.setStencilTest("greater", 0)
 							end
-							love.graphics.drawq(v.graphic, v.quad, (math.mod((i-1), 22)-offx)*17*scale+cox*16*scale+scale, (math.floor((i-1)/22)-offy)*17*scale+coy*16*scale-8*scale, 0, scale, scale)
+							love.graphics.draw(v.graphic, v.quad, (math.mod((i-1), 22)-offx)*17*scale+cox*16*scale+scale, (math.floor((i-1)/22)-offy)*17*scale+coy*16*scale-8*scale, 0, scale, scale)
 							
 							if loveVersion > 9 then
 								love.graphics.setStencilTest()
@@ -1009,7 +1009,7 @@ function editor_draw()
 								if w.i == currenttile then
 									love.graphics.setColor(1, 1, 1, 0.8)
 								end
-								love.graphics.drawq(entityquads[w.i].image, entityquads[w.i].quad, (math.mod((i-1), 22)-offx)*17*scale+cox*16*scale+scale, (math.floor((i-1)/22)-offy)*17*scale+coy*16*scale-8*scale, 0, scale, scale)
+								love.graphics.draw(entityquads[w.i].image, entityquads[w.i].quad, (math.mod((i-1), 22)-offx)*17*scale+cox*16*scale+scale, (math.floor((i-1)/22)-offy)*17*scale+coy*16*scale-8*scale, 0, scale, scale)
 								if w.i == currenttile then
 									love.graphics.setColor(1, 0, 0, 0.6)
 									drawrectangle((math.mod((i-1), 22)-offx)*17+cox*16, (math.floor((i-1)/22)-offy)*17+coy*16-9, 18, 18)
@@ -1026,7 +1026,7 @@ function editor_draw()
 							if i == currenttile then
 								love.graphics.setColor(1, 1, 1, 0.8)
 							end
-							love.graphics.drawq(tilequads[i].image, tilequads[i]:quad(), (math.mod((i-1), 22)-offx)*17*scale+cox*16*scale+scale, (math.floor((i-1)/22)-offy)*17*scale+coy*16*scale-8*scale, 0, scale, scale)
+							love.graphics.draw(tilequads[i].image, tilequads[i]:quad(), (math.mod((i-1), 22)-offx)*17*scale+cox*16*scale+scale, (math.floor((i-1)/22)-offy)*17*scale+coy*16*scale-8*scale, 0, scale, scale)
 							if i == currenttile then
 								love.graphics.setColor(1, 0, 0, 0.6)
 								drawrectangle((math.mod((i-1), 22)-offx)*17+cox*16, (math.floor((i-1)/22)-offy)*17+coy*16-9, 18, 18)
@@ -1047,13 +1047,13 @@ function editor_draw()
 						end
 						for t1 = 1, brush[1] do
 							for t2 = 1, brush[2] do
-								love.graphics.drawq(tilequads[currenttile].image, quad, math.floor((cox-xscroll-1+(t1-1))*16*scale), math.floor(((coy-yscroll-1+(t2-1))*16+8)*scale), 0, scale, scale)
+								love.graphics.draw(tilequads[currenttile].image, quad, math.floor((cox-xscroll-1+(t1-1))*16*scale), math.floor(((coy-yscroll-1+(t2-1))*16+8)*scale), 0, scale, scale)
 							end
 						end
 					elseif editenemies == false then
 						for t1 = 1, brush[1] do
 							for t2 = 1, brush[2] do
-								love.graphics.drawq(entityquads[currenttile].image, entityquads[currenttile].quad, math.floor((cox-xscroll-1+(t1-1))*16*scale), math.floor(((coy-yscroll-1+(t2-1))*16+8)*scale), 0, scale, scale)
+								love.graphics.draw(entityquads[currenttile].image, entityquads[currenttile].quad, math.floor((cox-xscroll-1+(t1-1))*16*scale), math.floor(((coy-yscroll-1+(t2-1))*16+8)*scale), 0, scale, scale)
 							end
 						end
 					else
@@ -1061,7 +1061,7 @@ function editor_draw()
 						local xoff, yoff = (((v.spawnoffsetx or 0)+v.width/2-.5)*16 - v.offsetX + v.quadcenterX)*scale, (((v.spawnoffsety or 0)-v.height+1)*16-v.offsetY - v.quadcenterY)*scale
 						for t1 = 1, brush[1] do
 							for t2 = 1, brush[2] do
-								love.graphics.drawq(v.graphic, v.quad, math.floor((cox-xscroll-1+(t1-1))*16*scale+xoff), math.floor(((coy-yscroll+(t2-1))*16)*scale+yoff), 0, scale, scale)
+								love.graphics.draw(v.graphic, v.quad, math.floor((cox-xscroll-1+(t1-1))*16*scale+xoff), math.floor(((coy-yscroll+(t2-1))*16)*scale+yoff), 0, scale, scale)
 							end
 						end
 					end
@@ -1321,7 +1321,7 @@ function editor_draw()
 								love.graphics.setStencilTest("greater", 0)
 							end
 							
-							love.graphics.drawq(v.graphic, v.quad, math.mod((i-1), 22)*17*scale+5*scale, math.floor((i-1)/22)*17*scale+38*scale-tilesoffset, 0, scale, scale)
+							love.graphics.draw(v.graphic, v.quad, math.mod((i-1), 22)*17*scale+5*scale, math.floor((i-1)/22)*17*scale+38*scale-tilesoffset, 0, scale, scale)
 							if loveVersion > 9 then
 								love.graphics.setStencilTest()
 							else
@@ -1333,7 +1333,7 @@ function editor_draw()
 						for i, v in ipairs(entitylistitems) do
 							properprint(v.t, (5)*scale, (v.entries[1].y+30)*scale-tilesoffset)
 							for j, k in ipairs(v.entries) do
-								love.graphics.drawq(entityquads[k.i].image, entityquads[k.i].quad, (k.x+5)*scale, (k.y+38)*scale-tilesoffset, 0, scale, scale)
+								love.graphics.draw(entityquads[k.i].image, entityquads[k.i].quad, (k.x+5)*scale, (k.y+38)*scale-tilesoffset, 0, scale, scale)
 								if k:gethighlight(mouse.getX(), mouse.getY()) then
 									love.graphics.setColor(1, 1, 1, 0.5)
 									love.graphics.rectangle("fill", (k.x+5)*scale, (k.y+38)*scale-tilesoffset, 16*scale, 16*scale)
@@ -1345,11 +1345,11 @@ function editor_draw()
 				else
 					if animatedtilelist then
 						for i = 1, tilelistcount+1 do
-							love.graphics.drawq(tilequads[i+tileliststart-1+10000].image, tilequads[i+tileliststart-1+10000]:quad(), math.mod((i-1), 22)*17*scale+5*scale, math.floor((i-1)/22)*17*scale+38*scale-tilesoffset, 0, scale, scale)
+							love.graphics.draw(tilequads[i+tileliststart-1+10000].image, tilequads[i+tileliststart-1+10000]:quad(), math.mod((i-1), 22)*17*scale+5*scale, math.floor((i-1)/22)*17*scale+38*scale-tilesoffset, 0, scale, scale)
 						end
 					else
 						for i = 1, tilelistcount+1 do
-							love.graphics.drawq(tilequads[i+tileliststart-1].image, tilequads[i+tileliststart-1]:quad(), math.mod((i-1), 22)*17*scale+5*scale, math.floor((i-1)/22)*17*scale+38*scale-tilesoffset, 0, scale, scale)
+							love.graphics.draw(tilequads[i+tileliststart-1].image, tilequads[i+tileliststart-1]:quad(), math.mod((i-1), 22)*17*scale+5*scale, math.floor((i-1)/22)*17*scale+38*scale-tilesoffset, 0, scale, scale)
 						end
 					end
 				end

@@ -260,7 +260,7 @@ function guielement:draw(a, offx, offy)
 			high = 2
 		end
 		
-		love.graphics.drawq(checkboximg, checkboxquad[high][quad], drawx*scale, drawy*scale, 0, scale, scale)
+		love.graphics.draw(checkboximg, checkboxquad[high][quad], drawx*scale, drawy*scale, 0, scale, scale)
 		
 		if self.text then
 			properprint(self.text, (drawx+10)*scale, (drawy+1)*scale)

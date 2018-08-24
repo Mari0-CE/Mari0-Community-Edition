@@ -703,9 +703,9 @@ function menu_draw()
 			love.graphics.draw(portalglowimg, 142*scale, 57*scale, 0, scale, scale)
 			
 			love.graphics.setColor(unpack(portalcolor[skinningplayer][1]))
-			love.graphics.drawq(portalimg, portalquad[portalframe], 174*scale, 46*scale, math.pi, scale, scale)
+			love.graphics.draw(portalimg, portalquad[portalframe], 174*scale, 46*scale, math.pi, scale, scale)
 			love.graphics.setColor(unpack(portalcolor[skinningplayer][2]))
-			love.graphics.drawq(portalimg, portalquad[portalframe], 142*scale, 70*scale, 0, scale, scale)
+			love.graphics.draw(portalimg, portalquad[portalframe], 142*scale, 70*scale, 0, scale, scale)
 			
 			love.graphics.setScissor()
 			

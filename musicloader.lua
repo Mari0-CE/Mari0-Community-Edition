@@ -67,9 +67,6 @@ function music:play(name, fast)
 	if self.loaded[name] then
 		if soundenabled then
 			self.loaded[name]:stop()
-			if loveVersion <= 8 then
-				self.loaded[name]:rewind()
-			end
 			self.loaded[name]:seek(0)
 			self.loaded[name]:setVolume(volumemusic or 1)
 			self.loaded[name]:play()
@@ -87,9 +84,7 @@ function music:stop(name, fast)
 	
 	if self.loaded[name] then
 		self.loaded[name]:stop()
-		if loveVersion <= 8 then
-			self.loaded[name]:rewind()
-		end
+		self.loaded[name]:seek(0)
 	end
 end
 

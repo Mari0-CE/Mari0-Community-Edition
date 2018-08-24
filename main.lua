@@ -45,42 +45,6 @@ function love.run()
 
 	MUSICFIX = loveVersion < 11 and "static" or "stream"
 
-	if loveVersion < 9 then
-		--Cheap af but I don't care, COMPATIBILITY!!!
-		love.math = {}
-		love.math.setRandomSeed = math.randomseed
-		love.math.random = math.random
-		
-		love.window = {}
-		love.window.setMode = love.graphics.setMode
-		love.window.getMode = love.graphics.getMode
-		love.window.setTitle = love.graphics.setCaption
-		love.window.setIcon = love.graphics.setIcon
-		love.window.getFullscreenModes = love.graphics.getModes
-		
-		love.filesystem.getDirectoryItems = love.filesystem.enumerate
-		love.filesystem.createDirectory = love.filesystem.mkdir
-		
-		love.graphics.setDefaultFilter = love.graphics.setDefaultImageFilter
-		love.graphics.origin = function() --Don't kill me for being cheap
-			local ptimes = 0
-			local ok, msg = pcall(love.graphics.pull)
-			if not ok then
-				return
-			else
-				while ok do
-					ptimes = ptimes + 1
-					ok, msg = pcall(love.graphics.pull)
-				end
-				for i = 1, ptimes do
-					love.graphics.push()
-				end
-			end
-		end
-		
-		love.mouse.setGrabbed = love.mouse.setGrab
-	end
-
 	love.math.setRandomSeed(os.time())
 	for i=1, 2 do 
 		love.math.random() 
@@ -267,11 +231,6 @@ function love.load(arg)
 	math.mod = math.fmod
 	math.random = love.math.random
 	
-	--blame slime
-	if loveVersion >= 9 then
-		love.graphics.drawq = love.graphics.draw
-	end
-	
 	print("Loading Mari0 SE!")
 	print("=======================")
 	lastline = debug.getinfo(1).currentline
@@ -381,9 +340,6 @@ function love.load(arg)
 	end
 	
 	iconimg = love.image.newImageData("graphics/icon.png")
-	if loveVersion < 9 then
-		iconimg = love.graphics.newImage("graphics/icon.png")
-	end
 	love.window.setIcon(iconimg)
 	
 	love.graphics.setDefaultFilter("nearest", "nearest")
@@ -999,11 +955,6 @@ function love.load(arg)
 		soundlist[v] = {}
 		soundlist[v].source = love.audio.newSource("sounds/" .. v .. ".ogg", MUSICFIX)
 		soundlist[v].lastplayed = 0
-		if loveVersion < 9 then
-			soundlist[v].isPlaying = function (self)
-				return not self:isStopped()
-			end
-		end
 	end
 	
 	soundlist["scorering"].source:setLooping(true)
@@ -2094,13 +2045,13 @@ function properprint(s, x, y, sc)
 		else
 			local char = string.sub(s, i, i)
 			if string.sub(s, i, i+3) == "_dir" and tonumber(string.sub(s, i+4, i+4)) then
-				love.graphics.drawq(directionsimg, directionsquad[tonumber(string.sub(s, i+4, i+4))], x+((i-1)*8+1)*scale, y, 0, scale, scale)
+				love.graphics.draw(directionsimg, directionsquad[tonumber(string.sub(s, i+4, i+4))], x+((i-1)*8+1)*scale, y, 0, scale, scale)
 				skip = 4
 			elseif char == "|" then
 				x = startx-((i)*8)*scale
 				y = y + 10*scale
 			elseif fontquads[char] then
-				love.graphics.drawq(fontimage, fontquads[char], x+((i-1)*8+1)*scale, y, 0, scale, scale)
+				love.graphics.draw(fontimage, fontquads[char], x+((i-1)*8+1)*scale, y, 0, scale, scale)
 			end
 		end
 	end
@@ -2119,7 +2070,7 @@ function properprintbackground(s, x, y, include, color, sc)
 				x = startx-((i)*8)*scale
 				y = y + 10*scale
 			elseif fontquadsback[char] then
-				love.graphics.drawq(fontimageback, fontquadsback[char], x+((i-1)*8)*scale, y-1*scale, 0, scale, scale)
+				love.graphics.draw(fontimageback, fontquadsback[char], x+((i-1)*8)*scale, y-1*scale, 0, scale, scale)
 			end
 		end
 	end

@@ -180,7 +180,7 @@ function portal:draw()
 			end
 			
 			love.graphics.setColor(unpack(self["portal" .. i .. "color"]))
-			love.graphics.drawq(portalimg, portalquad[self.portalframe], math.floor(((self["x" .. i]-1-xscroll)*16+offsetx)*scale), math.floor(((self["y" .. i]-yscroll-1)*16+offsety)*scale), rotation, scale*self.openscale[i], scale, 16, 8)
+			love.graphics.draw(portalimg, portalquad[self.portalframe], math.floor(((self["x" .. i]-1-xscroll)*16+offsetx)*scale), math.floor(((self["y" .. i]-yscroll-1)*16+offsety)*scale), rotation, scale*self.openscale[i], scale, 16, 8)
 		end
 	end
 end

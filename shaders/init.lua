@@ -99,12 +99,12 @@ local function CreateShaderPass()
 			
 			if fullscreen then
 				if fullscreenmode == "full" then
-					love.graphics.drawq(self.canvas.canvas, self.canvas.quad, 0, 0, 0, desktopsize.width/(width*16*scale), desktopsize.height/(height*16*scale))
+					love.graphics.draw(self.canvas.canvas, self.canvas.quad, 0, 0, 0, desktopsize.width/(width*16*scale), desktopsize.height/(height*16*scale))
 				else
-					love.graphics.drawq(self.canvas.canvas, self.canvas.quad, 0, touchfrominsidemissing/2, 0, touchfrominsidescaling/scale, touchfrominsidescaling/scale)
+					love.graphics.draw(self.canvas.canvas, self.canvas.quad, 0, touchfrominsidemissing/2, 0, touchfrominsidescaling/scale, touchfrominsidescaling/scale)
 				end
 			else
-				love.graphics.drawq(self.canvas.canvas, self.canvas.quad, 0, 0)
+				love.graphics.draw(self.canvas.canvas, self.canvas.quad, 0, 0)
 			end
 		end
 	end

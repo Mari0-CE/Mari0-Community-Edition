@@ -59,7 +59,7 @@ function pushbutton:draw()
 		r = math.pi*1.5
 	end
 	
-	love.graphics.drawq(pushbuttonimg, pushbuttonquad[quad], math.floor((self.cox-0.5-xscroll)*16*scale), (self.coy-yscroll-1)*16*scale, r, horscale, scale, 8, 8)
+	love.graphics.draw(pushbuttonimg, pushbuttonquad[quad], math.floor((self.cox-0.5-xscroll)*16*scale), (self.coy-yscroll-1)*16*scale, r, horscale, scale, 8, 8)
 end
 
 function pushbutton:addoutput(a, t)

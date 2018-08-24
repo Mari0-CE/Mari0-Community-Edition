@@ -541,9 +541,7 @@ function mario:update(dt)
 				if mariotime <= 0 then
 					subtractscore = false
 					soundlist["scorering"].source:stop()
-					if loveVersion <= 8 then
-						soundlist["scorering"].source:rewind()
-					end
+					soundlist["scorering"].source:seek(0)
 					castleflagmove = true
 					mariotime = 0
 				end
@@ -1096,17 +1094,11 @@ function mario:update(dt)
 		end
 		
 		local soundPlaying
-		if loveVersion > 8 then --Love 0.9.x added Source:isPlaying(), so 0.8.x crashed here
-			soundPlaying = soundlist["planemode"].source:isPlaying()
-		else
-			soundPlaying = soundlist["planemode"].source:isStopped()
-		end
+		soundPlaying = soundlist["planemode"].source:isPlaying()
 		
 		if not self.raccoonjump and self.raccoontimer == 0 and soundPlaying then 
 			soundlist["planemode"].source:stop()
-			if loveVersion <= 8 then
-				soundlist["planemode"].source:rewind()
-			end
+			soundlist["planemode"].source:seek(0)
 		end
 		
 		if self.raccoonascendtimer > 0 then
