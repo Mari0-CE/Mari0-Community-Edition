@@ -5362,7 +5362,7 @@ function checkkey(s)
 				return false
 			end
 		elseif s[3] == "but" then
-			if j:sDown(s[4]) then
+			if j:isDown(s[4]) then
 				return true
 			else
 				return false
