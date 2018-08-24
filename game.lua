@@ -5331,27 +5331,28 @@ end
 
 function checkkey(s)
 	if s[1] == "joy" then
+		local j = love.joystick:getJoysticks()[s[2]]
 		if s[3] == "hat" then
-			if string.match(love.joystick.getHat(s[2], s[4]), s[5]) then
+			if string.match(j:getHat(s[4]), s[5]) then
 				return true
 			else
 				return false
 			end
 		elseif s[3] == "but" then
-			if love.joystick.isDown(s[2], s[4]) then
+			if j:sDown(s[4]) then
 				return true
 			else
 				return false
 			end
 		elseif s[3] == "axe" then
 			if s[5] == "pos" then
-				if love.joystick.getAxis(s[2], s[4]) > joystickdeadzone then
+				if j:getAxis(s[4]) > joystickdeadzone then
 					return true
 				else
 					return false
 				end
 			else
-				if love.joystick.getAxis(s[2], s[4]) < -joystickdeadzone then
+				if j:getAxis(s[4]) < -joystickdeadzone then
 					return true
 				else
 					return false
