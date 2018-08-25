@@ -113,7 +113,7 @@ end
 
 function love.errhand(msg)
 	msg = tostring(msg)
-	uphold(msg)
+	
 	local trace = debug.traceback()
 
 	local err = {}
