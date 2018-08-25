@@ -3369,6 +3369,8 @@ end
 
 function mario:pickupbox(box)
 	self.pickup = box
+	box.speedx = 0
+	box.speedy = 0
 end
 
 function mario:dropbox()
