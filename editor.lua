@@ -33,7 +33,7 @@ function editor_load()
 	maxstates = 15
 	currentstate = 1
 	
-	tileswitcherkey = controls[1]["use"][1]
+	tileswitcherkey = controls[1]["use"][1] == "joy" and "e" or controls[1]["use"][1]
 	
 	if musiclist[#musiclist] ~= "princessmusic.ogg" then
 		musiclist[#musiclist+1] = "princessmusic.ogg"
