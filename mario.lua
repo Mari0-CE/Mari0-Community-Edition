@@ -1216,8 +1216,8 @@ function mario:updateangle()
 	elseif #controls[self.playernumber]["aimx"] > 0 then
 		local x, y
 		
-		local j = love.joystick.getJoysticks()[s[2]]
 		local s = controls[self.playernumber]["aimx"]
+		local j = love.joystick.getJoysticks()[s[2]]
 		if s[1] == "joy" then
 			x = -j:getAxis(s[4])
 			if s[5] == "neg" then
@@ -1226,6 +1226,7 @@ function mario:updateangle()
 		end
 		
 		s = controls[self.playernumber]["aimy"]
+		j = love.joystick.getJoysticks()[s[2]]
 		if s[1] == "joy" then
 			y = -j:getAxis(s[4])
 			if s[5] == "neg" then
