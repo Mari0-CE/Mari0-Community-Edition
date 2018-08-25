@@ -1039,7 +1039,7 @@ function drawui(hidetime)
 		end
 	end
 	
-	if players > 1 and gamestate ~= "menu" then
+	if players > 1 and mariolives then
 		for i = 1, players do
 			local x = (width*16)/players/2 + (width*16)/players*(i-1)
 			if mariolivecount ~= false then
