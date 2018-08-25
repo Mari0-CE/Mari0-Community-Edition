@@ -380,14 +380,42 @@ function editor_update(dt)
 		end
 	end
 	
+	if changemapwidthmenu then
+		return
+	end
+	
+	--key scroll
+	if editormenuopen == false then
+		if not (love.keyboard.isDown("lshift") or love.keyboard.isDown("rshift")) then
+			local xdir = love.keyboard.isDown("left") and -1 or (love.keyboard.isDown("right") and 1 or 0)
+			local ydir = love.keyboard.isDown("up") and -1 or (love.keyboard.isDown("down") and 1 or 0)
+			
+			--xdir
+			local oldxscroll = xscroll
+			xscroll = math.max(0, math.min(mapwidth-width, xscroll + 30*gdt*xdir))
+			splitxscroll[1] = math.max(0, math.min(mapwidth-width, splitxscroll[1]))
+			
+			--ydir
+			local oldyscroll = yscroll
+			yscroll = math.max(0, math.min(mapheight-height, yscroll + 30*gdt*ydir))
+			
+			if oldxscroll ~= xscroll or oldyscroll ~= yscroll then
+				autoscroll = false
+				guielements["autoscrollcheckbox"].var = autoscroll
+				generatespritebatch()
+				
+				if regiondragging then
+					regiondragging.movex = regiondragging.movex + (oldxscroll-xscroll)*16*scale
+					regiondragging.movey = regiondragging.movey + (oldyscroll-yscroll)*16*scale
+				end
+			end
+		end
+	end
+	
 	if regiondragging then
 		if regiondragging:update(dt) then
 			regiondragging = nil
 		end
-		return
-	end
-	
-	if changemapwidthmenu then
 		return
 	end
 	
@@ -419,52 +447,6 @@ function editor_update(dt)
 	end
 	
 	if editormenuopen == false then
-		--key scroll
-		local shiftpressed = ((love.keyboard.isDown("lshift") or love.keyboard.isDown("rshift")) and true) or false
-		
-		if love.keyboard.isDown("left") and not shiftpressed then
-			autoscroll = false
-			guielements["autoscrollcheckbox"].var = autoscroll
-			xscroll = xscroll - 30*gdt
-			if xscroll < 0 then
-				xscroll = 0
-			end
-			splitxscroll[1] = splitxscroll[1] - 30*gdt
-			if splitxscroll[1] < 0 then
-				splitxscroll[1] = 0
-			end
-			generatespritebatch()
-		elseif love.keyboard.isDown("right") and not shiftpressed then
-			autoscroll = false
-			guielements["autoscrollcheckbox"].var = autoscroll
-			xscroll = xscroll + 30*gdt
-			if xscroll > mapwidth-width then
-				xscroll = mapwidth-width
-			end
-			splitxscroll[1] = splitxscroll[1] + 30*gdt
-			if splitxscroll[1] > mapwidth-width then
-				splitxscroll[1] = mapwidth-width
-			end
-			generatespritebatch()
-		end
-		if love.keyboard.isDown("up") and not shiftpressed then
-			autoscroll = false
-			guielements["autoscrollcheckbox"].var = autoscroll
-			yscroll = yscroll - 30*gdt
-			if yscroll < 0 then
-				yscroll = 0
-			end
-			generatespritebatch()
-		elseif love.keyboard.isDown("down") and not shiftpressed then
-			autoscroll = false
-			guielements["autoscrollcheckbox"].var = autoscroll
-			yscroll = yscroll + 30*gdt
-			if yscroll > mapheight-height-1 then
-				yscroll = mapheight-height-1
-			end
-			generatespritebatch()
-		end
-		
 		if editorstate == "lightdraw" then
 			if love.mouse.isDown("l") then
 				local mousex, mousey = mouse.getPosition()
