@@ -404,7 +404,7 @@ function editor_update(dt)
 				guielements["autoscrollcheckbox"].var = autoscroll
 				generatespritebatch()
 				
-				if regiondragging then
+				if regiondragging and regiondragging.movex and regiondragging.movey then
 					regiondragging.movex = regiondragging.movex + (oldxscroll-xscroll)*16*scale
 					regiondragging.movey = regiondragging.movey + (oldyscroll-yscroll)*16*scale
 				end
