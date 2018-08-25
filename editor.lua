@@ -397,7 +397,7 @@ function editor_update(dt)
 			
 			--ydir
 			local oldyscroll = yscroll
-			yscroll = math.max(0, math.min(mapheight-height, yscroll + 30*gdt*ydir))
+			yscroll = math.max(0, math.min(mapheight-1-height, yscroll + 30*gdt*ydir))
 			
 			if oldxscroll ~= xscroll or oldyscroll ~= yscroll then
 				autoscroll = false
@@ -3064,18 +3064,23 @@ function editor_mousepressed(x, y, button)
 					id = math.min(id+1, #entitylistitems[list].entries)
 					currenttile = entitylistitems[list].entries[id].i
 				end
-			elseif animatedtilelist then
-				if currenttile > 10000 then
-					currenttile = currenttile - 1
-					if currenttile == 10000 then
-						currenttile = 10000+animatedtilecount
-					end
-				end
+			-- elseif animatedtilelist then
+				-- if currenttile > 10000 then
+					-- currenttile = currenttile - 1
+					-- if currenttile == 10000 then
+						-- currenttile = 10000+animatedtilecount
+					-- end
+				-- end
 			else
-				if currenttile > 0 then
+				if currenttile > 0 and currenttile <= 10000 then
 					currenttile = currenttile - 1
 					if currenttile == 0 then
 						currenttile = smbtilecount+portaltilecount+customtilecount
+					end
+				else
+					currenttile = currenttile - 1
+					if currenttile == 10000 then
+						currenttile = 10000+animatedtilecount
 					end
 				end
 			end
@@ -3113,18 +3118,25 @@ function editor_mousepressed(x, y, button)
 					id = math.max(1, id-1)
 					currenttile = entitylistitems[list].entries[id].i
 				end
-			elseif animatedtilelist then
-				if currenttile <= 10000+animatedtilecount then
-					currenttile = currenttile + 1
-					if currenttile == 10001+animatedtilecount then
-						currenttile = 10001
-					end
-				end
+			-- elseif animatedtilelist then
+				-- if currenttile <= 10000+animatedtilecount then
+					-- currenttile = currenttile + 1
+					-- if currenttile == 10001+animatedtilecount then
+						-- currenttile = 10001
+					-- end
+				-- end
 			else
 				if currenttile <= smbtilecount+portaltilecount+customtilecount then
 					currenttile = currenttile + 1
 					if currenttile > smbtilecount+portaltilecount+customtilecount then
 						currenttile = 1
+					end
+				else
+					if currenttile <= 10000+animatedtilecount then
+						currenttile = currenttile + 1
+						if currenttile == 10001+animatedtilecount then
+							currenttile = 10001
+						end
 					end
 				end
 			end
