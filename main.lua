@@ -1819,25 +1819,45 @@ function love.mousereleased(x, y, button)
 end
 
 function love.joystickpressed(joystick, button)
-	if keyprompt then
-		keypromptenter("joybutton", joystick, button)
-		return
+	local joysticks,found = love.joystick.getJoysticks(),false
+	for i,v in ipairs(joysticks) do
+		if v:getID() == joystick:getID() then
+			joystick,found = i,true
+			break
+		end
 	end
 	
-	if gamestate == "menu" or gamestate == "options" then
-		menu_joystickpressed(joystick, button)
-	elseif gamestate == "game" then
-		game_joystickpressed(joystick, button)
+	if found then
+		if keyprompt then
+			keypromptenter("joybutton", joystick, button)
+		elseif gamestate == "menu" or gamestate == "options" then
+			menu_joystickpressed(joystick, button)
+		elseif gamestate == "game" then
+			game_joystickpressed(joystick, button)
+		end
 	end
 end
 
 function love.joystickreleased(joystick, button)
-	if gamestate == "menu" or gamestate == "options" then
-		menu_joystickreleased(joystick, button)
-	elseif gamestate == "game" then
-		game_joystickreleased(joystick, button)
+	local joysticks,found = love.joystick.getJoysticks(),false
+	for i,v in ipairs(joysticks) do
+		if v:getID() == joystick:getID() then
+			joystick,found = i,true
+			break
+		end
+	end
+	
+	if found then
+		if gamestate == "menu" or gamestate == "options" then
+			menu_joystickreleased(joystick, button)
+		elseif gamestate == "game" then
+			game_joystickreleased(joystick, button)
+		end
 	end
 end
+
+love.gamepadpressed = love.joystickpressed
+love.gamepadreleased = love.joystickreleased
 
 function round(num, idp) --Not by me
 	local mult = 10^(idp or 0)
@@ -1944,7 +1964,7 @@ end
 
 function keyprompt_update()
 	if keyprompt then
-		local js = love.joystick:getJoysticks()
+		local js = love.joystick.getJoysticks()
 		for i = 1, prompt.joysticks do
 			for j = 1, #prompt.joystick[i].validhats do
 				local dir = js[i]:getHat(prompt.joystick[i].validhats[j])
