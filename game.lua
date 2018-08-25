@@ -5355,6 +5355,10 @@ end
 function checkkey(s)
 	if s[1] == "joy" then
 		local j = love.joystick.getJoysticks()[s[2]]
+		if not j then
+			return false
+		end
+		
 		if s[3] == "hat" then
 			if string.match(j:getHat(s[4]), s[5]) then
 				return true
@@ -5362,7 +5366,7 @@ function checkkey(s)
 				return false
 			end
 		elseif s[3] == "but" then
-			if (j:isGamepad() and j.isGamepadDown or j.isDown)(j,s[4]) then
+			if (type(s[4]) == "number" and j.isDown or j.isGamepadDown)(j,s[4]) then
 				return true
 			else
 				return false
