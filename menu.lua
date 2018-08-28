@@ -52,6 +52,8 @@ function menu_load()
 	mariolevel = 1
 	marioworld = 1
 	mariosublevel = 0
+
+	mariolives = nil
 	
 	--load 1-1 as background
 	loadbackgroundsafe("1-1.txt")
