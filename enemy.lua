@@ -145,6 +145,14 @@ function enemy:init(x, y, t, a)
 	
 	self.firstmovement = self.movement
 	self.firstanimationtype = self.animationtype
+
+	-- Apparently we now have to deal with case sensitivity.
+	-- This could definitely happen in more places, especially with custom enemies, so keep an eye out.
+	self.offsetX = self.offsetX or self.offsetx
+	self.offsetY = self.offsetY or self.offsety
+	self.quadcenterX = self.quadcenterX or self.quadcenterx
+	self.quadcenterY = self.quadcenterY or self.quadcentery
+	
 	self.startoffsetY = self.offsetY
 	self.startquadcenterY = self.quadcenterY
 	self.startoffsetY = self.offsetY

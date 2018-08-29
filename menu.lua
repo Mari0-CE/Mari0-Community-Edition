@@ -10,7 +10,7 @@ function menu_load()
 	
 	selection = 1
 	coinanimation = 1
-	love.graphics.setBackgroundColor(92, 148, 252)
+	love.graphics.setBackgroundColor(92 / 255, 148 / 255, 252 / 255)
 	scrollsmoothrate = 4
 	optionstab = 2
 	optionsselection = 1
@@ -35,7 +35,7 @@ function menu_load()
 	infmarioYspeed = 200
 	infmarioRspeed = 4
 	
-	RGBchangespeed = 200
+	RGBchangespeed = 0.8
 	huechangespeed = 0.5
 	spriteset = 1
 	
@@ -45,13 +45,15 @@ function menu_load()
 	end
 	
 	continueavailable = false
-	if love.filesystem.exists("suspend.txt") then
+	if love.filesystem.getInfo("suspend.txt") then
 		continueavailable = true
 	end
 	
 	mariolevel = 1
 	marioworld = 1
 	mariosublevel = 0
+
+	mariolives = nil
 	
 	--load 1-1 as background
 	loadbackgroundsafe("1-1.txt")
@@ -72,10 +74,10 @@ end
 function menu_update(dt)
 	--coinanimation
 	coinanimation = coinanimation + dt*6.75
-	while coinanimation > 6 do
+	while coinanimation >= 6 do
 		coinanimation = coinanimation - 5
 	end	
-	coinframe = math.floor(coinanimation)
+	coinframe = math.max(1, math.floor(coinanimation))
 	
 	--Animate animated tiles because I say so
 	for i = 1, #animatedtiles do
@@ -149,10 +151,10 @@ function menu_update(dt)
 		if characters[mariocharacter[skinningplayer]].colorables and optionsselection > 5 and optionsselection < 9 then
 			local colorRGB = optionsselection-5
 			
-			if (love.keyboard.isDown("right") or love.keyboard.isDown("d")) and mariocolors[skinningplayer][colorsetedit][colorRGB] < 255 then
+			if (love.keyboard.isDown("right") or love.keyboard.isDown("d")) and mariocolors[skinningplayer][colorsetedit][colorRGB] < 1 then
 				mariocolors[skinningplayer][colorsetedit][colorRGB] = mariocolors[skinningplayer][colorsetedit][colorRGB] + RGBchangespeed*dt
-				if mariocolors[skinningplayer][colorsetedit][colorRGB] > 255 then
-					mariocolors[skinningplayer][colorsetedit][colorRGB] = 255
+				if mariocolors[skinningplayer][colorsetedit][colorRGB] > 1 then
+					mariocolors[skinningplayer][colorsetedit][colorRGB] = 1
 				end
 			elseif (love.keyboard.isDown("left") or love.keyboard.isDown("a")) and mariocolors[skinningplayer][colorsetedit][colorRGB] > 0 then
 				mariocolors[skinningplayer][colorsetedit][colorRGB] = mariocolors[skinningplayer][colorsetedit][colorRGB] - RGBchangespeed*dt
@@ -222,22 +224,22 @@ function menu_draw()
 		local portalcolor1, portalcolor2 = portalcolor[j][1], portalcolor[j][2]
 		
 		if players == 1 then
-			portalcolor1, portalcolor2 = {60, 188, 252}, {232, 130, 30}
+			portalcolor1, portalcolor2 = {60 / 255, 188 / 255, 252 / 255}, {232 / 255, 130 / 255, 30 / 255}
 		end
 		
 		drawplayer(nil, ((startx[pid]-xscroll)*16)+8*(j-1), ((starty[pid]-yscroll)*16-12), scale,     v.smalloffsetX, v.smalloffsetY, 0, v.smallquadcenterX, v.smallquadcenterY, "idle", false, false, mariohats[j], v.animations, v.idle[angle], 0, false, false, mariocolors[j], 1, portalcolor1, portalcolor2, nil, nil, nil, nil, nil, nil, characters[mariocharacter[j]])
 	end
 	
-	love.graphics.setColor(255, 255, 255, 255)
+	love.graphics.setColor(1, 1, 1, 1)
 	drawforeground()
 	
 	if gamestate == "menu" then
 		love.graphics.draw(titleimg, 40*scale, 24*scale, 0, scale, scale)
 		
 		if updatenotification then
-			love.graphics.setColor(255, 0, 0)
+			love.graphics.setColor(1, 0, 0)
 			properprint("version outdated!|go to stabyourself.net|to download latest", 220*scale, 90*scale)
-			love.graphics.setColor(255, 255, 255, 255)
+			love.graphics.setColor(1, 1, 1, 1)
 		end
 		
 		if selection == 0 then
@@ -293,16 +295,16 @@ function menu_draw()
 		if selectworldopen then
 			love.graphics.setColor(0, 0, 0)
 			love.graphics.rectangle("fill", 30*scale, 92*scale, 200*scale, 60*scale)
-			love.graphics.setColor(255, 255, 255)
+			love.graphics.setColor(1, 1, 1)
 			drawrectangle(31, 93, 198, 58)
 			properprint("select world", 83*scale, 105*scale)
 			for i = 1, 8 do
 				if selectworldcursor == i then
-					love.graphics.setColor(255, 255, 255)
+					love.graphics.setColor(1, 1, 1)
 				elseif reachedworlds[mappack][i] then
-					love.graphics.setColor(200, 200, 200)
+					love.graphics.setColor(0.8, 0.8, 0.8)
 				elseif selectworldexists[i] then
-					love.graphics.setColor(50, 50, 50)
+					love.graphics.setColor(0.2, 0.2, 0.2)
 				else
 					love.graphics.setColor(0, 0, 0)
 				end
@@ -316,17 +318,17 @@ function menu_draw()
 		
 	elseif gamestate == "mappackmenu" then
 		--background
-		love.graphics.setColor(0, 0, 0, 100)
+		love.graphics.setColor(0, 0, 0, 0.4)
 		love.graphics.rectangle("fill", 21*scale, 16*scale, 218*scale, 200*scale)
-		love.graphics.setColor(255, 255, 255, 255)
+		love.graphics.setColor(1, 1, 1, 1)
 		
 		--set scissor
 		love.graphics.setScissor(21*scale, 16*scale, 218*scale, 200*scale)
 		
 		if loadingonlinemappacks then
-			love.graphics.setColor(0, 0, 0, 200)
+			love.graphics.setColor(0, 0, 0, 0.8)
 			love.graphics.rectangle("fill", 21*scale, 16*scale, 218*scale, 200*scale)
-			love.graphics.setColor(255, 255, 255, 255)
+			love.graphics.setColor(1, 1, 1, 1)
 			properprint("a little patience..|downloading " .. currentdownload .. " of " .. downloadcount, 50*scale, 30*scale)
 			drawrectangle(50, 55, 152, 10)
 			love.graphics.rectangle("fill", 50*scale, 55*scale, 152*((currentfiledownload-1)/(filecount-1))*scale, 10*scale)
@@ -339,9 +341,9 @@ function menu_draw()
 				love.graphics.translate(0, -round(mappackscrollsmooth*60*scale))
 				
 				love.graphics.setScissor(240*scale, 16*scale, 200*scale, 200*scale)
-				love.graphics.setColor(0, 0, 0, 200)
+				love.graphics.setColor(0, 0, 0, 0.8)
 				love.graphics.rectangle("fill", 240*scale, 81*scale, 115*scale, 61*scale)
-				love.graphics.setColor(255, 255, 255)
+				love.graphics.setColor(1, 1, 1)
 				if not savefolderfailed then
 					properprint("press right to|access the dlc||press m to|open your|mappack folder", 241*scale, 83*scale)
 				else
@@ -364,17 +366,17 @@ function menu_draw()
 					love.graphics.draw(mappackoverlay, 29*scale, (24+(i-1)*60)*scale, 0, scale, scale)
 					
 					--name
-					love.graphics.setColor(200, 200, 200)
+					love.graphics.setColor(0.8, 0.8, 0.8)
 					if mappackselection == i then
-						love.graphics.setColor(255, 255, 255)
+						love.graphics.setColor(1, 1, 1)
 					end
 					
 					properprint(string.sub(mappackname[i]:lower(), 1, 17), 83*scale, (26+(i-1)*60)*scale)
 					
 					--author
-					love.graphics.setColor(100, 100, 100)
+					love.graphics.setColor(0.4, 0.4, 0.4)
 					if mappackselection == i then
-						love.graphics.setColor(100, 100, 100)
+						love.graphics.setColor(0.4, 0.4, 0.4)
 					end
 					
 					if mappackauthor[i] then
@@ -382,9 +384,9 @@ function menu_draw()
 					end
 					
 					--description
-					love.graphics.setColor(130, 130, 130)
+					love.graphics.setColor(0.5, 0.5, 0.5)
 					if mappackselection == i then
-						love.graphics.setColor(180, 180, 180)
+						love.graphics.setColor(0.7, 0.7, 0.7)
 					end
 					
 					if mappackdescription[i] then
@@ -399,7 +401,7 @@ function menu_draw()
 						end
 					end
 					
-					love.graphics.setColor(255, 255, 255)
+					love.graphics.setColor(1, 1, 1)
 					
 					--highlight
 					if i == mappackselection then
@@ -428,18 +430,18 @@ function menu_draw()
 				end
 				
 				love.graphics.setScissor()
-				love.graphics.setColor(0, 0, 0, 200)
+				love.graphics.setColor(0, 0, 0, 0.8)
 				love.graphics.rectangle("fill", 241*scale, 16*scale, 150*scale, 200*scale)
-				love.graphics.setColor(255, 255, 255, 255)
+				love.graphics.setColor(1, 1, 1, 1)
 				properprint("wanna contribute?|make a mappack and|send an email to|mappack at|stabyourself.net!||include your map-|pack! you can find|it in your appdata|love/mari0 dir.", 244*scale, 19*scale)
 				if outdated then
-					love.graphics.setColor(255, 0, 0, 255)
+					love.graphics.setColor(1, 0, 0, 1)
 					properprint("version outdated!|you have an old|version of mari0!|mappacks could not|be downloaded.|go to|stabyourself.net|to download latest", 244*scale, 130*scale)
-					love.graphics.setColor(255, 255, 255, 255)
+					love.graphics.setColor(1, 1, 1, 1)
 				elseif downloaderror then
-					love.graphics.setColor(255, 0, 0, 255)
+					love.graphics.setColor(1, 0, 0, 1)
 					properprint("download error!|something went|wrong while|downloading|mappacks.|press left and|right to try|again.  sorry.", 244*scale, 130*scale)
-					love.graphics.setColor(255, 255, 255, 255)
+					love.graphics.setColor(1, 1, 1, 1)
 				end
 					
 				love.graphics.setScissor(21*scale, 16*scale, 218*scale, 200*scale)
@@ -459,17 +461,17 @@ function menu_draw()
 					love.graphics.draw(mappackoverlay, 29*scale, (24+(i-1)*60)*scale, 0, scale, scale)
 					
 					--name
-					love.graphics.setColor(200, 200, 200)
+					love.graphics.setColor(0.8, 0.8, 0.8)
 					if onlinemappackselection == i then
-						love.graphics.setColor(255, 255, 255)
+						love.graphics.setColor(1, 1, 1)
 					end
 					
 					properprint(string.sub(onlinemappackname[i]:lower(), 1, 17), 83*scale, (26+(i-1)*60)*scale)
 					
 					--author
-					love.graphics.setColor(100, 100, 100)
+					love.graphics.setColor(0.4, 0.4, 0.4)
 					if onlinemappackselection == i then
-						love.graphics.setColor(100, 100, 100)
+						love.graphics.setColor(0.4, 0.4, 0.4)
 					end
 					
 					if onlinemappackauthor[i] then
@@ -477,9 +479,9 @@ function menu_draw()
 					end
 					
 					--description
-					love.graphics.setColor(130, 130, 130)
+					love.graphics.setColor(0.5, 0.5, 0.5)
 					if onlinemappackselection == i then
-						love.graphics.setColor(180, 180, 180)
+						love.graphics.setColor(0.7, 0.7, 0.7)
 					end
 					
 					if onlinemappackdescription[i] then
@@ -494,7 +496,7 @@ function menu_draw()
 						end
 					end
 					
-					love.graphics.setColor(255, 255, 255)
+					love.graphics.setColor(1, 1, 1)
 					
 					--highlight
 					if i == onlinemappackselection then
@@ -515,99 +517,99 @@ function menu_draw()
 		love.graphics.setScissor()
 		
 		if mappackhorscroll == 0 then
-			love.graphics.setColor(255, 255, 255)
+			love.graphics.setColor(1, 1, 1)
 			love.graphics.rectangle("fill", 22*scale, 3*scale, 44*scale, 13*scale)
 			love.graphics.setColor(0, 0, 0)
 			properprint("local", 23*scale, 6*scale)
 			drawrectangle(22, 3, 44, 13)
 			love.graphics.setColor(0, 0, 0)
 			love.graphics.rectangle("fill", 70*scale, 3*scale, 29*scale, 13*scale)
-			love.graphics.setColor(255, 255, 255)
+			love.graphics.setColor(1, 1, 1)
 			properprint("dlc", 72*scale, 6*scale)
 		else
 			love.graphics.setColor(0, 0, 0)
 			love.graphics.rectangle("fill", 22*scale, 3*scale, 44*scale, 13*scale)
-			love.graphics.setColor(255, 255, 255)
+			love.graphics.setColor(1, 1, 1)
 			properprint("local", 23*scale, 6*scale)
-			love.graphics.setColor(255, 255, 255)
+			love.graphics.setColor(1, 1, 1)
 			love.graphics.rectangle("fill", 70*scale, 3*scale, 29*scale, 13*scale)
 			love.graphics.setColor(0, 0, 0)
 			properprint("dlc", 72*scale, 6*scale)
 			drawrectangle(70, 3, 29, 13)
 		end
 	elseif gamestate == "options" then
-		love.graphics.setColor(0, 0, 0, 200)
+		love.graphics.setColor(0, 0, 0, 0.8)
 		love.graphics.rectangle("fill", 21*scale, 16*scale, 218*scale, 200*scale)
 		
 		--Controls tab head
 		if optionstab == 1 then
-			love.graphics.setColor(100, 100, 100, 100)
+			love.graphics.setColor(0.4, 0.4, 0.4, 0.4)
 			love.graphics.rectangle("fill", 25*scale, 20*scale, 67*scale, 11*scale)
 		end
 		
 		if optionstab == 1 and optionsselection == 1 then
-			love.graphics.setColor(255, 255, 255, 255)
+			love.graphics.setColor(1, 1, 1, 1)
 		else
-			love.graphics.setColor(100, 100, 100, 255)
+			love.graphics.setColor(0.4, 0.4, 0.4, 1)
 		end
 		properprint("controls", 26*scale, 22*scale)
 		
 		--Skins tab head
 		if optionstab == 2 then
-			love.graphics.setColor(100, 100, 100, 100)
+			love.graphics.setColor(0.4, 0.4, 0.4, 0.4)
 			love.graphics.rectangle("fill", 96*scale, 20*scale, 43*scale, 11*scale)
 		end
 		
 		
 		if optionstab == 2 and optionsselection == 1 then
-			love.graphics.setColor(255, 255, 255, 255)
+			love.graphics.setColor(1, 1, 1, 1)
 		else
-			love.graphics.setColor(100, 100, 100, 255)
+			love.graphics.setColor(0.4, 0.4, 0.4, 1)
 		end
 		properprint("skins", 97*scale, 22*scale)
 		
 		--Miscellaneous tab head
 		if optionstab == 3 then
-			love.graphics.setColor(100, 100, 100, 100)
+			love.graphics.setColor(0.4, 0.4, 0.4, 0.4)
 			love.graphics.rectangle("fill", 145*scale, 20*scale, 39*scale, 11*scale)
 		end
 		
 		if optionstab == 3 and optionsselection == 1 then
-			love.graphics.setColor(255, 255, 255, 255)
+			love.graphics.setColor(1, 1, 1, 1)
 		else
-			love.graphics.setColor(100, 100, 100, 255)
+			love.graphics.setColor(0.4, 0.4, 0.4, 1)
 		end
 		properprint("misc.", 146*scale, 22*scale)
 		
 		--Cheat tab head
 		if optionstab == 4 then
-			love.graphics.setColor(100, 100, 100, 100)
+			love.graphics.setColor(0.4, 0.4, 0.4, 0.4)
 			love.graphics.rectangle("fill", 190*scale, 20*scale, 43*scale, 11*scale)
 		end
 		
 		if optionstab == 4 and optionsselection == 1 then
-			love.graphics.setColor(255, 255, 255, 255)
+			love.graphics.setColor(1, 1, 1, 1)
 		else
-			love.graphics.setColor(100, 100, 100, 255)
+			love.graphics.setColor(0.4, 0.4, 0.4, 1)
 		end
 		properprint("cheat", 191*scale, 22*scale)
 		
-		love.graphics.setColor(255, 255, 255, 255)
+		love.graphics.setColor(1, 1, 1, 1)
 		
 		if optionstab == 1 then
 			--CONTROLS
 			if optionsselection == 2 then
-				love.graphics.setColor(255, 255, 255, 255)
+				love.graphics.setColor(1, 1, 1, 1)
 			else
-				love.graphics.setColor(100, 100, 100, 255)
+				love.graphics.setColor(0.4, 0.4, 0.4, 1)
 			end
 			
 			properprint("edit player:" .. skinningplayer, 74*scale, 40*scale)
 			
 			if optionsselection == 3 then
-				love.graphics.setColor(255, 255, 255, 255)
+				love.graphics.setColor(1, 1, 1, 1)
 			else
-				love.graphics.setColor(100, 100, 100, 255)
+				love.graphics.setColor(0.4, 0.4, 0.4, 1)
 			end
 			
 			if mouseowner == skinningplayer then
@@ -619,9 +621,9 @@ function menu_draw()
 			for i = 1, #controlstable do
 				if mouseowner ~= skinningplayer or i <= 8 then		
 					if optionsselection == 3+i then
-						love.graphics.setColor(255, 255, 255, 255)
+						love.graphics.setColor(1, 1, 1, 1)
 					else
-						love.graphics.setColor(100, 100, 100, 255)
+						love.graphics.setColor(0.4, 0.4, 0.4, 1)
 					end
 					
 					properprint(controlstable[i], 30*scale, (70+(i-1)*12)*scale)
@@ -641,9 +643,9 @@ function menu_draw()
 			end
 				
 			if keyprompt then
-				love.graphics.setColor(0, 0, 0, 255)
+				love.graphics.setColor(0, 0, 0, 1)
 				love.graphics.rectangle("fill", 30*scale, 100*scale, 200*scale, 60*scale)
-				love.graphics.setColor(255, 255, 255, 255)
+				love.graphics.setColor(1, 1, 1, 1)
 				drawrectangle(30, 100, 200, 60)
 				if controlstable[optionsselection-3] == "aimx" then
 					properprint("move stick right", 40*scale, 110*scale)
@@ -655,11 +657,11 @@ function menu_draw()
 				properprint("press \"esc\" to cancel", 40*scale, 140*scale)
 				
 				if buttonerror then
-					love.graphics.setColor(200, 0, 0)
+					love.graphics.setColor(0.8, 0, 0)
 					properprint("you can only set", 40*scale, 120*scale)
 					properprint("buttons for this", 40*scale, 130*scale)
 				elseif axiserror then
-					love.graphics.setColor(200, 0, 0)
+					love.graphics.setColor(0.8, 0, 0)
 					properprint("you can only set", 40*scale, 120*scale)
 					properprint("axes for this", 40*scale, 130*scale)
 				end
@@ -667,9 +669,9 @@ function menu_draw()
 		elseif optionstab == 2 then
 			--SKINS
 			if optionsselection == 2 then
-				love.graphics.setColor(255, 255, 255, 255)
+				love.graphics.setColor(1, 1, 1, 1)
 			else
-				love.graphics.setColor(100, 100, 100, 255)
+				love.graphics.setColor(0.4, 0.4, 0.4, 1)
 			end
 			
 			properprint("edit player:" .. skinningplayer, 74*scale, 32*scale)
@@ -698,22 +700,22 @@ function menu_draw()
 			
 			local portalframe = portalanimation
 			
-			love.graphics.setColor(255, 255, 255, 80 - math.abs(portalframe-3)*10)
+			love.graphics.setColor(1, 1, 1, (80 - math.abs(portalframe-3)*10)/255)
 			love.graphics.draw(portalglowimg, 174*scale, 59*scale, math.pi, scale, scale)
 			love.graphics.draw(portalglowimg, 142*scale, 57*scale, 0, scale, scale)
 			
 			love.graphics.setColor(unpack(portalcolor[skinningplayer][1]))
-			love.graphics.drawq(portalimg, portalquad[portalframe], 174*scale, 46*scale, math.pi, scale, scale)
+			love.graphics.draw(portalimg, portalquad[portalframe], 174*scale, 46*scale, math.pi, scale, scale)
 			love.graphics.setColor(unpack(portalcolor[skinningplayer][2]))
-			love.graphics.drawq(portalimg, portalquad[portalframe], 142*scale, 70*scale, 0, scale, scale)
+			love.graphics.draw(portalimg, portalquad[portalframe], 142*scale, 70*scale, 0, scale, scale)
 			
 			love.graphics.setScissor()
 			
 			--Character change
 			if optionsselection == 3 then
-				love.graphics.setColor(255, 255, 255, 255)
+				love.graphics.setColor(1, 1, 1, 1)
 			else
-				love.graphics.setColor(100, 100, 100, 255)
+				love.graphics.setColor(0.4, 0.4, 0.4, 1)
 			end
 			
 			properprint("{", 65*scale, 54*scale)
@@ -722,9 +724,9 @@ function menu_draw()
 			
 			--HAT
 			if optionsselection == 4 then
-				love.graphics.setColor(255, 255, 255, 255)
+				love.graphics.setColor(1, 1, 1, 1)
 			else
-				love.graphics.setColor(100, 100, 100, 255)
+				love.graphics.setColor(0.4, 0.4, 0.4, 1)
 			end
 			if mariohats[skinningplayer][1] == 0 then
 				properprint("hat: none", (83)*scale, 90*scale)
@@ -734,9 +736,9 @@ function menu_draw()
 			
 			if v.colorables then
 				if optionsselection == 5 then
-					love.graphics.setColor(255, 255, 255, 255)
+					love.graphics.setColor(1, 1, 1, 1)
 				else
-					love.graphics.setColor(100, 100, 100, 255)
+					love.graphics.setColor(0.4, 0.4, 0.4, 1)
 				end
 				
 				--NEW SKIN CUSTOMIZATION
@@ -744,68 +746,68 @@ function menu_draw()
 				properprint("{ " .. v.colorables[colorsetedit] .. " }", 120*scale-string.len("{ " .. v.colorables[colorsetedit] .. " }")*4*scale, 105*scale)
 				
 				if optionsselection > 5 and optionsselection < 9 then
-					love.graphics.setColor(255, 255, 255, 255)
+					love.graphics.setColor(1, 1, 1, 1)
 					love.graphics.rectangle("fill", 39*scale, 114*scale + (optionsselection-6)*10*scale, 142*scale, 10*scale)
 				end
 			
-				love.graphics.setColor(100, 0, 0)
+				love.graphics.setColor(0.4, 0, 0)
 				properprint("r", 40*scale, (116)*scale)
-				love.graphics.setColor(255, 0, 0)	
+				love.graphics.setColor(1, 0, 0)	
 				properprint("r", 39*scale, (115)*scale)
 				
-				love.graphics.setColor(0, 100, 0)
+				love.graphics.setColor(0, 0.4, 0)
 				properprint("g", 40*scale, (126)*scale)
-				love.graphics.setColor(0, 255, 0)	
+				love.graphics.setColor(0, 1, 0)	
 				properprint("g", 39*scale, (125)*scale)
 				
-				love.graphics.setColor(0, 0, 100)
+				love.graphics.setColor(0, 0, 0.4)
 				properprint("b", 40*scale, (136)*scale)
-				love.graphics.setColor(0, 0, 255)	
+				love.graphics.setColor(0, 0, 1)	
 				properprint("b", 39*scale, (135)*scale)
 				
-				love.graphics.setColor(100, 0, 0)
-				love.graphics.rectangle("fill", 51*scale, (116)*scale, math.floor(129*scale * (mariocolors[skinningplayer][colorsetedit][1]/255)), 7*scale)
-				love.graphics.setColor(255, 0, 0)
-				love.graphics.rectangle("fill", 50*scale, (115)*scale, math.floor(129*scale * (mariocolors[skinningplayer][colorsetedit][1]/255)), 7*scale)
+				love.graphics.setColor(0.4, 0, 0)
+				love.graphics.rectangle("fill", 51*scale, (116)*scale, math.floor(129*scale * mariocolors[skinningplayer][colorsetedit][1]), 7*scale)
+				love.graphics.setColor(1, 0, 0)
+				love.graphics.rectangle("fill", 50*scale, (115)*scale, math.floor(129*scale * mariocolors[skinningplayer][colorsetedit][1]), 7*scale)
 				
-				love.graphics.setColor(100, 100, 100)
-				local s = math.floor(mariocolors[skinningplayer][colorsetedit][1])
+				love.graphics.setColor(0.4, 0.4, 0.4)
+				local s = math.floor(mariocolors[skinningplayer][colorsetedit][1] * 255)
 				properprint(s, 200*scale-string.len(s)*4*scale, 116*scale)
 				
-				love.graphics.setColor(0, 100, 0)
-				love.graphics.rectangle("fill", 51*scale, (126)*scale, math.floor(129*scale * (mariocolors[skinningplayer][colorsetedit][2]/255)), 7*scale)
-				love.graphics.setColor(0, 255, 0)
-				love.graphics.rectangle("fill", 50*scale, (125)*scale, math.floor(129*scale * (mariocolors[skinningplayer][colorsetedit][2]/255)), 7*scale)
+				love.graphics.setColor(0, 0.4, 0)
+				love.graphics.rectangle("fill", 51*scale, (126)*scale, math.floor(129*scale * mariocolors[skinningplayer][colorsetedit][2]), 7*scale)
+				love.graphics.setColor(0, 1, 0)
+				love.graphics.rectangle("fill", 50*scale, (125)*scale, math.floor(129*scale * mariocolors[skinningplayer][colorsetedit][2]), 7*scale)
 				
-				love.graphics.setColor(100, 100, 100)
-				local s = math.floor(mariocolors[skinningplayer][colorsetedit][2])
+				love.graphics.setColor(0.4, 0.4, 0.4)
+				local s = math.floor(mariocolors[skinningplayer][colorsetedit][2] * 255)
 				properprint(s, 200*scale-string.len(s)*4*scale, 126*scale)
 				
-				love.graphics.setColor(0, 0, 100)
-				love.graphics.rectangle("fill", 51*scale, (136)*scale, math.floor(129*scale * (mariocolors[skinningplayer][colorsetedit][3]/255)), 7*scale)
-				love.graphics.setColor(0, 0, 255)
-				love.graphics.rectangle("fill", 50*scale, (135)*scale, math.floor(129*scale * (mariocolors[skinningplayer][colorsetedit][3]/255)), 7*scale)
+				love.graphics.setColor(0, 0, 0.4)
+				love.graphics.rectangle("fill", 51*scale, (136)*scale, math.floor(129*scale * mariocolors[skinningplayer][colorsetedit][3]), 7*scale)
+				love.graphics.setColor(0, 0, 1)
+				love.graphics.rectangle("fill", 50*scale, (135)*scale, math.floor(129*scale * mariocolors[skinningplayer][colorsetedit][3]), 7*scale)
 				
-				love.graphics.setColor(100, 100, 100)
-				local s = math.floor(mariocolors[skinningplayer][colorsetedit][3])
+				love.graphics.setColor(0.4, 0.4, 0.4)
+				local s = math.floor(mariocolors[skinningplayer][colorsetedit][3] * 255)
 				properprint(s, 200*scale-string.len(s)*4*scale, 136*scale)
 			end
 			
 			--Portalhuehues
 			--hue
-			local alpha = 100
+			local alpha = 0.4
 			
 			if characters[mariocharacter[skinningplayer]].colorables then
 				if optionsselection == 9 then
-					alpha = 255
+					alpha = 1
 				end
 			else
 				if optionsselection == 5 then
-					alpha = 255
+					alpha = 1
 				end
 			end
 			
-			love.graphics.setColor(255, 255, 255, alpha)
+			love.graphics.setColor(1, 1, 1, alpha)
 			
 			properprint("coop portal 1 color:", 31*scale, 150*scale)
 			
@@ -817,18 +819,18 @@ function menu_draw()
 			love.graphics.setColor(alpha, alpha, alpha)
 			love.graphics.draw(huebarmarkerimg, math.floor(28 + (portalhues[skinningplayer][1])*178)*scale, 160*scale, 0, scale, scale)
 			
-			alpha = 100
+			alpha = 0.4
 			if characters[mariocharacter[skinningplayer]].colorables then
 				if optionsselection == 10 then
-					alpha = 255
+					alpha = 1
 				end
 			else
 				if optionsselection == 6 then
-					alpha = 255
+					alpha = 1
 				end
 			end
 			
-			love.graphics.setColor(255, 255, 255, alpha)
+			love.graphics.setColor(1, 1, 1, alpha)
 			
 			properprint("coop portal 2 color:", 31*scale, 180*scale)
 			
@@ -841,9 +843,9 @@ function menu_draw()
 			love.graphics.draw(huebarmarkerimg, math.floor(28 + (portalhues[skinningplayer][2])*178)*scale, 190*scale, 0, scale, scale)
 		elseif optionstab == 3 then
 			if optionsselection == 2 then
-				love.graphics.setColor(255, 255, 255, 255)
+				love.graphics.setColor(1, 1, 1, 1)
 			else
-				love.graphics.setColor(100, 100, 100, 255)
+				love.graphics.setColor(0.4, 0.4, 0.4, 1)
 			end
 			properprint("size:", 30*scale, 40*scale)
 			if fullscreen then
@@ -858,9 +860,9 @@ function menu_draw()
 			
 			
 			if optionsselection == 3 then
-				love.graphics.setColor(255, 255, 255, 255)
+				love.graphics.setColor(1, 1, 1, 1)
 			else
-				love.graphics.setColor(100, 100, 100, 255)
+				love.graphics.setColor(0.4, 0.4, 0.4, 1)
 			end
 			
 			properprint("shader1:", 30*scale, 55*scale)
@@ -871,9 +873,9 @@ function menu_draw()
 			end
 			
 			if optionsselection == 4 then
-				love.graphics.setColor(255, 255, 255, 255)
+				love.graphics.setColor(1, 1, 1, 1)
 			else
-				love.graphics.setColor(100, 100, 100, 255)
+				love.graphics.setColor(0.4, 0.4, 0.4, 1)
 			end
 			properprint("shader2:", 30*scale, 65*scale)
 			if shaderssupported == false then
@@ -882,14 +884,14 @@ function menu_draw()
 				properprint(string.lower(shaderlist[currentshaderi2]), (180-string.len(shaderlist[currentshaderi2])*8)*scale, 65*scale)
 			end
 			
-			love.graphics.setColor(100, 100, 100, 255)
+			love.graphics.setColor(0.4, 0.4, 0.4, 1)
 			properprint("shaders will really", 30*scale, 80*scale)
 			properprint("reduce performance!", 30*scale, 90*scale)
 			
 			if optionsselection == 5 then
-				love.graphics.setColor(255, 255, 255, 255)
+				love.graphics.setColor(1, 1, 1, 1)
 			else
-				love.graphics.setColor(100, 100, 100, 255)
+				love.graphics.setColor(0.4, 0.4, 0.4, 1)
 			end
 			properprint("game volume:", 30*scale, 105*scale)
 			drawrectangle(138, 108, 90, 1)
@@ -898,9 +900,9 @@ function menu_draw()
 			love.graphics.draw(volumesliderimg, math.floor((137+89*volumesfx)*scale), 105*scale, 0, scale, scale)
 			
 			if optionsselection == 6 then
-				love.graphics.setColor(255, 255, 255, 255)
+				love.graphics.setColor(1, 1, 1, 1)
 			else
-				love.graphics.setColor(100, 100, 100, 255)
+				love.graphics.setColor(0.4, 0.4, 0.4, 1)
 			end
 			properprint("music volume:", 30*scale, 120*scale)
 			drawrectangle(138, 123, 90, 1)
@@ -909,25 +911,25 @@ function menu_draw()
 			love.graphics.draw(volumesliderimg, math.floor((137+89*volumemusic)*scale), 120*scale, 0, scale, scale)
 			
 			if optionsselection == 7 then
-				love.graphics.setColor(255, 255, 255, 255)
+				love.graphics.setColor(1, 1, 1, 1)
 			else
-				love.graphics.setColor(100, 100, 100, 255)
+				love.graphics.setColor(0.4, 0.4, 0.4, 1)
 			end
 			
 			properprint("reset game mappacks", 30*scale, 135*scale)
 			
 			if optionsselection == 8 then
-				love.graphics.setColor(255, 255, 255, 255)
+				love.graphics.setColor(1, 1, 1, 1)
 			else
-				love.graphics.setColor(100, 100, 100, 255)
+				love.graphics.setColor(0.4, 0.4, 0.4, 1)
 			end
 			
 			properprint("reset all settings", 30*scale, 150*scale)
 			
 			if optionsselection == 9 then
-				love.graphics.setColor(255, 255, 255, 255)
+				love.graphics.setColor(1, 1, 1, 1)
 			else
-				love.graphics.setColor(100, 100, 100, 255)
+				love.graphics.setColor(0.4, 0.4, 0.4, 1)
 			end
 			
 			properprint("vsync:", 30*scale, 165*scale)
@@ -937,13 +939,13 @@ function menu_draw()
 				properprint("off", (180-24)*scale, 165*scale)
 			end
 			
-			love.graphics.setColor(100, 100, 100, 255)
+			love.graphics.setColor(0.4, 0.4, 0.4, 1)
 			properprint("you can lock the|mouse with f12", 30*scale, 180*scale)
 			
-			love.graphics.setColor(255, 255, 255, 255)
+			love.graphics.setColor(1, 1, 1, 1)
 			properprint(versionstring, 134*scale, 207*scale)
 		elseif optionstab == 4 then
-			love.graphics.setColor(255, 255, 255, 255)
+			love.graphics.setColor(1, 1, 1, 1)
 			if not gamefinished then
 				properprint("unlock this by completing", 30*scale, 40*scale)
 				properprint("the original levels pack!", 30*scale, 50*scale)
@@ -952,18 +954,18 @@ function menu_draw()
 			end
 			
 			if optionsselection == 2 then
-				love.graphics.setColor(255, 255, 255, 255)
+				love.graphics.setColor(1, 1, 1, 1)
 			else
-				love.graphics.setColor(100, 100, 100, 255)
+				love.graphics.setColor(0.4, 0.4, 0.4, 1)
 			end
 			
 			properprint("mode:", 30*scale, 65*scale)
 			properprint("{" .. playertype .. "}", (180-(string.len(playertype)+2)*8)*scale, 65*scale)
 			
 			if optionsselection == 3 then
-				love.graphics.setColor(255, 255, 255, 255)
+				love.graphics.setColor(1, 1, 1, 1)
 			else
-				love.graphics.setColor(100, 100, 100, 255)
+				love.graphics.setColor(0.4, 0.4, 0.4, 1)
 			end
 			
 			properprint("knockback:", 30*scale, 80*scale)
@@ -974,9 +976,9 @@ function menu_draw()
 			end
 			
 			if optionsselection == 4 then
-				love.graphics.setColor(255, 255, 255, 255)
+				love.graphics.setColor(1, 1, 1, 1)
 			else
-				love.graphics.setColor(100, 100, 100, 255)
+				love.graphics.setColor(0.4, 0.4, 0.4, 1)
 			end
 			
 			properprint("bullettime:", 30*scale, 95*scale)
@@ -988,9 +990,9 @@ function menu_draw()
 			end
 			
 			if optionsselection == 5 then
-				love.graphics.setColor(255, 255, 255, 255)
+				love.graphics.setColor(1, 1, 1, 1)
 			else
-				love.graphics.setColor(100, 100, 100, 255)
+				love.graphics.setColor(0.4, 0.4, 0.4, 1)
 			end
 			
 			properprint("huge mario:", 30*scale, 120*scale)
@@ -1001,9 +1003,9 @@ function menu_draw()
 			end
 			
 			if optionsselection == 6 then
-				love.graphics.setColor(255, 255, 255, 255)
+				love.graphics.setColor(1, 1, 1, 1)
 			else
-				love.graphics.setColor(100, 100, 100, 255)
+				love.graphics.setColor(0.4, 0.4, 0.4, 1)
 			end
 			
 			properprint("goomba attack:", 30*scale, 135*scale)
@@ -1014,9 +1016,9 @@ function menu_draw()
 			end
 			
 			if optionsselection == 7 then
-				love.graphics.setColor(255, 255, 255, 255)
+				love.graphics.setColor(1, 1, 1, 1)
 			else
-				love.graphics.setColor(100, 100, 100, 255)
+				love.graphics.setColor(0.4, 0.4, 0.4, 1)
 			end
 			
 			properprint("sonic rainboom:", 30*scale, 150*scale)
@@ -1027,9 +1029,9 @@ function menu_draw()
 			end
 			
 			if optionsselection == 8 then
-				love.graphics.setColor(255, 255, 255, 255)
+				love.graphics.setColor(1, 1, 1, 1)
 			else
-				love.graphics.setColor(100, 100, 100, 255)
+				love.graphics.setColor(0.4, 0.4, 0.4, 1)
 			end
 			
 			properprint("playercollision:", 30*scale, 165*scale)
@@ -1040,9 +1042,9 @@ function menu_draw()
 			end
 			
 			if optionsselection == 9 then
-				love.graphics.setColor(255, 255, 255, 255)
+				love.graphics.setColor(1, 1, 1, 1)
 			else
-				love.graphics.setColor(100, 100, 100, 255)
+				love.graphics.setColor(0.4, 0.4, 0.4, 1)
 			end
 			
 			properprint("infinite time:", 30*scale, 180*scale)
@@ -1053,9 +1055,9 @@ function menu_draw()
 			end
 			
 			if optionsselection == 10 then
-				love.graphics.setColor(255, 255, 255, 255)
+				love.graphics.setColor(1, 1, 1, 1)
 			else
-				love.graphics.setColor(100, 100, 100, 255)
+				love.graphics.setColor(0.4, 0.4, 0.4, 1)
 			end
 			
 			properprint("infinite lives:", 30*scale, 195*scale)
@@ -1135,7 +1137,7 @@ function loadbackground(backgroundlevel)
 	itemanimations = {}
 	textentities = {}
 	
-	if love.filesystem.exists("mappacks/" .. mappack .. "/" .. backgroundlevel) == false then
+	if not love.filesystem.getInfo("mappacks/" .. mappack .. "/" .. backgroundlevel) then
 		return false
 	else
 		loadmap(backgroundlevel:sub(1, -5))
@@ -1200,7 +1202,7 @@ function loadmappacks()
 	
 	local delete = {}
 	for i = 1, #mappacklist do
-		if love.filesystem.exists( "mappacks/" .. mappacklist[i] .. "/version.txt") or not love.filesystem.exists( "mappacks/" .. mappacklist[i] .. "/settings.txt") then
+		if love.filesystem.getInfo( "mappacks/" .. mappacklist[i] .. "/version.txt") or not love.filesystem.getInfo( "mappacks/" .. mappacklist[i] .. "/settings.txt") then
 			table.insert(delete, i)
 		end
 	end
@@ -1220,7 +1222,7 @@ function loadmappacks()
 	mappackbackground = {}
 	
 	for i = 1, #mappacklist do
-		if love.filesystem.exists( "mappacks/" .. mappacklist[i] .. "/icon.png" ) then
+		if love.filesystem.getInfo( "mappacks/" .. mappacklist[i] .. "/icon.png" ) then
 			mappackicon[i] = love.graphics.newImage("mappacks/" .. mappacklist[i] .. "/icon.png")
 		else
 			mappackicon[i] = nil
@@ -1228,7 +1230,7 @@ function loadmappacks()
 		
 		mappackauthor[i] = ""
 		mappackdescription[i] = ""
-		if love.filesystem.exists( "mappacks/" .. mappacklist[i] .. "/settings.txt" ) then		
+		if love.filesystem.getInfo( "mappacks/" .. mappacklist[i] .. "/settings.txt" ) then		
 			local s = love.filesystem.read( "mappacks/" .. mappacklist[i] .. "/settings.txt" )
 			local s1 = s:split("\n")
 			for j = 1, #s1 do
@@ -1275,7 +1277,7 @@ function loadonlinemappacks()
 	
 	local delete = {}
 	for i = 1, #onlinemappacklist do
-		if not love.filesystem.exists( "mappacks/" .. onlinemappacklist[i] .. "/version.txt") or not love.filesystem.exists( "mappacks/" .. onlinemappacklist[i] .. "/settings.txt") then
+		if not love.filesystem.getInfo( "mappacks/" .. onlinemappacklist[i] .. "/version.txt") or not love.filesystem.getInfo( "mappacks/" .. onlinemappacklist[i] .. "/settings.txt") then
 			table.insert(delete, i)
 		end
 	end
@@ -1295,7 +1297,7 @@ function loadonlinemappacks()
 	onlinemappackbackground = {}
 	
 	for i = 1, #onlinemappacklist do
-		if love.filesystem.exists( "mappacks/" .. onlinemappacklist[i] .. "/icon.png" ) then
+		if love.filesystem.getInfo( "mappacks/" .. onlinemappacklist[i] .. "/icon.png" ) then
 			onlinemappackicon[i] = love.graphics.newImage("mappacks/" .. onlinemappacklist[i] .. "/icon.png")
 		else
 			onlinemappackicon[i] = nil
@@ -1303,7 +1305,7 @@ function loadonlinemappacks()
 		
 		onlinemappackauthor[i] = nil
 		onlinemappackdescription[i] = nil
-		if love.filesystem.exists( "mappacks/" .. onlinemappacklist[i] .. "/settings.txt" ) then		
+		if love.filesystem.getInfo( "mappacks/" .. onlinemappacklist[i] .. "/settings.txt" ) then		
 			local s = love.filesystem.read( "mappacks/" .. onlinemappacklist[i] .. "/settings.txt" )
 			local s1 = s:split("\n")
 			for j = 1, #s1 do
@@ -1379,7 +1381,7 @@ function downloadmappacks()
 	for i = 1, #maplist do
 		--check if current version is equal or newer
 		local version = 0
-		if love.filesystem.exists("mappacks/" .. maplist[i] .. "/version.txt") then
+		if love.filesystem.getInfo("mappacks/" .. maplist[i] .. "/version.txt") then
 			local data = love.filesystem.read("mappacks/" .. maplist[i] .. "/version.txt")
 			if data then
 				version = tonumber(data)
@@ -1393,7 +1395,7 @@ function downloadmappacks()
 			currentdownload = i
 			downloadcount = #maplist
 			
-			if love.filesystem.exists("mappacks/" .. maplist[i] .. "/") then
+			if love.filesystem.getInfo("mappacks/" .. maplist[i] .. "/") then
 				love.filesystem.remove("mappacks/" .. maplist[i] .. "/")
 			end
 			
@@ -1451,7 +1453,7 @@ function downloadmappacks()
 		
 		--Delete stuff and stuff.
 		if not success then
-			if love.filesystem.exists("mappacks/" .. maplist[i] .. "/") then
+			if love.filesystem.getInfo("mappacks/" .. maplist[i] .. "/") then
 				local list = love.filesystem.getDirectoryItems("mappacks/" .. maplist[i] .. "/")
 				for j = 1, #list do
 					love.filesystem.remove("mappacks/" .. maplist[i] .. "/" .. list[j])
@@ -1913,6 +1915,14 @@ function menu_joystickreleased(joystick, button)
 
 end
 
+function menu_joystickaxis(joystick, axis, value, stickmoved, shouldermoved)
+
+end
+
+function menu_joystickhat(joystick, hat, direction)
+
+end
+
 function keypromptenter(t, ...)
 	arg = {...}
 	if t == "key" and (arg[1] == ";" or arg[1] == "," or arg[1] == "," or arg[1] == "-") then
@@ -1920,7 +1930,7 @@ function keypromptenter(t, ...)
 	end
 	buttonerror = false
 	axiserror = false
-	local buttononly = {"run", "jump", "reload", "use", "portal1", "portal2"}
+	local buttononly = {"run", "jump", "reload", "use"}
 	local axisonly = {"aimx", "aimy"}
 	if t ~= "key" or arg[1] ~= "escape" then
 		if t == "key" then
@@ -2016,7 +2026,7 @@ function reset_mappacks()
 end
 
 function delete_mappack(pack)
-	if not love.filesystem.exists("mappacks/" .. pack .. "/") then
+	if not love.filesystem.getInfo("mappacks/" .. pack .. "/") then
 		return false
 	end
 	
@@ -2030,7 +2040,7 @@ end
 
 function createmappack()
 	local i = 1
-	while love.filesystem.exists("mappacks/custom_mappack_" .. i .. "/") do
+	while love.filesystem.getInfo("mappacks/custom_mappack_" .. i .. "/") do
 		i = i + 1
 	end
 	
@@ -2089,7 +2099,7 @@ function selectworld()
 	
 	selectworldexists = {}
 	for i = 1, 8 do
-		if love.filesystem.exists("mappacks/" .. mappack .. "/" .. i .. "-1.txt") then
+		if love.filesystem.getInfo("mappacks/" .. mappack .. "/" .. i .. "-1.txt") then
 			selectworldexists[i] = true
 		end
 	end

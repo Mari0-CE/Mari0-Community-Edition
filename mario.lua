@@ -106,8 +106,8 @@ function mario:init(x, y, i, animation, size, t)
 	self.customscissor = false
 	
 	if players == 1 and not arcade then
-		self.portal1color = {60, 188, 252}
-		self.portal2color = {232, 130, 30}
+		self.portal1color = {60 / 255, 188 / 255, 252 / 255}
+		self.portal2color = {232 / 255, 130 / 255, 30 / 255}
 	else
 		self.portal1color = portalcolor[self.playernumber][1]
 		self.portal2color = portalcolor[self.playernumber][2]
@@ -541,6 +541,7 @@ function mario:update(dt)
 				if mariotime <= 0 then
 					subtractscore = false
 					soundlist["scorering"].source:stop()
+					soundlist["scorering"].source:seek(0)
 					castleflagmove = true
 					mariotime = 0
 				end
@@ -1092,8 +1093,12 @@ function mario:update(dt)
 			end
 		end
 		
-		if not self.raccoonjump and self.raccoontimer == 0 and not soundlist["planemode"].source:isStopped() then
+		local soundPlaying
+		soundPlaying = soundlist["planemode"].source:isPlaying()
+		
+		if not self.raccoonjump and self.raccoontimer == 0 and soundPlaying then 
 			soundlist["planemode"].source:stop()
+			soundlist["planemode"].source:seek(0)
 		end
 		
 		if self.raccoonascendtimer > 0 then
@@ -1204,16 +1209,18 @@ function mario:updateangle()
 		local x, y
 		
 		local s = controls[self.playernumber]["aimx"]
+		local j = love.joystick.getJoysticks()[s[2]]
 		if s[1] == "joy" then
-			x = -love.joystick.getAxis(s[2], s[4])
+			x = j and -j:getAxis(s[4]) or 0
 			if s[5] == "neg" then
 				x = -x
 			end
 		end
 		
 		s = controls[self.playernumber]["aimy"]
+		j = love.joystick.getJoysticks()[s[2]]
 		if s[1] == "joy" then
-			y = -love.joystick.getAxis(s[2], s[4])
+			y = j and -j:getAxis(s[4]) or 0
 			if s[5] == "neg" then
 				y = -y
 			end
@@ -3362,6 +3369,8 @@ end
 
 function mario:pickupbox(box)
 	self.pickup = box
+	box.speedx = 0
+	box.speedy = 0
 end
 
 function mario:dropbox()
@@ -3489,7 +3498,7 @@ end
 
 function mario:savereplaydata()
 	local i = 1
-	while love.filesystem.exists("replay" .. i .. ".txt") do
+	while love.filesystem.getInfo("replay" .. i .. ".txt") do
 		i = i + 1
 	end
 	

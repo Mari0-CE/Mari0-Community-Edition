@@ -43,7 +43,7 @@ function actionblock:draw()
 	if self.state == "on" then
 		q = 2
 	end
-	love.graphics.drawq(actionblockimg, wallindicatorquad[q], math.floor((self.x-xscroll)*16*scale), math.floor((self.y-.5-yscroll-bounceyoffset)*16*scale), 0, scale, scale)
+	love.graphics.draw(actionblockimg, wallindicatorquad[q], math.floor((self.x-xscroll)*16*scale), math.floor((self.y-.5-yscroll-bounceyoffset)*16*scale), 0, scale, scale)
 end
 
 function actionblock:floorcollide(a, b, c, d)

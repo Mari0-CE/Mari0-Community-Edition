@@ -12,7 +12,7 @@ function loadhat(path)
 		return
 	end
 	
-	if not love.filesystem.exists("hats/" .. s1[7] .. ".png") or not love.filesystem.exists("hats/" .. s1[8] .. ".png") then
+	if not love.filesystem.getInfo("hats/" .. s1[7] .. ".png") or not love.filesystem.getInfo("hats/" .. s1[8] .. ".png") then
 		return
 	end
 	

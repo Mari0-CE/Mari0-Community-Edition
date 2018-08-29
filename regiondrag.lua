@@ -102,9 +102,9 @@ function regiondrag:draw()
 	end
 	
 	if high == 5 or self.grabbed == 5 then
-		love.graphics.setColor(255, 255, 255, 100)
+		love.graphics.setColor(1, 1, 1, 0.4)
 	else
-		love.graphics.setColor(255, 127, 39, 100)
+		love.graphics.setColor(1, 0.5, 0.15, 0.4)
 	end
 	love.graphics.rectangle("fill", (self.x-xscroll)*16*scale, (self.y-yscroll-.5)*16*scale, self.width*16*scale, self.height*16*scale)
 	
@@ -114,9 +114,9 @@ function regiondrag:draw()
 		local x, y
 		
 		if i == self.grabbed or (self.grabbed == 0 and high == i) then
-			love.graphics.setColor(255, 255, 255, 200)
+			love.graphics.setColor(1, 1, 1, 0.8)
 		else
-			love.graphics.setColor(222, 97, 29, 200)
+			love.graphics.setColor(0.87, 0.4, 0.11, 0.8)
 		end
 		
 		if i == 1 then

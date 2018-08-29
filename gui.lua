@@ -78,11 +78,11 @@ function guielement:init(...)
 		self.repeatwaittimer = self.repeatwait
 		self.repeatdelaytimer = self.repeatdelay
 		
-		self.bordercolorhigh = {255, 255, 255}
-		self.bordercolor = {127, 127, 127}
+		self.bordercolorhigh = {1, 1, 1}
+		self.bordercolor = {0.5, 0.5, 0.5}
 		
 		self.fillcolor = {0, 0, 0}
-		self.textcolor = {255, 255, 255}
+		self.textcolor = {1, 1, 1}
 		
 	elseif arg[1] == "scrollbar" then --scrollbar(x, y, range, width, height, default, dir, display, min, max, step, mousewheel)
 		self.type = arg[1]
@@ -107,9 +107,9 @@ function guielement:init(...)
 			self.xrange = self.range - self.width
 		end	
 		
-		self.backgroundcolor = {127, 127, 127}
-		self.bordercolorhigh = {255, 255, 255}
-		self.bordercolor = {127, 127, 127}
+		self.backgroundcolor = {0.5, 0.5, 0.5}
+		self.bordercolorhigh = {1, 1, 1}
+		self.bordercolor = {0.5, 0.5, 0.5}
 		
 		self.fillcolor = {0, 0, 0}
 	elseif arg[1] == "input" then --input(x, y, width, enterfunc, start, maxlength, height, numerical, spacing)
@@ -139,17 +139,17 @@ function guielement:init(...)
 			end
 		end
 		
-		self.bordercolorhigh = {255, 255, 255}
-		self.bordercolor = {127, 127, 127}
+		self.bordercolorhigh = {1, 1, 1}
+		self.bordercolor = {0.5, 0.5, 0.5}
 		
 		self.fillcolor = {0, 0, 0}
-		self.textcolor = {255, 255, 255}
+		self.textcolor = {1, 1, 1}
 	elseif arg[1] == "text" then --(x, y, s, color)
 		self.type = arg[1]
 		self.x = arg[2]
 		self.y = arg[3]
 		self.value = arg[4] or ""
-		self.color = arg[5] or {255, 255, 255}
+		self.color = arg[5] or {1, 1, 1}
 	elseif arg[1] == "submenu" then
 		self.type = arg[1]
 		self.x = arg[2]
@@ -249,7 +249,7 @@ function guielement:draw(a, offx, offy)
 	local drawx = self.x + (offx or 0)
 	local drawy = self.y + (offy or 0)
 	
-	love.graphics.setColor(255, 255, 255, a)
+	love.graphics.setColor(1, 1, 1, a)
 	if self.type == "checkbox" then
 		local quad = 1
 		if self.var == true then
@@ -260,7 +260,7 @@ function guielement:draw(a, offx, offy)
 			high = 2
 		end
 		
-		love.graphics.drawq(checkboximg, checkboxquad[high][quad], drawx*scale, drawy*scale, 0, scale, scale)
+		love.graphics.draw(checkboximg, checkboxquad[high][quad], drawx*scale, drawy*scale, 0, scale, scale)
 		
 		if self.text then
 			properprint(self.text, (drawx+10)*scale, (drawy+1)*scale)
@@ -269,13 +269,13 @@ function guielement:draw(a, offx, offy)
 		local high = self:inhighlight(mouse.getPosition()) or (self.scrollbar and self.scrollbar.dragging)
 		
 		if self.extended then
-			love.graphics.setColor(127, 127, 127, a)
+			love.graphics.setColor(0.5, 0.5, 0.5, a)
 			love.graphics.rectangle("fill", (drawx+2)*scale, (drawy+2)*scale, (13+self.width*8)*scale, (10*(#self.entries+1)+1)*scale)
 		end
 		
-		love.graphics.setColor(127, 127, 127, a)
+		love.graphics.setColor(0.5, 0.5, 0.5, a)
 		if high then
-			love.graphics.setColor(255, 255, 255, a)
+			love.graphics.setColor(1, 1, 1, a)
 		end
 		
 		love.graphics.rectangle("fill", drawx*scale, drawy*scale, (3+self.width*8)*scale, 11*scale)
@@ -284,9 +284,9 @@ function guielement:draw(a, offx, offy)
 		love.graphics.setColor(0, 0, 0, a)
 		love.graphics.rectangle("fill", (drawx+1)*scale, (drawy+1)*scale, (1+self.width*8)*scale, 9*scale)
 		
-		love.graphics.setColor(255, 255, 255, a)
+		love.graphics.setColor(1, 1, 1, a)
 		if self.extended then
-			love.graphics.setColor(127, 127, 127, a)
+			love.graphics.setColor(0.5, 0.5, 0.5, a)
 		end
 		local s = self.entries[self.var]
 		if self.cutoff then
@@ -296,9 +296,9 @@ function guielement:draw(a, offx, offy)
 		properprint(s, (drawx+1)*scale, (drawy+2)*scale)
 	
 		if self.extended then
-			love.graphics.setColor(127, 127, 127, a)
+			love.graphics.setColor(0.5, 0.5, 0.5, a)
 			if high then
-				love.graphics.setColor(255, 255, 255, a)
+				love.graphics.setColor(1, 1, 1, a)
 			end
 			
 			love.graphics.rectangle("fill", drawx*scale, (drawy+11)*scale, (13+self.width*8)*scale, (10*#self.entries)*scale)
@@ -312,7 +312,7 @@ function guielement:draw(a, offx, offy)
 				if high ~= i then
 					love.graphics.setColor(0, 0, 0, a)
 					love.graphics.rectangle("fill", (drawx+1)*scale, (drawy+1+i*10)*scale, (11+self.width*8)*scale, 9*scale)
-					love.graphics.setColor(255, 255, 255, a)
+					love.graphics.setColor(1, 1, 1, a)
 					properprint(s, (drawx+1)*scale, (drawy+2+10*i)*scale)
 				else
 					love.graphics.setColor(0, 0, 0, a)
@@ -390,7 +390,7 @@ function guielement:draw(a, offx, offy)
 			love.graphics.rectangle("fill", (drawx+1+self.xrange*self.internvalue)*scale, (drawy+1)*scale, (self.width-2)*scale, (self.height-2)*scale)
 			
 			if self.displaynumber then
-				love.graphics.setColor(255, 255, 255, a)
+				love.graphics.setColor(1, 1, 1, a)
 				properprint(formatscrollnumber(self.value), math.floor((drawx+self.xrange*self.internvalue)*scale), (drawy+1)*scale)
 			end
 		end
@@ -457,9 +457,9 @@ function guielement:draw(a, offx, offy)
 	elseif self.type == "submenu" then
 		local high = self:inhighlight(mouse.getPosition()) or (self.scrollbar and self.scrollbar.dragging)
 	
-		love.graphics.setColor(127, 127, 127, a)
+		love.graphics.setColor(0.5, 0.5, 0.5, a)
 		if high then
-			love.graphics.setColor(255, 255, 255, a)
+			love.graphics.setColor(1, 1, 1, a)
 		end
 		
 		love.graphics.rectangle("fill", drawx*scale, drawy*scale, (3+self.width*8)*scale, 11*scale)
@@ -467,17 +467,17 @@ function guielement:draw(a, offx, offy)
 		love.graphics.setColor(0, 0, 0, a)
 		love.graphics.rectangle("fill", (drawx+1)*scale, (drawy+1)*scale, (1+self.width*8)*scale, 9*scale)
 		
-		love.graphics.setColor(255, 255, 255, a)
+		love.graphics.setColor(1, 1, 1, a)
 		if self.extended then
-			love.graphics.setColor(127, 127, 127, a)
+			love.graphics.setColor(0.5, 0.5, 0.5, a)
 		end
 		
 		properprint(string.sub(self.entries[self.value], 1, self.width), (drawx+1)*scale, (drawy+2)*scale)
 	
 		if self.extended then
-			love.graphics.setColor(127, 127, 127, a)
+			love.graphics.setColor(0.5, 0.5, 0.5, a)
 			if high then
-				love.graphics.setColor(255, 255, 255, a)
+				love.graphics.setColor(1, 1, 1, a)
 			end
 			
 			love.graphics.rectangle("fill", (self.subx+9+self.width*8)*scale, (self.suby)*scale, (3+self.width2*8)*scale, (10*#self.entries+1)*scale)
@@ -486,7 +486,7 @@ function guielement:draw(a, offx, offy)
 				if high ~= i then
 					love.graphics.setColor(0, 0, 0, a)
 					love.graphics.rectangle("fill", (self.subx+10+self.width*8)*scale, (self.suby+1+(i-1)*10)*scale, (1+self.width2*8)*scale, 9*scale)
-					love.graphics.setColor(255, 255, 255, a)
+					love.graphics.setColor(1, 1, 1, a)
 					properprint(string.sub(self.entries[i], 1, self.width2), (self.subx+10+self.width*8)*scale, (self.suby+2+10*(i-1))*scale)
 				else
 					love.graphics.setColor(0, 0, 0, a)
@@ -499,13 +499,13 @@ function guielement:draw(a, offx, offy)
 			end
 		end
 		
-		love.graphics.setColor(127, 127, 127, a)
+		love.graphics.setColor(0.5, 0.5, 0.5, a)
 		if high then
-			love.graphics.setColor(255, 255, 255, a)
+			love.graphics.setColor(1, 1, 1, a)
 		end
 		love.graphics.draw(dropdownarrowimg, (drawx+5+self.width*8)*scale, (drawy+5)*scale, -math.pi/2, scale, scale, 6, 6)
 	end
-	love.graphics.setColor(255, 255, 255, a)
+	love.graphics.setColor(1, 1, 1, a)
 end
 
 function guielement:getheight()

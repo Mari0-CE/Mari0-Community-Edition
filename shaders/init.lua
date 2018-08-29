@@ -69,7 +69,7 @@ local function CreateShaderPass()
 	function pass:predraw()
 		if supported and self.on and self.canvas then
 			--self.canvas.canvas:clear(love.graphics.getBackgroundColor())
-			love.graphics.setCanvas(self.canvas.canvas)
+			love.graphics.setCanvas{self.canvas.canvas, stencil=true}
 			love.graphics.clear(love.graphics.getBackgroundColor()) --0.10.0
 			return self.canvas.canvas
 		end
@@ -99,12 +99,12 @@ local function CreateShaderPass()
 			
 			if fullscreen then
 				if fullscreenmode == "full" then
-					love.graphics.drawq(self.canvas.canvas, self.canvas.quad, 0, 0, 0, desktopsize.width/(width*16*scale), desktopsize.height/(height*16*scale))
+					love.graphics.draw(self.canvas.canvas, self.canvas.quad, 0, 0, 0, desktopsize.width/(width*16*scale), desktopsize.height/(height*16*scale))
 				else
-					love.graphics.drawq(self.canvas.canvas, self.canvas.quad, 0, touchfrominsidemissing/2, 0, touchfrominsidescaling/scale, touchfrominsidescaling/scale)
+					love.graphics.draw(self.canvas.canvas, self.canvas.quad, 0, touchfrominsidemissing/2, 0, touchfrominsidescaling/scale, touchfrominsidescaling/scale)
 				end
 			else
-				love.graphics.drawq(self.canvas.canvas, self.canvas.quad, 0, 0)
+				love.graphics.draw(self.canvas.canvas, self.canvas.quad, 0, 0)
 			end
 		end
 	end
@@ -138,7 +138,7 @@ function shaders:init(numpasses)
 		local filename, filetype = v:match("(.+)%.(.-)$")
 		if filetype == "frag" then
 			local name = "shaders".."/"..v
-			if love.filesystem.isFile(name) then
+			if love.filesystem.getInfo(name, "file") then
 				local str = love.filesystem.read(name)
 				local success, effect = pcall(love.graphics.newShader, str)
 				if success then
@@ -241,7 +241,7 @@ function shaders:postdraw()
 	
 	local blendmode = love.graphics.getBlendMode()
 	love.graphics.setBlendMode("alpha", "premultiplied")
-	love.graphics.setColor(255, 255, 255)
+	love.graphics.setColor(1, 1, 1)
 	
 	local activepasses = {}
 	

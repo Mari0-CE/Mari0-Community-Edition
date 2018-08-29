@@ -22,7 +22,7 @@ function getfilepath(name)
 	local musicpaths = {"sounds/", "mappacks/" .. mappack .. "/music/"}
 	
 	for i = 1, #musicpaths do
-		if love.filesystem.isFile(musicpaths[i] .. name) then
+		if love.filesystem.getInfo(musicpaths[i] .. name, "file") then
 			return musicpaths[i] .. name
 		end
 	end
@@ -36,7 +36,7 @@ function music:load(name)
 	end
 	
 	if not self.loaded[filepath] then
-		local loaded, source = pcall(love.audio.newSource, filepath, "stream")
+		local loaded, source = pcall(love.audio.newSource, filepath, MUSICFIX)
 		if loaded then
 			-- all music should loop
 			source:setLooping(true)
@@ -67,7 +67,7 @@ function music:play(name, fast)
 	if self.loaded[name] then
 		if soundenabled then
 			self.loaded[name]:stop()
-			self.loaded[name]:rewind()
+			self.loaded[name]:seek(0)
 			self.loaded[name]:setVolume(volumemusic or 1)
 			self.loaded[name]:play()
 		end
@@ -84,6 +84,7 @@ function music:stop(name, fast)
 	
 	if self.loaded[name] then
 		self.loaded[name]:stop()
+		self.loaded[name]:seek(0)
 	end
 end
 

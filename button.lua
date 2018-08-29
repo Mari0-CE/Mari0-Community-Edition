@@ -123,13 +123,13 @@ function button:draw()
 	end
 
 	if self.dir == "down" then	
-		love.graphics.drawq(buttonimg, buttonquad[quad], math.floor((self.x-1/16-xscroll)*16*scale), ((self.y-yscroll)*16-10)*scale, 0, scale, scale)
+		love.graphics.draw(buttonimg, buttonquad[quad], math.floor((self.x-1/16-xscroll)*16*scale), ((self.y-yscroll)*16-10)*scale, 0, scale, scale)
 	elseif self.dir == "left" then
-		love.graphics.drawq(buttonimg, buttonquad[quad], math.floor((self.x+4/16-xscroll)*16*scale), ((self.y-yscroll)*16-21)*scale, math.pi/2, scale, scale)
+		love.graphics.draw(buttonimg, buttonquad[quad], math.floor((self.x+4/16-xscroll)*16*scale), ((self.y-yscroll)*16-21)*scale, math.pi/2, scale, scale)
 	elseif self.dir == "right" then
-		love.graphics.drawq(buttonimg, buttonquad[quad], math.floor((self.x+10/16-xscroll)*16*scale), ((self.y-yscroll)*16+11)*scale, -math.pi/2, scale, scale)
+		love.graphics.draw(buttonimg, buttonquad[quad], math.floor((self.x+10/16-xscroll)*16*scale), ((self.y-yscroll)*16+11)*scale, -math.pi/2, scale, scale)
 	elseif self.dir == "up" then
-		love.graphics.drawq(buttonimg, buttonquad[quad], math.floor((self.x+31/16-xscroll)*16*scale), ((self.y-yscroll)*16-16)*scale, math.pi, scale, scale)
+		love.graphics.draw(buttonimg, buttonquad[quad], math.floor((self.x+31/16-xscroll)*16*scale), ((self.y-yscroll)*16-16)*scale, math.pi, scale, scale)
 	end
 end
 
