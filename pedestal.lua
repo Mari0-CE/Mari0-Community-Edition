@@ -52,7 +52,7 @@ function pedestal:update(dt)
 end
 
 function pedestal:draw()
-	love.graphics.setColor(255, 255, 255)
+	love.graphics.setColor(1, 1, 1)
 	if self.pickedup then
 		local prog = self.progress / pedestaltime
 		love.graphics.setScissor(math.floor((self.cox-1-xscroll)*16*scale), math.floor((self.coy-1.5-yscroll)*16*scale)+14*prog*scale, 16*scale, (14*(1-prog)+2)*scale)

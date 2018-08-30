@@ -65,7 +65,7 @@ function panel:draw()
 		quad = 1
 	end
 	
-	love.graphics.drawq(panelimg, panelquad[quad], math.floor((self.cox-1-xscroll+.5)*16*scale), math.floor((self.coy-1-yscroll)*16*scale), self.r, scale, scale, 8, 8)
+	love.graphics.draw(panelimg, panelquad[quad], math.floor((self.cox-1-xscroll+.5)*16*scale), math.floor((self.coy-1-yscroll)*16*scale), self.r, scale, scale, 8, 8)
 end
 
 function panel:input(t, input)

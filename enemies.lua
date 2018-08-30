@@ -110,7 +110,7 @@ function loadenemy(filename)
 		end
 		
 		--Load graphics if it exists
-		if love.filesystem.exists(folder .. s .. ".png") then
+		if love.filesystem.getInfo(folder .. s .. ".png") then
 			enemiesdata[s].graphic = love.graphics.newImage(folder .. s .. ".png")
 		end
 		

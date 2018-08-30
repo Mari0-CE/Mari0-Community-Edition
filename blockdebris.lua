@@ -1,6 +1,7 @@
 blockdebris = class("blockdebris")
 
 function blockdebris:init(x, y, speedx, speedy)
+	updateranges()
 	self.x = x
 	self.y = y
 	self.speedx = speedx
@@ -35,5 +36,5 @@ function blockdebris:update(dt)
 end
 
 function blockdebris:draw()
-	love.graphics.drawq(blockdebrisimg, blockdebrisquads[spriteset][self.frame], math.floor((self.x-xscroll)*16*scale), math.floor((self.y-yscroll-.5)*16*scale), 0, scale, scale, 4, 4)
+	love.graphics.draw(blockdebrisimg, blockdebrisquads[spriteset][self.frame], math.floor((self.x-xscroll)*16*scale), math.floor((self.y-yscroll-.5)*16*scale), 0, scale, scale, 4, 4)
 end

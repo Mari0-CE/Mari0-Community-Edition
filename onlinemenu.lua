@@ -22,12 +22,12 @@ function onlinemenu_load()
 	guielements.magiccheckbox = guielement:new("checkbox", 220, 147, togglemagic, true)
 	
 	guielements.hostbutton = guielement:new("button", 247, 199, "create game", creategame, 2)
-	guielements.hostbutton.bordercolor = {255, 0, 0}
-	guielements.hostbutton.bordercolorhigh = {255, 127, 127}
+	guielements.hostbutton.bordercolor = {1, 0, 0}
+	guielements.hostbutton.bordercolorhigh = {1, 0.5, 0.5}
 	
 	guielements.joinbutton = guielement:new("button", 61, 199, "join game", joingame, 2)
-	guielements.joinbutton.bordercolor = {0, 255, 0}
-	guielements.joinbutton.bordercolorhigh = {127, 255, 127}
+	guielements.joinbutton.bordercolor = {0, 1, 0}
+	guielements.joinbutton.bordercolorhigh = {0.5, 1, 0.5}
 	
 	runanimationtimer = 0
 	runanimationframe = 1
@@ -79,9 +79,9 @@ end
 
 function onlinemenu_draw()
 	--TOP PART
-	love.graphics.setColor(0, 0, 0, 200)
+	love.graphics.setColor(0, 0, 0, 0.8)
 	love.graphics.rectangle("fill", 3*scale, 3*scale, 394*scale, 52*scale)
-	love.graphics.setColor(255, 255, 255)
+	love.graphics.setColor(1, 1, 1)
 	
 	properprint("online play", 4*scale, 5*scale)
 	
@@ -99,24 +99,24 @@ function onlinemenu_draw()
 	--BOTTOM PART
 	
 	--LEFT (JOIN)
-	love.graphics.setColor(0, 0, 0, 200)
+	love.graphics.setColor(0, 0, 0, 0.8)
 	love.graphics.rectangle("fill", 3*scale, 58*scale, 196*scale, 163*scale)
 	
-	love.graphics.setColor(255, 255, 255)
+	love.graphics.setColor(1, 1, 1)
 	properprint("join game", 64*scale, 60*scale)
 	
 	properprint("address/magicdns", 36*scale, 77*scale)
 	guielements.ipentry:draw()
-	love.graphics.setColor(150, 150, 150)
+	love.graphics.setColor(0.6, 0.6, 0.6)
 	properprint("enter ip, hostname,", 24*scale, 107*scale)
 	properprint("domain or magicdns", 28*scale, 117*scale)
 	properprint("words to connect.", 32*scale, 127*scale)
 	
-	love.graphics.setColor(255, 255, 255)
+	love.graphics.setColor(1, 1, 1)
 	properprint("optional port:", 21*scale, 148*scale)
 	guielements.portentry2:draw()
 	
-	love.graphics.setColor(150, 150, 150)
+	love.graphics.setColor(0.6, 0.6, 0.6)
 	properprint("not needed when", 40*scale, 162*scale)
 	properprint("connecting through", 28*scale, 172*scale)
 	properprint("magicdns", 68*scale, 182*scale)
@@ -124,23 +124,23 @@ function onlinemenu_draw()
 	guielements.joinbutton:draw()
 	
 	--RIGHT (HOST)
-	love.graphics.setColor(0, 0, 0, 200)
+	love.graphics.setColor(0, 0, 0, 0.8)
 	love.graphics.rectangle("fill", 202*scale, 58*scale, 195*scale, 163*scale)
 	
-	love.graphics.setColor(255, 255, 255)
+	love.graphics.setColor(1, 1, 1)
 	properprint("host game", 260*scale, 60*scale)
 	properprint("port", 280*scale, 77*scale)
 	
 	guielements.portentry:draw()
 	
-	love.graphics.setColor(150, 150, 150)
+	love.graphics.setColor(0.6, 0.6, 0.6)
 	properprint("port will need to", 230*scale, 107*scale)
 	properprint("be udp forwarded for", 218*scale, 117*scale)
 	properprint("internet play!", 242*scale, 127*scale)
 	
 	guielements.magiccheckbox:draw()
 	properprint("use magicdns words", 230*scale, 148*scale)
-	love.graphics.setColor(150, 150, 150)
+	love.graphics.setColor(0.6, 0.6, 0.6)
 	properprint("allows friends", 238*scale, 162*scale)
 	properprint("to join using", 242*scale, 172*scale)
 	properprint("two short words", 234*scale, 182*scale)

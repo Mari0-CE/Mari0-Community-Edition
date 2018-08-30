@@ -31,7 +31,7 @@ function intro_update(dt)
 	end
 end
 
-function intro_draw()	
+function intro_draw()
 	local logoscale = scale
 	if logoscale <= 1 then
 		logoscale = 0.5
@@ -40,14 +40,14 @@ function intro_draw()
 	end
 	
 	if introprogress >= 0 and introprogress < introduration then
-		local a = 255
+		local a = 1
 		if introprogress < introfadetime then
-			a = introprogress/introfadetime * 255
+			a = introprogress/introfadetime
 		elseif introprogress >= introduration-introfadetime then
-			a = (1-(introprogress-(introduration-introfadetime))/introfadetime) * 255
+			a = (1-(introprogress-(introduration-introfadetime))/introfadetime)
 		end
 		
-		love.graphics.setColor(255, 255, 255, a)
+		love.graphics.setColor(1, 1, 1, a)
 		
 		if introprogress > introfadetime+0.3 and introprogress < introduration - introfadetime then
 			local y = (introprogress-0.2-introfadetime) / (introduration-2*introfadetime) * 206 * 5
@@ -62,10 +62,10 @@ function intro_draw()
 			love.graphics.draw(logo, love.graphics.getWidth()/2, love.graphics.getHeight()/2, 0, logoscale, logoscale, 142, 150)
 		end
 		
-		local a2 = math.max(0, (1-(introprogress-.5)/0.3)*255)
-		love.graphics.setColor(150, 150, 150, a2)
+		local a2 = math.max(0, (1-(introprogress-.5)/0.3))
+		love.graphics.setColor(0.6, 0.6, 0.6, a2)
 		properprint("loading mari0 se..", love.graphics.getWidth()/2-string.len("loading mari0 se..")*4*scale, love.graphics.getHeight()/2-170*logoscale-7*scale)
-		love.graphics.setColor(50, 50, 50, a2)
+		love.graphics.setColor(0.2, 0.2, 0.2, a2)
 		properprint(loadingtext, love.graphics.getWidth()/2-string.len(loadingtext)*4*scale, love.graphics.getHeight()/2+165*logoscale)
 	end
 end
@@ -75,6 +75,7 @@ function intro_mousepressed()
 		return
 	end
 	soundlist["stab"].source:stop()
+	soundlist["stab"].source:seek(0)
 	menu_load()
 	shaders:set(1, shaderlist[currentshaderi1])
 	shaders:set(2, shaderlist[currentshaderi2])
@@ -85,6 +86,7 @@ function intro_keypressed()
 		return
 	end
 	soundlist["stab"].source:stop()
+	soundlist["stab"].source:seek(0)
 	menu_load()
 	shaders:set(1, shaderlist[currentshaderi1])
 	shaders:set(2, shaderlist[currentshaderi2])

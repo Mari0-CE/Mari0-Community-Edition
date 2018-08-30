@@ -5,7 +5,7 @@ function magic:init()
 	self.t = 0
 	self.x = math.floor(7+math.random()*188)*scale
 	self.y = math.floor(88+math.random()*12)*scale
-	self.color = {202+(math.random()-.7)*50, 170+(math.random()-.7)*50, 209+(math.random()-.7)*50}
+	self.color = {202/255+(math.random()-.7)*0.2, 170/255+(math.random()-.7)*0.2, 209/255+(math.random()-.7)*0.2}
 end
 
 function magic:update(dt)
@@ -17,5 +17,5 @@ end
 
 function magic:draw()
 	love.graphics.setColor(unpack(self.color))
-	love.graphics.drawq(magicimg, magicquad[math.floor(self.t/self.lifetime*6)+1], self.x, self.y, 0, scale, scale, 5, 5)
+	love.graphics.draw(magicimg, magicquad[math.floor(self.t/self.lifetime*6)+1], self.x, self.y, 0, scale, scale, 5, 5)
 end
