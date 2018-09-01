@@ -347,7 +347,7 @@ function enemy:update(dt)
 						self.animationtype = self.firstanimationtype
 						
 						if self.chasemarioonwakeup then
-							local px = objects["player"][getclosestplayer(x)].x
+							local px = objects["player"][getclosestplayer(self.x)].x
 							if px > self.x then
 								self.speedx = -self.speedx
 							end
