@@ -2916,7 +2916,9 @@ function hitblock(x, y, t, koopa)
 	
 	local r = map[x][y]
 	if not t or not t.infunnel then
-		playsound("blockhit")
+		if koopa and t:onscreen() or not koopa then
+			playsound("blockhit")
+		end
 	end
 	
 	if tilequads[r[1]]:getproperty("breakable", x, y) == true or tilequads[r[1]]:getproperty("coinblock", x, y) == true then --Block should bounce!

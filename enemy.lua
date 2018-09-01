@@ -1076,7 +1076,7 @@ function enemy:leftcollide(a, b, c, d)
 			
 			if a == "tile" then
 				hitblock(b.cox, b.coy, self, true)
-			else
+			elseif self:onscreen() then
 				playsound("blockhit")
 			end
 			return false
@@ -1132,7 +1132,7 @@ function enemy:rightcollide(a, b, c, d)
 			
 			if a == "tile" then
 				hitblock(b.cox, b.coy, self, true)
-			else
+			elseif self:onscreen() then
 				playsound("blockhit")
 			end
 			return false
@@ -1446,4 +1446,9 @@ function enemy:getspawnedenemies()
 	end
 	
 	return count
+end
+
+function enemy:onscreen()
+	print(self.x > xscroll and self.x < xscroll+width+1 and self.y > yscroll and self.y < yscroll+height+1)
+	return self.x > xscroll and self.x < xscroll+width+1 and self.y > yscroll and self.y < yscroll+height+1
 end
