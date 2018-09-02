@@ -354,7 +354,7 @@ function enemy:update(dt)
 						self.animationtype = self.firstanimationtype
 						
 						if self.chasemarioonwakeup then
-							local px = objects["player"][getclosestplayer(x)].x
+							local px = objects["player"][getclosestplayer(self.x)].x
 							if px > self.x then
 								self.speedx = -self.speedx
 							end
@@ -1089,7 +1089,7 @@ function enemy:leftcollide(a, b, c, d)
 			
 			if a == "tile" then
 				hitblock(b.cox, b.coy, self, true)
-			else
+			elseif self:onscreen() then
 				playsound("blockhit")
 			end
 			return false
@@ -1145,7 +1145,7 @@ function enemy:rightcollide(a, b, c, d)
 			
 			if a == "tile" then
 				hitblock(b.cox, b.coy, self, true)
-			else
+			elseif self:onscreen() then
 				playsound("blockhit")
 			end
 			return false
@@ -1424,6 +1424,7 @@ function enemy:transform(t)
 	end
 	
 	self.kill = true
+	self.active = false
 	self.drawable = false
 end
 
@@ -1459,4 +1460,8 @@ function enemy:getspawnedenemies()
 	end
 	
 	return count
+end
+
+function enemy:onscreen()
+	return self.x > xscroll-self.width and self.x < xscroll+width+self.width and self.y > yscroll-self.height and self.y < yscroll+height+self.height
 end
