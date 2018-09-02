@@ -1449,6 +1449,5 @@ function enemy:getspawnedenemies()
 end
 
 function enemy:onscreen()
-	print(self.x > xscroll and self.x < xscroll+width+1 and self.y > yscroll and self.y < yscroll+height+1)
-	return self.x > xscroll and self.x < xscroll+width+1 and self.y > yscroll and self.y < yscroll+height+1
+	return self.x > xscroll-self.width and self.x < xscroll+width+self.width and self.y > yscroll-self.height and self.y < yscroll+height+self.height
 end
