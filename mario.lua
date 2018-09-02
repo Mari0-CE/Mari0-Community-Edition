@@ -2255,6 +2255,9 @@ function mario:stompenemy(a, b, c, d, side)
 		end
 	elseif b.stompable then
 		b:stomp(self.x, self)
+		if not side then
+			self.y = b.y - self.height-1/16
+		end
 		if self.combo < #mariocombo then
 			addpoints(mariocombo[self.combo], self.x, self.y)
 			if not b.stompcombosuppressor then
