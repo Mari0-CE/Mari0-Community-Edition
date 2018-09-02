@@ -1411,6 +1411,7 @@ function enemy:transform(t)
 	end
 	
 	self.kill = true
+	self.active = false
 	self.drawable = false
 end
 
