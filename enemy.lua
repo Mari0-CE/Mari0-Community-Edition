@@ -219,8 +219,8 @@ function enemy:update(dt)
 	if self.lifetimer then
 		self.lifetimer = self.lifetimer - dt
 		if self.lifetimer <= 0 then
-			if self.transforms and self.transformtrigger == "lifetime" then
-				self:transform(self.transformsinto)
+			if self.transforms then
+				self:transformcheck("lifetime")
 			end
 			self:output()
 			self.dead = true
