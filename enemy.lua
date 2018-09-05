@@ -176,6 +176,33 @@ function enemy:init(x, y, t, a)
 	end
 	
 	self.outtable = {}
+	
+	--Create enemy transform table from properties if none exists
+	if type(self.transforms) == "boolean" then
+		self.transforms = {{self.transformtrigger,self.transformsinto}}
+	end
+	
+	--Set default values for tile locking (there's probably a better way to do this)
+	if self.tilelocked then
+		if self.tilelocked[1] then
+			self.tilelockedxtimer = 0
+			if not self.tilelockedoffsetx then
+				self.tilelockedoffsetx = 0
+			end
+			if not self.tilelockedscalex then
+				self.tilelockedscalex = 1
+			end
+		end
+		if self.tilelocked[2] then
+			self.tilelockedytimer = 0
+			if not self.tilelockedoffsety then
+				self.tilelockedoffsety = 0
+			end
+			if not self.tilelockedscaley then
+				self.tilelockedscaley = 1
+			end
+		end
+	end
 end
 
 function enemy:update(dt)
@@ -829,6 +856,38 @@ function enemy:update(dt)
 			end
 		end
 	end
+	
+	--Tile locking
+	if self.tilelocked then
+		if	self.tilelocked[1] then
+			if self.speedx ~= 0 then
+				self.tilelockedxtimer = self.tilelockedxtimer + (self.tilelockedscalex^(-1))*dt
+				if self.tilelockedxtimer >= math.abs(self.speedx^(-1)) then
+					if self.speedx > 0 then
+						self.x = self.x + self.tilelockedscalex
+					else
+						self.x = self.x - self.tilelockedscalex
+					end
+					self.tilelockedxtimer = 0
+				end
+			end
+			self.x = math.floor((self.x/self.tilelockedscalex)+0.5)*self.tilelockedscalex+((1-self.width)/2)+self.tilelockedoffsetx
+		end
+		if self.tilelocked[2] then
+			if self.speedy ~= 0 then
+				self.tilelockedytimer = self.tilelockedytimer + (self.tilelockedscaley^(-1))*dt
+				if self.tilelockedytimer >= math.abs(self.speedy^(-1)) then
+					if self.speedy > 0 then
+						self.y = self.y + self.tilelockedscaley
+					else
+						self.y = self.y - self.tilelockedscaley
+					end
+					self.tilelockedytimer = 0
+				end
+			end
+			self.y = math.floor((self.y/self.tilelockedscaley)+0.5)*self.tilelockedscaley+((1-self.height)/2)+self.tilelockedoffsety
+		end
+	end	
 end
 
 function enemy:addoutput(a, t)
@@ -862,8 +921,15 @@ function enemy:shotted(dir, below, high, fireball, star)
 	
 	playsound("shot")
 	
-	if self.transforms and (self.transformtrigger == "shot" or self.transformtrigger == "death") then
-		self:transform(self.transformsinto)
+	if self.transforms then
+		if fireball then
+			self:transformcheck("fireball")
+		elseif star then
+			self:transformcheck("star")
+		else
+			self:transformcheck("shot")
+			self:transformcheck("death")
+		end
 		return
 	end
 	
@@ -1227,6 +1293,9 @@ end
 
 function enemy:startfall()
 	self.falling = true
+	if self.transforms then
+		self:transformcheck("falling")
+	end
 end
 
 function enemy:stomp(x, b)
@@ -1324,6 +1393,9 @@ function enemy:portaled()
 	if self.killsenemiesafterportal then
 		self.killsenemies = true
 	end
+	if self.transforms then
+		self:transformcheck("portaled")
+	end
 end
 
 function enemy:spawnenemy(t)
@@ -1417,6 +1489,10 @@ end
 
 function enemy:emancipate()
 	if not self.kill then
+		if self.transforms then
+			self:transformcheck("emancipated")
+			self:transformcheck("fizzled")
+		end
 		table.insert(emancipateanimations, emancipateanimation:new(self.x, self.y, self.width, self.height, self.graphic, self.quad, self.speedx, self.speedy, self.rotation, self.offsetX, self.offsetY, self.quadcenterX, self.quadcenterY))
 		self.kill = true
 		self.drawable = false
@@ -1424,6 +1500,9 @@ function enemy:emancipate()
 end
 
 function enemy:laser(guns, pewpew)
+	if self.transforms then
+		self:transformcheck("laser")
+	end
 	if not self.laserresistant then
 		self:shotted()
 	end
@@ -1432,6 +1511,9 @@ end
 function enemy:enteredfunnel(inside)
 	if inside then
 		self.infunnel = true
+		if self.transforms then
+			self:transformcheck("funnel")
+		end
 	else
 		self.infunnel = false
 		self.gravity = self.startgravity
@@ -1451,4 +1533,16 @@ end
 
 function enemy:onscreen()
 	return self.x > xscroll-self.width and self.x < xscroll+width+self.width and self.y > yscroll-self.height and self.y < yscroll+height+self.height
+end
+
+function enemy:transformcheck(trigger,notransform)
+	for i, v in pairs(self.transforms) do
+		if v[1] == trigger then
+			if notransform then
+				return true
+			else
+				self:transform(v[2])
+			end
+		end
+	end
 end
