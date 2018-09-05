@@ -1436,6 +1436,10 @@ function game_draw()
 						love.graphics.setColor(1, 1, 1)
 						local dirscale
 						
+						if v.rendercolor then
+							love.graphics.setColor(v.rendercolor)
+						end
+						
 						if j == "player" then
 							if (v.portalsavailable[1] or v.portalsavailable[2]) then
 								if (v.pointingangle+math.pi*2 > -v.rotation+math.pi*2 and (not (v.pointingangle > -v.rotation+math.pi))) or v.pointingangle < -v.rotation-math.pi then
