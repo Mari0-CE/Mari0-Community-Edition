@@ -17,6 +17,6 @@ function portalwall:draw()--debug
 	if self.width ~= 0 or self.height ~= 0 then
 		love.graphics.line((self.x-xscroll)*16*scale, (self.y-.5-yscroll)*16*scale, (self.x-xscroll)*16*scale+self.width*16*scale, (self.y-.5-yscroll)*16*scale+self.height*16*scale)
 	else
-		love.graphics.point((self.x-xscroll)*16*scale, (self.y-.5-yscroll)*16*scale)
+		love.graphics.line((self.x-xscroll)*16*scale, (self.y-.5-yscroll)*16*scale, (self.x-xscroll)*16*scale+self.width*16*scale, (self.y-.5-yscroll)*16*scale+self.height*16*scale)
 	end
 end
