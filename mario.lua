@@ -229,14 +229,14 @@ function mario:init(x, y, i, animation, size, t)
 		self.animationstate = "climbing"
 		self:setquad()
 		self.x = 4-3/16
-		self.y = 15+0.4*(self.playernumber-1)
+		self.y = mapheight+0.4*(self.playernumber-1)
 		self.vineanimationclimb = false
 		self.vineanimationdropoff = false
 		self.vinemovetimer = 0
 		playsound("vine")
 		
 		if #objects["vine"] == 0 then
-			table.insert(objects["vine"], vine:new(5, 16, "start"))
+			table.insert(objects["vine"], vine:new(5, mapheight+1, "start"))
 		end
 	end
 	self:setquad()
@@ -761,11 +761,11 @@ function mario:update(dt)
 			self.climbframe = math.max(self.climbframe, 1)
 			
 			self.y = self.y - vinemovespeed*dt
-			if self.y <= 15-vineanimationgrowheight+vineanimationstop+0.4*(self.playernumber-1) then
+			if self.y <= mapheight-vineanimationgrowheight+vineanimationstop+0.4*(self.playernumber-1) then
 				self.vineanimationclimb = false
 				self.vineanimationdropoff = true
 				self.animationtimer = 0
-				self.y = 15-vineanimationgrowheight+vineanimationstop+0.4*(self.playernumber-1)
+				self.y = mapheight-vineanimationgrowheight+vineanimationstop+0.4*(self.playernumber-1)
 				self.climbframe = 2
 				self.pointingangle = math.pi/2
 				self.animationdirection = "left"
