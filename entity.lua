@@ -69,8 +69,8 @@ entitylist = {
 	{t=""},
 	{t="boxtube", category="portal elements", description="place on empty tile - will drop an object and remove previous one", iconauthor="Mari0Maker"},
 	{t="pushbutton", category="portal elements", description="place on empty tile - will send a toggle signal when used", output=true, iconauthor=""},
-	{t=""},
-	{t=""},
+	{t="zginttrigger", category="i/o objects", description="place anywhere - will output when an integer is...", output=true, iconauthor=""},
+	{t="zgbooltrigger", category="i/o objects", description="place anywhere - will output when a boolean is true", output=true, iconauthor=""},
 	{t=""},
 	{t=""},
 	{t=""},
@@ -461,8 +461,8 @@ rightclickmenues.squarewave = {
 rightclickmenues.regiontrigger = {
 	{t="text", value="trigger on:"},
 	{t="checkbox", text="players", default="true"},
-	{t="checkbox", text="enemies", default="true"},
-	{},
+	{t="text", vaule="enemy category:"},
+	{t="input", text="enemies", default="all", max=5},
 	{t="regionselect", value="select region", region="region", default="region:0:0:1:1"}
 }
 
@@ -527,6 +527,21 @@ rightclickmenues.pedestal = {
 	{t="checkbox", text="orange", default="true"}
 }
 
+rightclickmenues.zginttrigger = {
+	{t="text", value="int is ? than:"},
+	{t="submenu", entries={"greater", "less", "equal"}, default=1, width=8},
+	{t="input", default="0", max=12},
+	{},
+	{t="input", default="myint", max=42}
+}
+
+rightclickmenues.zgbooltrigger = {
+	{t="text", value="boolean:"},
+	{t="checkbox", text="inverted", default="true"},
+	{t="input", default="mybool", max=42},
+	{},
+	{t="checkbox", text="invisible", default="true"}
+}
 groundlighttable = {"groundlightver", "groundlighthor", "groundlightupright", "groundlightrightdown", "groundlightdownleft", "groundlightleftup"}
 
 for i = 1, #groundlighttable do

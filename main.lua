@@ -554,6 +554,8 @@ function love.load(arg)
 	require "animationsystem"
 	require "regiondrag"
 	require "regiontrigger"
+	require "zgbooltrigger"
+	require "zginttrigger"
 	require "checkpoint"
 	require "portal"
 	require "portalent"
@@ -2367,4 +2369,8 @@ function mouse.getY()
 	else
 		return love.mouse.getY()
 	end
+end
+
+function dbprint(x) --debugprint, can easily comment out the "print" thing
+	print(x)
 end

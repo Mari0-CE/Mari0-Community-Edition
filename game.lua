@@ -11,6 +11,8 @@ function game_load(suspended)
 	--LINK STUFF
 	mariocoincount = 0
 	marioscore = 0
+	globools = {}
+	globints = {}
 	
 	--get mariolives
 	mariolivecount = 3
@@ -2932,6 +2934,8 @@ function loadlevel(level)
 	objects["panel"] = {}
 	objects["scaffold"] = {}
 	objects["regiontrigger"] = {}
+	objects["zgbooltrigger"] = {}
+	objects["zginttrigger"] = {}
 	objects["animationtrigger"] = {}
 	objects["checkpoints"] = {}
 	objects["portalent"] = {}
@@ -3542,6 +3546,12 @@ function loadmap(filename, createobjects)
 							
 						elseif t == "regiontrigger" then
 							table.insert(objects["regiontrigger"], regiontrigger:new(x, y, r))
+							
+						elseif t == "zgbooltrigger" then
+							table.insert(objects["zgbooltrigger"], zgbooltrigger:new(x, y, r))
+							
+						elseif t == "zginttrigger" then
+						table.insert(objects["zginttrigger"], zginttrigger:new(x, y, r))
 							
 						elseif t == "animationtrigger" then
 							table.insert(objects["animationtrigger"], animationtrigger:new(x, y, r))
@@ -5758,5 +5768,45 @@ function checkportalremove(x, y)
 				v:removeportal(2)
 			end
 		end
+	end
+end
+
+function globoolSH(id, para) --does everything relating to globools
+--DOC: a simple function, unites four things that i'll be doing a lot with globools into a single, easy-to-fix shorthand
+
+if para == "flip" then
+globools[id] = not globools[id]
+elseif para == "true" then
+globools[id] = true
+elseif para == "false" then
+globools[id] = false
+end
+return globools[id] or false --sanitise outputs so nil is never returned
+end
+
+function globintSH(id, para, value) --modifies global integers in an expandable set of ways
+globints[id] = globints[id] or 0
+
+	if para == "set" then
+		globints[id] = value
+	elseif para == "add" then
+		globints[id] = globints[id] + value	
+	elseif para == "subtract" then
+		globints[id] = globints[id] + value
+	end
+return globints[id]
+end
+
+function globintCH(id, para, value) --checks global integers
+value = tonumber(value)
+globints[id] = globints[id] or 0
+	if globints[id] > value and para == "greater" then
+		return true
+	elseif globints[id] < value and para == "less" then
+		return true
+	elseif globints[id] == value and para == "equal" then
+		return true
+	else
+		return false
 	end
 end

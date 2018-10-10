@@ -59,6 +59,17 @@ enableportalgun:player				enable portal gun of player
 disableportalgun:player				disable portal gun of player
 --]]
 
+
+--[[ FES:
+(--DOC)
+TRIGGER	whenboolis			whenever a boolean is true						#def		#imp
+TRIGGER	whenintis			whenever an integer is {>,<,=} a value
+CONDITION 	ifbool			only if a boolean is true (can be inverted)			#def		#imp
+CONDITION	ifint				if an integer is {>,<,+} a value
+ACTION	dotobool			set and/or flip a boolean (three modes of one action)	#def		#imp
+ACTION	dotoint			add, subtact, or set a boolean 
+]]--
+
 function animation:init(path, name)
 	self.filepath = path
 	self.name = name
@@ -171,6 +182,10 @@ function animation:update(dt)
 			end
 			
 			if trig then
+				self:trigger()
+			end
+		elseif v[1] == "whenboolis" then
+			if globoolSH(v[2],"check") then
 				self:trigger()
 			end
 		end
@@ -419,6 +434,7 @@ function animation:update(dt)
 				
 			elseif v[1] == "enableportalgun" then
 				if v[2] == "everyone" then
+			
 					for i = 1, players do
 						objects["player"][i].portalgundisabled = false
 					end
@@ -428,6 +444,10 @@ function animation:update(dt)
 						objects["player"][i].portalgundisabled = false
 					end
 				end
+			elseif v[1] == "dotobool" then
+				globoolSH(v[2],v[3])
+			elseif v[1] == "dotoint" then
+				globintSH(v[2],v[3],v[4])
 			end
 			
 			self.currentaction = self.currentaction + 1
@@ -468,6 +488,16 @@ function animation:trigger()
 				end
 			elseif v[1] == "requirecoins" then
 				if mariocoincount < tonumber(v[2]) then
+					pass = false
+					break
+				end
+			elseif v[1] == "ifbool" then
+				if (globoolSH(v[2], "check") ~= (v[3] == "true")  then
+					pass = false
+					break
+				end
+			elseif v[1] == "ifint" then
+				if not globintCH(v[2], v[3], v[4]) then
 					pass = false
 					break
 				end
