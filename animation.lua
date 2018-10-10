@@ -492,7 +492,7 @@ function animation:trigger()
 					break
 				end
 			elseif v[1] == "ifbool" then
-				if (globoolSH(v[2], "check") ~= (v[3] == "true")  then
+				if (globoolSH(v[2], "check")) ~= (v[3] == "true")  then
 					pass = false
 					break
 				end
