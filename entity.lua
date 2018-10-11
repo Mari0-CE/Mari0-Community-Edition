@@ -461,7 +461,7 @@ rightclickmenues.squarewave = {
 rightclickmenues.regiontrigger = {
 	{t="text", value="trigger on:"},
 	{t="checkbox", text="players", default="true"},
-	{t="text", vaule="enemy category:"},
+	{t="text", value="enemy cat:"},
 	{t="input", text="enemies", default="all", max=5},
 	{t="regionselect", value="select region", region="region", default="region:0:0:1:1"}
 }
