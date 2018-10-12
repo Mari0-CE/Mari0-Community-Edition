@@ -2623,6 +2623,9 @@ function mario:globalcollide(a, b, c, d, dir)
 	if b.booloncollect and b.boolactoncollect then
 		globoolSH(b.booloncollect, b.boolactoncollect)
 	end
+	if b.intoncollect and b.intactoncollect and b.intactvalue then
+		globintSH(b.intoncollect, b.intactoncollect, b.intactvalue)
+	end
 	if a == "screenboundary" then
 		if self.x+self.width/2 > b.x then
 			self.x = b.x

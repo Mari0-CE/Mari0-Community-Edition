@@ -103,9 +103,43 @@ table.insert(toenter, {name = "whenboolis",
 				t="input",
 				default="mybool"
 			},
+			{
+				t="text",
+				value="is"
+			},
+			{
+				t="booleanselection"
+			}
 		}
 	}
 })
+
+table.insert(toenter, {name = "whenintis",
+	t = {
+		t="trigger",
+		nicename="when integer:",
+		entries={
+			{
+				t="input",
+			},
+			{
+				t="text",
+				value="is",
+			},
+			{
+				t="integerselection"
+			},
+			{
+				t="text",
+				value="than"
+			},
+			{
+				t="numinput"
+			}
+		}
+	}
+})
+
 
 --CONDITIONS:
 
@@ -565,6 +599,18 @@ table.insert(toenter, {name = "playmusic",
 		entries={
 			{
 				t="musicselection"
+			}
+		}
+	}
+})
+
+table.insert(toenter, {name = "playsound", 
+	t = {
+		t="action",
+		nicename="play sound",
+		entries={
+			{
+				t="input"
 			}
 		}
 	}

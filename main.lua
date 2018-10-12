@@ -565,6 +565,7 @@ function love.load(arg)
 	require "dialogbox"
 	require "itemanimation"
 	require "animatedtimer"
+	require "animatedbooltimer"
 	require "animatedtiletrigger"
 	require "delayer"
 	require "entitylistitem"
@@ -967,7 +968,8 @@ function love.load(arg)
 	--sounds
 	soundstoload = {"jump", "jumpbig", "stomp", "shot", "blockhit", "blockbreak", "coin", "pipe", "boom", "mushroomappear", "mushroomeat", "shrink", "death", "gameover", "fireball",
 					"oneup", "levelend", "castleend", "scorering", "intermission", "fire", "bridgebreak", "bowserfall", "vine", "swim", "rainboom", "konami", "pause", "bulletbill",
-					"lowtime", "tailwag", "planemode", "stab", "portal1open", "portal2open", "portalenter", "portalfizzle"}
+					"lowtime", "tailwag", "planemode", "stab", "portal1open", "portal2open", "portalenter", "portalfizzle",
+					"match", "nomatch", "getitem", "zelda", "unlock", "spawnkey", "kingcannon", "checkpoint", "bomb", "no"}
 				
 	soundlist = {}
 	

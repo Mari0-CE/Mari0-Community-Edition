@@ -98,6 +98,10 @@ function game_update(dt)
 		animatedtimerlist[i]:update(dt)
 	end
 	
+	for i = 1, #animatedbooltimerlist do
+		animatedbooltimerlist[i]:update(dt)
+	end
+	
 	--coinanimation
 	coinanimation = coinanimation + dt*6.75
 	while coinanimation >= 6 do
@@ -3331,8 +3335,10 @@ function loadmap(filename, createobjects)
 	
 	--ANIMATED TIMERS
 	animatedtimers = {}
+	animatedbooltimers = {}
 	for x = 1, mapwidth do
 		animatedtimers[x] = {}
+		animatedbooltimers[x] = {}
 	end
 
 	for i = 1, #animatedtiles do
@@ -3348,6 +3354,8 @@ function loadmap(filename, createobjects)
 			if r[1] > 10000 then
 				if tilequads[r[1]].triggered then
 					animatedtimers[x][y] = animatedtimer:new(x, y, r[1])
+				elseif  tilequads[r[1]].boolean then
+					animatedbooltimers[x][y] = animatedbooltimer:new(x, y, r[1])
 				elseif tilequads[r[1]].cache then
 					table.insert(tilequads[r[1]].cache, {x=x,y=y})
 				end
@@ -5785,6 +5793,7 @@ return globools[id] or false --sanitise outputs so nil is never returned
 end
 
 function globintSH(id, para, value) --modifies global integers in an expandable set of ways
+value = tonumber(value) or 0
 globints[id] = globints[id] or 0
 
 	if para == "set" then
@@ -5792,14 +5801,15 @@ globints[id] = globints[id] or 0
 	elseif para == "add" then
 		globints[id] = globints[id] + value	
 	elseif para == "subtract" then
-		globints[id] = globints[id] + value
+		globints[id] = globints[id] - value
 	end
 return globints[id]
 end
 
 function globintCH(id, para, value) --checks global integers
-value = tonumber(value)
+value = tonumber(value) or 0
 globints[id] = globints[id] or 0
+
 	if globints[id] > value and para == "greater" then
 		return true
 	elseif globints[id] < value and para == "less" then

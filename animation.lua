@@ -185,7 +185,11 @@ function animation:update(dt)
 				self:trigger()
 			end
 		elseif v[1] == "whenboolis" then
-			if globoolSH(v[2],"check") then
+			if tostring(globoolSH(v[2],"check")) == v[3] then
+				self:trigger()
+			end
+		elseif v[1] == "whenintis" then
+			if globintCH(v[2],v[3],v[4]) then
 				self:trigger()
 			end
 		end
@@ -324,6 +328,8 @@ function animation:update(dt)
 					musicname = v[2]
 					playmusic()
 				end
+			elseif v[1] == "playsound" then
+				playsound(v[2])
 			elseif v[1] == "screenshake" then
 				earthquake = tonumber(v[2]) or 1
 			elseif v[1] == "addcoins" then

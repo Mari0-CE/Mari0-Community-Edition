@@ -2278,9 +2278,15 @@ function mapwidthapply()
 	
 	--Update animatedtimers
 	animatedtimers = {}
+	animatedbooltimers = {}
 	for x = 1, mapwidth do
 		if not animatedtimers[x] then
 			animatedtimers[x] = {}
+		end
+	end
+	for x = 1, mapwidth do
+		if not animatedbooltimers[x] then
+			animatedbooltimers[x] = {}
 		end
 	end
 	

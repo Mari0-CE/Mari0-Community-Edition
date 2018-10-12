@@ -23,6 +23,11 @@ function animatedquad:init(imgpath, s, number)
 	if self.delays[1] == "triggered" then
 		self.triggered = true
 		table.remove(self.delays, 1)
+	elseif self.delays[1] == "boolean" then
+		self.boolean = true
+		self.boolid = self.delays[2]
+		table.remove(self.delays, 1)
+		table.remove(self.delays, 1)
 	else
 		for i, v in ipairs(self.properties) do
 			if self.props.collision ~= v.collision or self.props.portalable ~= v.portalable then
@@ -85,7 +90,7 @@ function animatedquad:update(dt)
 		if self.quadi > #self.quadlist then
 			self.quadi = 1
 		end
-		if objects and not self.triggered then
+		if objects and not self.triggered and not self.boolean then
 			self:updateproperties()
 		end
 	end
