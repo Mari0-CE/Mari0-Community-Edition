@@ -99,6 +99,8 @@ end
 function animatedquad:quad(x, y)
 	if self.triggered and x and y and animatedtimers[x][y] then
 		return self.quadlist[animatedtimers[x][y]:geti()]
+	elseif self.boolean and x and y and animatedbooltimers[x][y] then
+		return self.quadlist[animatedbooltimers[x][y]:geti()]
 	else
 		return self.quadlist[self.quadi]
 	end
@@ -108,6 +110,10 @@ function animatedquad:getproperty(s, x, y)
 	if self.triggered and x and y and animatedtimers[x] and animatedtimers[x][y] then
 		if self.properties[animatedtimers[x][y]:geti()] then
 			return self.properties[animatedtimers[x][y]:geti()][s]
+		end
+	elseif self.boolean and x and y and animatedbooltimers[x] and animatedbooltimers[x][y] then
+		if self.properties[animatedbooltimers[x][y]:geti()] then
+			return self.properties[animatedbooltimers[x][y]:geti()][s]
 		end
 	end
 	return self.props[s]

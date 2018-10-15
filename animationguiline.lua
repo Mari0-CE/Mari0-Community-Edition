@@ -1027,9 +1027,9 @@ function animationguiline:init(tabl, t2)
 					temp.width = 4+width*8
 					
 				elseif v.t == "numinput" then
-					local width = 5
-					local maxwidth = 10
-					temp.gui = guielement:new("input", 0, 0, width, nil, self.t[tid] or v.default or "0", maxwidth, nil, true, 0)
+					local width = 10
+					local maxwidth = 30
+					temp.gui = guielement:new("input", 0, 0, width, nil, self.t[tid] or v.default or "0", maxwidth, nil, nil, 0)
 					temp.width = 4+width*8
 					
 				elseif v.t == "playerselection" then

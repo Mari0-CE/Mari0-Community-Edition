@@ -1381,19 +1381,13 @@ function editor_draw()
 				else
 					if tile and tilequads[tile+tileliststart-1] and tile+tileliststart-1 <= tilelistcount+tileliststart then
 						--Local variables
-						local propertylist = {"collision", "invisible", "breakable", "coinblock", "coin", "slantupleft", "slantupright", "mirror", "grate", "platform", "water", "bridge", "spikesleft", "spikestop","spikesright", "spikesbottom", "foreground"}
+						local propertylist = {"collision", "invisible", "breakable", "coinblock", "coin", "slantupleft", "slantupright", "mirror", "grate", "platform", "water", "bridge", "spikesleft", "spikestop","spikesright", "spikesbottom", "foreground", "big"}
 						local propertytable = {}
 						local longestpropertylength = 0
 						local propertycount = -10
 						local s = ""
 						--2*2 Tile
-						if tile+tileliststart-1 == 136 then
-							table.insert(propertytable, "2*2 tile")
-							propertycount = propertycount + 10
-							if 8 >= longestpropertylength then
-								longestpropertylength = 8
-							end
-						end
+						
 						--Unportalable
 						if not tilequads[tile+tileliststart-1]:getproperty("portalable") then
 							table.insert(propertytable, "unportalable")
@@ -1403,7 +1397,7 @@ function editor_draw()
 							end
 						end
 						--Properties
-						for i = 1, 18 do
+						for i = 1, #propertylist do
 							if tilequads[tile+tileliststart-1]:getproperty(propertylist[i]) then
 								table.insert(propertytable, propertylist[i])
 								propertycount = propertycount + 10
@@ -2527,10 +2521,10 @@ function placetile(x, y, t, ent)
 			generatespritebatch()
 		end
 		
-		if currenttile == 136 then
-			placetile(x+16*scale, y, 137)
-			placetile(x, y+16*scale, 138)
-			placetile(x+16*scale, y+16*scale, 139)
+		if tilequads[currenttile]:getproperty("big") then
+			placetile(x+16*scale, y, currenttile+1)
+			placetile(x, y+16*scale, currenttile+2)
+			placetile(x+16*scale, y+16*scale, currenttile+3)
 		end
 		
 	else

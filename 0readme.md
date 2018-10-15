@@ -24,4 +24,13 @@ added a couple sounds.
 
 
 
-planned features for next commit: 2x2 tile as a settable property, more things to do with integers (such as using them in numinput for animations), more things with animated tiles (such as them triggering directly on global booleans), an example mappack
+planned features for next commit; more things to do with integers (such as using them in numinput for animations), more things with animated tiles (such as them triggering directly on global booleans), an example mappack
+
+new random thing: animations now accept names of globints as numinput. it can also take a built-in variable such as marioworld or mariocoincount with the input "g:marioworld" or "g:mariocoincount". I think. 
+I may also add this to globinttrigger entities.
+
+tile property #19 (next to foreground): 2x2.
+
+fix: the lowtime sound can now only play once, usually.
+
+...If anything about this is broken, help me fix it, please.

@@ -13,7 +13,7 @@ function game_load(suspended)
 	marioscore = 0
 	globools = {}
 	globints = {}
-	
+	firstunder100 = true
 	--get mariolives
 	mariolivecount = 3
 	if love.filesystem.getInfo("mappacks/" .. mappack .. "/settings.txt") then
@@ -174,12 +174,12 @@ function game_update(dt)
 		if notime == false and infinitetime == false and mariotime ~= 0 then
 			mariotime = mariotime - 2.5*dt
 			
-			if mariotime > 0 and mariotime + 2.5*dt >= 99 and mariotime < 99 then
+			if mariotime > 0 and mariotime + 2.5*dt >= 99 and mariotime < 99 and firstunder100 then
 				love.audio.stop()
 				playsound("lowtime")
 			end
 			
-			if mariotime > 0 and mariotime + 2.5*dt >= 99-8 and mariotime < 99-8 then
+			if mariotime > 0 and mariotime + 2.5*dt >= 99-8 and mariotime < 99-8 and firstunder100 then
 				local star = false
 				for i = 1, players do
 					if objects["player"][i].starred then
@@ -188,10 +188,13 @@ function game_update(dt)
 				end
 				
 				if not star then
+				
 					playmusic()
 				else
 					music:play("starmusic.ogg")
 				end
+				
+				firstunder100 = false
 			end
 			
 			if mariotime <= 0 then
@@ -5795,7 +5798,6 @@ end
 function globintSH(id, para, value) --modifies global integers in an expandable set of ways
 value = tonumber(value) or 0
 globints[id] = globints[id] or 0
-
 	if para == "set" then
 		globints[id] = value
 	elseif para == "add" then

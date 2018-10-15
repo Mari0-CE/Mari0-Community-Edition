@@ -136,13 +136,13 @@ function animation:update(dt)
 			end
 		elseif v[1] == "timepassed" then
 			self.timer = self.timer + dt
-			if self.timer >= tonumber(v[2]) and self.timer - dt < tonumber(v[2]) then
+			if self.timer >= self:decodenuminput(v[2]) and self.timer - dt < self:decodenuminput(v[2]) then
 				self:trigger()
 			end
 		elseif v[1] == "playerxgreater" then
 			local trig = false
 			for i = 1, players do
-				if objects["player"][i].x+objects["player"][i].width/2 > tonumber(v[2]) then
+				if objects["player"][i].x+objects["player"][i].width/2 > self:decodenuminput(v[2]) then
 					trig = true
 				end
 			end
@@ -153,7 +153,7 @@ function animation:update(dt)
 		elseif v[1] == "playerxless" then
 			local trig = false
 			for i = 1, players do
-				if objects["player"][i].x+objects["player"][i].width/2 < tonumber(v[2]) then
+				if objects["player"][i].x+objects["player"][i].width/2 < self:decodenuminput(v[2]) then
 					trig = true
 				end
 			end
@@ -165,7 +165,7 @@ function animation:update(dt)
 		elseif v[1] == "playerygreater" then
 			local trig = false
 			for i = 1, players do
-				if objects["player"][i].y+objects["player"][i].height/2 > tonumber(v[2]) then
+				if objects["player"][i].y+objects["player"][i].height/2 > self:decodenuminput(v[2]) then
 					trig = true
 				end
 			end
@@ -176,7 +176,7 @@ function animation:update(dt)
 		elseif v[1] == "playeryless" then
 			local trig = false
 			for i = 1, players do
-				if objects["player"][i].y+objects["player"][i].height/2 < tonumber(v[2]) then
+				if objects["player"][i].y+objects["player"][i].height/2 < self:decodenuminput(v[2]) then
 					trig = true
 				end
 			end
@@ -210,7 +210,7 @@ function animation:update(dt)
 						objects["player"][i].controlsenabled = false
 					end
 				else
-					local p = objects["player"][tonumber(string.sub(v[2], -1))]
+					local p = objects["player"][self:decodenuminput(string.sub(v[2], -1))]
 					if p then
 						p.controlsenabled = false
 					end
@@ -221,23 +221,23 @@ function animation:update(dt)
 						objects["player"][i].controlsenabled = true
 					end
 				else
-					local p = objects["player"][tonumber(string.sub(v[2], -1))]
+					local p = objects["player"][self:decodenuminput(string.sub(v[2], -1))]
 					if p then
 						p.controlsenabled = true
 					end
 				end
 			elseif v[1] == "sleep" then
-				self.sleep = tonumber(v[2])
+				self.sleep = self:decodenuminput(v[2])
 			elseif v[1] == "setcamerax" then
-				xscroll = tonumber(v[2])
+				xscroll = self:decodenuminput(v[2])
 			elseif v[1] == "setcameray" then
-				yscroll = tonumber(v[2])
+				yscroll = self:decodenuminput(v[2])
 			elseif v[1] == "pancameratox" then
 				autoscroll = false
-				cameraxpan(tonumber(v[2]), tonumber(v[3]))
+				cameraxpan(self:decodenuminput(v[2]), self:decodenuminput(v[3]))
 			elseif v[1] == "pancameratoy" then
 				autoscroll = false
-				cameraypan(tonumber(v[2]), tonumber(v[3]))
+				cameraypan(self:decodenuminput(v[2]), self:decodenuminput(v[3]))
 			elseif v[1] == "disablescroll" then
 				autoscroll = false
 			elseif v[1] == "enablescroll" then
@@ -253,21 +253,21 @@ function animation:update(dt)
 			elseif v[1] == "setx" then
 				if v[2] == "everyone" then
 					for i = 1, players do
-						objects["player"][i].x = tonumber(v[3])
+						objects["player"][i].x = self:decodenuminput(v[3])
 					end
 				else
-					if objects["player"][tonumber(string.sub(v[3], -1))] then
-						objects["player"][tonumber(string.sub(v[3], -1))].x = tonumber(v[4])
+					if objects["player"][self:decodenuminput(string.sub(v[3], -1))] then
+						objects["player"][self:decodenuminput(string.sub(v[3], -1))].x = self:decodenuminput(v[4])
 					end
 				end
 			elseif v[1] == "sety" then
 				if v[2] == "everyone" then
 					for i = 1, players do
-						objects["player"][i].y = tonumber(v[3])
+						objects["player"][i].y = self:decodenuminput(v[3])
 					end
 				else
-					if objects["player"][tonumber(string.sub(v[3], -1))] then
-						objects["player"][tonumber(string.sub(v[3], -1))].y = tonumber(v[4])
+					if objects["player"][self:decodenuminput(string.sub(v[3], -1))] then
+						objects["player"][self:decodenuminput(string.sub(v[3], -1))].y = self:decodenuminput(v[4])
 					end
 				end
 			elseif v[1] == "playerwalk" then
@@ -276,8 +276,8 @@ function animation:update(dt)
 						objects["player"][i]:animationwalk(v[3])
 					end
 				else
-					if objects["player"][tonumber(string.sub(v[2], -1))] then
-						objects["player"][tonumber(string.sub(v[2], -1))]:animationwalk(v[3])
+					if objects["player"][self:decodenuminput(string.sub(v[2], -1))] then
+						objects["player"][self:decodenuminput(string.sub(v[2], -1))]:animationwalk(v[3])
 					end
 				end
 			elseif v[1] == "playeranimationstop" then
@@ -286,8 +286,8 @@ function animation:update(dt)
 						objects["player"][i]:stopanimation()
 					end
 				else
-					if objects["player"][tonumber(string.sub(v[2], -1))] then
-						objects["player"][tonumber(string.sub(v[2], -1))]:stopanimation()
+					if objects["player"][self:decodenuminput(string.sub(v[2], -1))] then
+						objects["player"][self:decodenuminput(string.sub(v[2], -1))]:stopanimation()
 					end
 				end
 			elseif v[1] == "disableanimation" then
@@ -300,8 +300,8 @@ function animation:update(dt)
 						objects["player"][i]:jump(true)
 					end
 				else
-					if objects["player"][tonumber(string.sub(v[2], -1))] then
-						objects["player"][tonumber(string.sub(v[2], -1))]:jump(true)
+					if objects["player"][self:decodenuminput(string.sub(v[2], -1))] then
+						objects["player"][self:decodenuminput(string.sub(v[2], -1))]:jump(true)
 					end
 				end
 			elseif v[1] == "playerstopjump" then
@@ -310,8 +310,8 @@ function animation:update(dt)
 						objects["player"][i]:stopjump(true)
 					end
 				else
-					if objects["player"][tonumber(string.sub(v[2], -1))] then
-						objects["player"][tonumber(string.sub(v[2], -1))]:stopjump()
+					if objects["player"][self:decodenuminput(string.sub(v[2], -1))] then
+						objects["player"][self:decodenuminput(string.sub(v[2], -1))]:stopjump()
 					end
 				end
 			elseif v[1] == "dialogbox" then
@@ -331,31 +331,31 @@ function animation:update(dt)
 			elseif v[1] == "playsound" then
 				playsound(v[2])
 			elseif v[1] == "screenshake" then
-				earthquake = tonumber(v[2]) or 1
+				earthquake = self:decodenuminput(v[2]) or 1
 			elseif v[1] == "addcoins" then
-				collectcoin(nil, nil, tonumber(v[2]) or 1)
+				collectcoin(nil, nil, self:decodenuminput(v[2]) or 1)
 			elseif v[1] == "addpoints" then
-				addpoints(tonumber(v[2]) or 1)
+				addpoints(self:decodenuminput(v[2]) or 1)
 			elseif v[1] == "changebackgroundcolor" then
-				love.graphics.setBackgroundColor(tonumber(v[2]) / 255 or 1, tonumber(v[3]) / 255 or 1, tonumber(v[4]) / 255 or 1)
+				love.graphics.setBackgroundColor(self:decodenuminput(v[2]) / 255 or 1, self:decodenuminput(v[3]) / 255 or 1, self:decodenuminput(v[4]) / 255 or 1)
 			elseif v[1] == "killplayer" then
 				if v[2] == "everyone" then
 					for i = 1, players do
 						objects["player"][i]:die("script")
 					end
 				else
-					if objects["player"][tonumber(string.sub(v[2], -1))] then
-						objects["player"][tonumber(string.sub(v[2], -1))]:die("script")
+					if objects["player"][self:decodenuminput(string.sub(v[2], -1))] then
+						objects["player"][self:decodenuminput(string.sub(v[2], -1))]:die("script")
 					end
 				end
 			elseif v[1] == "changetime" then
-				mariotime = (tonumber(v[2]) or 400)
+				mariotime = (self:decodenuminput(v[2]) or 400)
 			elseif v[1] == "loadlevel" then
 				love.audio.stop()
 				
-				marioworld = tonumber(v[2]) or marioworld
-				mariolevel = tonumber(v[3]) or mariolevel
-				mariosublevel = tonumber(v[4]) or mariosublevel
+				marioworld = self:decodenuminput(v[2]) or marioworld
+				mariolevel = self:decodenuminput(v[3]) or mariolevel
+				mariosublevel = self:decodenuminput(v[4]) or mariosublevel
 				levelscreen_load("next")
 				
 			elseif v[1] == "disableplayeraim" then
@@ -364,8 +364,8 @@ function animation:update(dt)
 						objects["player"][i].disableaiming = true
 					end
 				else
-					if objects["player"][tonumber(string.sub(v[2], -1))] then
-						objects["player"][tonumber(string.sub(v[2], -1))].disableaiming = true
+					if objects["player"][self:decodenuminput(string.sub(v[2], -1))] then
+						objects["player"][self:decodenuminput(string.sub(v[2], -1))].disableaiming = true
 					end
 				end
 			elseif v[1] == "enableplayeraim" then
@@ -374,8 +374,8 @@ function animation:update(dt)
 						objects["player"][i].disableaiming = false
 					end
 				else
-					if objects["player"][tonumber(string.sub(v[2], -1))] then
-						objects["player"][tonumber(string.sub(v[2], -1))].disableaiming = false
+					if objects["player"][self:decodenuminput(string.sub(v[2], -1))] then
+						objects["player"][self:decodenuminput(string.sub(v[2], -1))].disableaiming = false
 					end
 				end
 			
@@ -385,26 +385,26 @@ function animation:update(dt)
 						objects["player"][i]:removeportals()
 					end
 				else
-					if objects["player"][tonumber(string.sub(v[2], -1))] then
-						objects["player"][tonumber(string.sub(v[2], -1))]:removeportals()
+					if objects["player"][self:decodenuminput(string.sub(v[2], -1))] then
+						objects["player"][self:decodenuminput(string.sub(v[2], -1))]:removeportals()
 					end
 				end
 				
 			elseif v[1] == "makeplayerlook" then
-				local ang = math.mod(math.mod(tonumber(v[3]), 360)+360, 360)
+				local ang = math.mod(math.mod(self:decodenuminput(v[3]), 360)+360, 360)
 				
 				if v[2] == "everyone" then
 					for i = 1, players do
 						objects["player"][i].pointingangle = math.rad(ang)-math.pi/2
 					end
 				else
-					if objects["player"][tonumber(string.sub(v[2], -1))] then
-						objects["player"][tonumber(string.sub(v[2], -1))].pointingangle = math.rad(ang)-math.pi/2
+					if objects["player"][self:decodenuminput(string.sub(v[2], -1))] then
+						objects["player"][self:decodenuminput(string.sub(v[2], -1))].pointingangle = math.rad(ang)-math.pi/2
 					end
 				end
 			
 			elseif v[1] == "makeplayerfireportal" then
-				if tonumber(v[3]) == 1 or tonumber(v[3]) == 2 then
+				if self:decodenuminput(v[3]) == 1 or self:decodenuminput(v[3]) == 2 then
 					if v[2] == "everyone" then
 						for i = 1, players do
 							local sourcex = objects["player"][i].x+6/16
@@ -414,7 +414,7 @@ function animation:update(dt)
 							shootportal(i, 1, sourcex, sourcey, direction)
 						end
 					else
-						local i = tonumber(string.sub(v[2], -1))
+						local i = self:decodenuminput(string.sub(v[2], -1))
 						
 						if objects["player"][i] then
 							local sourcex = objects["player"][i].x+6/16
@@ -432,7 +432,7 @@ function animation:update(dt)
 						objects["player"][i].portalgundisabled = true
 					end
 				else
-					local i = tonumber(string.sub(v[2], -1))
+					local i = self:decodenuminput(string.sub(v[2], -1))
 					if objects["player"][i] then
 						objects["player"][i].portalgundisabled = true
 					end
@@ -445,7 +445,7 @@ function animation:update(dt)
 						objects["player"][i].portalgundisabled = false
 					end
 				else
-					local i = tonumber(string.sub(v[2], -1))
+					local i = self:decodenuminput(string.sub(v[2], -1))
 					if objects["player"][i] then
 						objects["player"][i].portalgundisabled = false
 					end
@@ -478,22 +478,22 @@ function animation:trigger()
 				end
 			elseif v[1] == "sublevelequals" then
 				print(mariosublevel)
-				if (v[2] == "main" and (tonumber(mariosublevel) ~= 0)) or (v[2] ~= "main" and tonumber(v[2]) ~= tonumber(mariosublevel)) then
+				if (v[2] == "main" and (self:decodenuminput(mariosublevel) ~= 0)) or (v[2] ~= "main" and self:decodenuminput(v[2]) ~= self:decodenuminput(mariosublevel)) then
 					pass = false
 					break
 				end
 			elseif v[1] == "levelequals" then
-				if tonumber(v[2]) ~= tonumber(mariolevel) then
+				if self:decodenuminput(v[2]) ~= self:decodenuminput(mariolevel) then
 					pass = false
 					break
 				end
 			elseif v[1] == "worldequals" then
-				if tonumber(v[2]) ~= tonumber(marioworld) then
+				if self:decodenuminput(v[2]) ~= self:decodenuminput(marioworld) then
 					pass = false
 					break
 				end
 			elseif v[1] == "requirecoins" then
-				if mariocoincount < tonumber(v[2]) then
+				if mariocoincount < self:decodenuminput(v[2]) then
 					pass = false
 					break
 				end
@@ -520,4 +520,14 @@ end
 
 function animation:draw()
 	
+end
+
+function animation:decodenuminput(x)
+	if tonumber(x) then
+		return tonumber(x)	
+	elseif string.sub(x,1,2) == "g:" then
+		return _G[string.sub(x,3)]
+	else
+		return globints[x] or 0
+	end
 end

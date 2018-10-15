@@ -7,6 +7,7 @@ function animatedbooltimer:init(x, y, tileno)
 	self.quadi = 1
 	self.timer = 0
 	self.quadobj = tilequads[tileno]
+	self.boolcheck = self.quadobj.boolid
 	self.delays = self.quadobj.delays
 	self.frametimes = {}
 	self.length = 0
@@ -30,8 +31,14 @@ function animatedbooltimer:update(dt)
 		self.timer = 0
 		self.dir = 0
 	end
-	local newi = self:geti()
 	
+	local newbool = globoolSH(self.boolcheck, "check")
+	if newbool ~= self.oldbool then
+		self.oldbool = newbool
+		self:input(newbool)
+	end
+	
+	local newi = self:geti()
 	if oldi ~= newi then
 		local oldcol = self.quadobj.properties[oldi].collision
 		local oldportalable = self.quadobj.properties[oldi].portalable
