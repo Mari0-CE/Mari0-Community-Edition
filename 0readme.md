@@ -47,4 +47,4 @@ random fix: the intro now actually says CE for more than one frame
 
 integrated turretbot's MultiCustomTiles mod unsuccessfully - help me successfully integrate it and also add a dropdown for selecting between tilesets http://forum.stabyourself.net/viewtopic.php?f=13&t=4649
 
-updated title - do you like it?
+updated title image - do you like it? If you don't, you don't need to include it
