@@ -459,7 +459,7 @@ function love.load(arg)
 	
 	love.graphics.draw(logo, love.graphics.getWidth()/2, love.graphics.getHeight()/2, 0, logoscale, logoscale, 142, 150)
 	love.graphics.setColor(0.6, 0.6, 0.6)
-	properprint("loading mari0 se..", love.graphics.getWidth()/2-string.len("loading mari0 se..")*4*scale, love.graphics.getHeight()/2-170*logoscale-7*scale)
+	properprint("loading mari0 ce..", love.graphics.getWidth()/2-string.len("loading mari0 ce..")*4*scale, love.graphics.getHeight()/2-170*logoscale-7*scale)
 	love.graphics.setColor(0.2, 0.2, 0.2)
 	properprint(loadingtext, love.graphics.getWidth()/2-string.len(loadingtext)*4*scale, love.graphics.getHeight()/2+165*logoscale)
 	love.graphics.present()
@@ -2298,6 +2298,41 @@ function loadcustomtiles()
 	else
 		customtiles = false
 		customtilecount = 0
+	end
+end
+
+function loadmodcustomtiles()
+	local files = love.filesystem.getDirectoryItems("mappacks/" .. mappack .. "/tiles")
+	for i,j in pairs(files) do
+		print(i,j)
+		if string.sub(j, -4) ~= ".png" then
+			table.remove(files, i)
+			print(true)
+		end
+	end
+	if files ~= nil then
+		modcustomtiles = #files
+		modcustomtilesimg = {}
+		modcustomtilecount = {}
+		for i = 1, modcustomtiles do
+			modcustomtilesimg[i] = love.graphics.newImage("mappacks/" .. mappack .. "/tiles/" .. files[i])
+			local imgwidth, imgheight = modcustomtilesimg[i]:getWidth(), modcustomtilesimg[i]:getHeight()
+			local width = math.floor(imgwidth/17)
+			local height = math.floor(imgheight/17)
+			local imgdata = love.image.newImageData("mappacks/" .. mappack .. "/tiles/" .. files[i])
+			
+			for y = 1, height do
+				for x = 1, width do
+					table.insert(tilequads, quad:new(modcustomtilesimg[i], imgdata, x, y, imgwidth, imgheight))
+					local r, g, b = getaveragecolor(imgdata, x, y)
+					table.insert(rgblist, {r, g, b})
+				end
+			end
+			modcustomtilecount[i] = (modcustomtilecount[i-1] or 0) + width*height
+		end
+	else
+		modcustomtiles = false
+		modcustomtilecount = {0}
 	end
 end
 

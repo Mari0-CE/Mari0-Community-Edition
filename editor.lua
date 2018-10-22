@@ -648,7 +648,7 @@ function editor_update(dt)
 						currenttile = currenttile-22
 					end
 					currenttile = math.max(1, currenttile)
-					currenttile = math.min(currenttile, smbtilecount + portaltilecount + customtilecount)
+					currenttile = math.min(currenttile, smbtilecount + portaltilecount + customtilecount + (modcustomtilecount[modcustomtiles] or 0))
 				end
 				love.mouse.setPosition(middlemode[2], middlemode[3])
 			end
@@ -2361,13 +2361,13 @@ function tilesall()
 	
 	animatedtilelist = false
 	tileliststart = 1
-	tilelistcount = smbtilecount + portaltilecount + customtilecount -1
+	tilelistcount = smbtilecount + portaltilecount + customtilecount + (modcustomtilecount[modcustomtiles] or 0)  -1
 	
 	if editentities or editenemies then
 		currenttile = 1
 	end
 	
-	tilescrollbarheight = math.max(0, math.ceil((smbtilecount + portaltilecount + customtilecount)/22)*17 - 1 - (17*9) - 12)
+	tilescrollbarheight = math.max(0, math.ceil((smbtilecount + portaltilecount + customtilecount + (modcustomtilecount[modcustomtiles] or 0))/22)*17 - 1 - (17*9) - 12)
 	editentities = false
 	editenemies = false
 end
@@ -2427,13 +2427,13 @@ function tilescustom()
 	
 	animatedtilelist = false
 	tileliststart = smbtilecount + portaltilecount + 1
-	tilelistcount = customtilecount - 1
+	tilelistcount = customtilecount + (modcustomtilecount[modcustomtiles] or 0) - 1
 	
 	if editentities or editenemies then
 		currenttile = 1
 	end
 	
-	tilescrollbarheight = math.max(0, math.ceil((customtilecount)/22)*17 - 1 - (17*9) - 12)
+	tilescrollbarheight = math.max(0,  math.ceil((customtilecount + (modcustomtilecount[modcustomtiles] or 0))/22)*17 - 1 - (17*9) - 12)
 	editentities = false
 	editenemies = false
 end
@@ -3075,7 +3075,7 @@ function editor_mousepressed(x, y, button)
 				if currenttile > 0 and currenttile <= 10000 then
 					currenttile = currenttile - 1
 					if currenttile == 0 then
-						currenttile = smbtilecount+portaltilecount+customtilecount
+						currenttile = smbtilecount+portaltilecount+customtilecount+(modcustomtilecount[modcustomtiles] or 0)
 					end
 				else
 					currenttile = currenttile - 1
@@ -3126,9 +3126,9 @@ function editor_mousepressed(x, y, button)
 					-- end
 				-- end
 			else
-				if currenttile <= smbtilecount+portaltilecount+customtilecount then
+				if currenttile <= smbtilecount+portaltilecount+customtilecount+(modcustomtilecount[modcustomtiles] or 0) then
 					currenttile = currenttile + 1
-					if currenttile > smbtilecount+portaltilecount+customtilecount then
+					if currenttile > smbtilecount+portaltilecount+customtilecount+(modcustomtilecount[modcustomtiles] or 0) then
 						currenttile = 1
 					end
 				else

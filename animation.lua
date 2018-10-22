@@ -189,7 +189,7 @@ function animation:update(dt)
 				self:trigger()
 			end
 		elseif v[1] == "whenintis" then
-			if globintCH(v[2],v[3],v[4]) then
+			if globintCH(v[2],v[3],self:decodenuminput(v[4])) then
 				self:trigger()
 			end
 		end
@@ -453,7 +453,7 @@ function animation:update(dt)
 			elseif v[1] == "dotobool" then
 				globoolSH(v[2],v[3])
 			elseif v[1] == "dotoint" then
-				globintSH(v[2],v[3],v[4])
+				globintSH(v[2],v[3],self:decodenuminput(v[4]))
 			end
 			
 			self.currentaction = self.currentaction + 1
@@ -503,7 +503,7 @@ function animation:trigger()
 					break
 				end
 			elseif v[1] == "ifint" then
-				if not globintCH(v[2], v[3], v[4]) then
+				if not globintCH(v[2], v[3], self:decodenuminput(v[4])) then
 					pass = false
 					break
 				end

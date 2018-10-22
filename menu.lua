@@ -1117,6 +1117,7 @@ function loadbackground(backgroundlevel)
 	loadcustommusics()
 	loadanimatedtiles()
 	loadcustomtiles()
+	loadmodcustomtiles()
 	loadlevelscreens()
 	
 	blockbouncex = {}

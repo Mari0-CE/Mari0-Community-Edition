@@ -34,3 +34,17 @@ tile property #19 (next to foreground): 2x2.
 fix: the lowtime sound can now only play once, usually.
 
 ...If anything about this is broken, help me fix it, please.
+
+
+
+realised that global integers (or glints as they will now be referred to as) can store text, so officially supported that and may add more functions for it
+
+dialog boxes and textentities can now print globools, glints, and even built-in variables using the prefixes "gb:" "gi:" or "bi:"
+
+also added the prefix "bb:" for a human-readable version of a globool... could not isolate crash on trying to update a textentity though
+
+random fix: the intro now actually says CE for more than one frame
+
+integrated turretbot's MultiCustomTiles mod unsuccessfully - help me successfully integrate it and also add a dropdown for selecting between tilesets http://forum.stabyourself.net/viewtopic.php?f=13&t=4649
+
+updated title - do you like it?

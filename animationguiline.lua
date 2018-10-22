@@ -567,7 +567,7 @@ table.insert(toenter, {name = "dialogbox",
 			
 			{
 				t="input",
-				length=192
+				length=300
 			},
 			
 			{

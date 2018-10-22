@@ -865,7 +865,11 @@ function drawlevel()
 	if customtiles then
 		love.graphics.draw(customspritebatch, math.floor(-math.mod(xscroll, 1)*16*scale), math.floor(-math.mod(yscroll, 1)*16*scale))
 	end
-	
+	if modcustomtiles then
+		for i = 1, modcustomtiles do
+			love.graphics.draw(modcustomspritebatch[i], math.floor(-math.mod(xscroll, 1)*16*scale), math.floor(-math.mod(yscroll, 1)*16*scale))
+		end
+	end
 	local lmap = map
 	
 	local flooredxscroll
@@ -1068,7 +1072,11 @@ function drawforeground()
 	if customtiles then
 		love.graphics.draw(customspritebatchfront, math.floor(-math.mod(xscroll, 1)*16*scale), math.floor(-math.mod(yscroll, 1)*16*scale))
 	end
-	
+	if modcustomtiles then
+		for i = 1, modcustomtiles do
+			love.graphics.draw(modcustomspritebatchfront[i], math.floor(-math.mod(xscroll, 1)*16*scale), math.floor(-math.mod(yscroll, 1)*16*scale))
+		end
+	end
 	
 	--ANY NON STATIC BLOCKS AND STUFF.
 	local lmap = map
@@ -2237,6 +2245,13 @@ function game_draw()
 									img = portaltilesimg
 								elseif tilenumber <= smbtilecount+portaltilecount+customtilecount then
 									img = customtilesimg
+								elseif tilenumber <= smbtilecount+portaltilecount+customtilecount+modcustomtilecount[modcustomtiles] then
+									for i = 1, modcustomtiles do
+										if tilenumber <= smbtilecount+portaltilecount+customtilecount+modcustomtilecount[i] then
+											img = modcustomtilesimg[i]
+											break
+										end
+									end
 								end
 								
 								love.graphics.draw(img, tilequads[tilenumber]:quad(), math.floor((x-1-v.x-6/16)*16*scale+playerx*scale), math.floor((y-1.5-v.y)*16*scale+playery*scale), 0, scale, scale)
@@ -3007,6 +3022,14 @@ function loadlevel(level)
 			customspritebatch = love.graphics.newSpriteBatch( customtilesimg, 10000 )
 			customspritebatchfront = love.graphics.newSpriteBatch( customtilesimg, 10000 )
 		end
+		if modcustomtiles then
+			modcustomspritebatch = {}
+			modcustomspritebatchfront = {}
+			for i = 1, modcustomtiles do
+				modcustomspritebatch[i] = love.graphics.newSpriteBatch( modcustomtilesimg[i], 10000 )
+				modcustomspritebatchfront[i] = love.graphics.newSpriteBatch( modcustomtilesimg[i], 10000 )
+			end
+		end
 		spritebatchX = {}
 		spritebatchY = {}
 	end
@@ -3235,6 +3258,14 @@ function loadmap(filename, createobjects)
 		customspritebatch = love.graphics.newSpriteBatch( customtilesimg, 10000 )
 		customspritebatchfront = love.graphics.newSpriteBatch( customtilesimg, 10000 )
 	end
+	if modcustomtiles then
+		modcustomspritebatch = {}
+		modcustomspritebatchfront = {}
+		for i = 1, modcustomtiles do
+			modcustomspritebatch[i] = love.graphics.newSpriteBatch( modcustomtilesimg[i], 10000 )
+			modcustomspritebatchfront[i] = love.graphics.newSpriteBatch( modcustomtilesimg[i], 10000 )
+		end
+	end
 	spritebatchX = {}
 	spritebatchY = {}
 	
@@ -3284,7 +3315,7 @@ function loadmap(filename, createobjects)
 					coinmap[x][y] = true
 				end
 			
-				if (tonumber(r[1]) > smbtilecount+portaltilecount+customtilecount and tonumber(r[1]) <= 10000) or tonumber(r[1]) > 10000+animatedtilecount then
+				if (tonumber(r[1]) > smbtilecount+portaltilecount+customtilecount+(modcustomtilecount[modcustomtiles] or 0) and tonumber(r[1]) <= 10000) or tonumber(r[1]) > 10000+animatedtilecount then
 					r[1] = 1
 				end
 				
@@ -3311,7 +3342,7 @@ function loadmap(filename, createobjects)
 				coinmap[x][y] = true
 			end
 			
-			if (tonumber(r[1]) > smbtilecount+portaltilecount+customtilecount and tonumber(r[1]) <= 10000) or tonumber(r[1]) > 10000+animatedtilecount then
+			if (tonumber(r[1]) > smbtilecount+portaltilecount+customtilecount+(modcustomtilecount[modcustomtiles] or 0) and tonumber(r[1]) <= 10000) or tonumber(r[1]) > 10000+animatedtilecount then
 				r[1] = 1
 			end
 			
@@ -3786,6 +3817,16 @@ function generatespritebatch()
 		end
 	end
 	
+	if modcustomtiles then
+		for i = 1, modcustomtiles do
+			modcustomspritebatch[i]:clear()
+			modcustomspritebatchfront[i]:clear()
+			if loveVersion <= 9 then
+				modcustomspritebatch[i]:bind()
+				modcustomspritebatchfront[i]:bind()
+			end
+		end
+	end
 	
 	local xtodraw
 	if mapwidth < width+1 then
@@ -3850,7 +3891,14 @@ function generatespritebatch()
 								portalspritebatch:add( tilequads[tilenumber]:quad(), (x-1)*16*scale, ((y)*16-8)*scale, 0, scale, scale )
 							elseif tilenumber <= smbtilecount+portaltilecount+customtilecount then
 								customspritebatch:add( tilequads[tilenumber]:quad(), (x-1)*16*scale, ((y)*16-8)*scale, 0, scale, scale )
-							end
+							elseif tilenumber <= smbtilecount+portaltilecount+customtilecount+modcustomtilecount[modcustomtiles or 1] then
+								for i = 1, modcustomtiles do
+									if tilenumber <= smbtilecount+portaltilecount+customtilecount+modcustomtilecount[i] then
+										modcustomspritebatch[i]:add( tilequads[tilenumber]:quad(), (x-1)*16*scale, ((y)*16-8)*scale, 0, scale, scale )
+										break
+									end
+								end
+							end								
 						end
 					else
 						if tilenumber ~= 0 and tilequads[tilenumber]:getproperty("invisible", cox, coy) == false and tilequads[tilenumber]:getproperty("coinblock", cox, coy) == false then
@@ -3860,6 +3908,13 @@ function generatespritebatch()
 								portalspritebatchfront:add( tilequads[tilenumber]:quad(), (x-1)*16*scale, ((y)*16-8)*scale, 0, scale, scale )
 							elseif tilenumber <= smbtilecount+portaltilecount+customtilecount then
 								customspritebatchfront:add( tilequads[tilenumber]:quad(), (x-1)*16*scale, ((y)*16-8)*scale, 0, scale, scale )
+							elseif tilenumber <= smbtilecount+portaltilecount+customtilecount+modcustomtilecount[modcustomtiles or 1] then
+								for i = 1, modcustomtiles do
+									if tilenumber <= smbtilecount+portaltilecount+customtilecount+modcustomtilecount[i] then
+										modcustomspritebatch[i]:add( tilequads[tilenumber]:quad(), (x-1)*16*scale, ((y)*16-8)*scale, 0, scale, scale )
+										break
+									end
+								end
 							end
 						end
 					end
@@ -3879,6 +3934,13 @@ function generatespritebatch()
 		if customtiles then
 			customspritebatch:unbind()
 			customspritebatchfront:unbind()
+		end
+		
+		if modcustomtiles then
+			for i = 1, modcustomtiles do
+				modcustomspritebatch[i]:unbind()
+				modcustomspritebatchfront[i]:unbind()
+			end
 		end
 	end
 end
@@ -5792,12 +5854,16 @@ globools[id] = true
 elseif para == "false" then
 globools[id] = false
 end
+if para ~= "check" then
+	print(id,para)
+end
 return globools[id] or false --sanitise outputs so nil is never returned
 end
 
 function globintSH(id, para, value) --modifies global integers in an expandable set of ways
 value = tonumber(value) or 0
 globints[id] = globints[id] or 0
+print(id,para,value)
 	if para == "set" then
 		globints[id] = value
 	elseif para == "add" then
@@ -5811,7 +5877,6 @@ end
 function globintCH(id, para, value) --checks global integers
 value = tonumber(value) or 0
 globints[id] = globints[id] or 0
-
 	if globints[id] > value and para == "greater" then
 		return true
 	elseif globints[id] < value and para == "less" then
