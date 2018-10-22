@@ -96,7 +96,6 @@ function editor_load()
 	pastemode = false -- 1 transparent, 2 opaque
 	pastecenter = {0, 0}
 	mtclipboard = {} -- fill with x, y, tile
-	renamingline = false
 	
 	splitxscroll = {0, 0}
 	
@@ -318,7 +317,6 @@ function editor_load()
 		
 	--OBJECTS fun fact: objects were originally in the tiles tab
 	guielements["objectscrollbar"] = guielement:new("scrollbar", 381, 21, 199, 15, 40, 0, "ver", nil, nil, nil, nil, true)
-	guielements["objectrename"] = guielement:new("input", 6, 39, 35, finishrenameline)
 	
 	--POWERLINE "SUBTAB"
 	drawtools = 2
@@ -761,8 +759,8 @@ function editor_update(dt)
 		end
 	elseif editorstate == "objects" then
 		multitilesoffset = guielements["objectscrollbar"].value * objectscrollbarheight * scale
-		guielements["objectrename"].inputting = guielements["objectrename"].active
 	end
+	
 	
 	if animationguilines then
 		for i, v in pairs(animationguilines) do
@@ -823,8 +821,7 @@ function editor_draw()
 				if pastingtiles then
 					-- draw mtclipboard
 						for i, v in ipairs(mtclipboard) do
-							for j, u in ipairs(v) do
-								w = u[1]
+							for j, w in ipairs(v) do
 								--w = tonumber(w)
 								local quad = tilequads[w]:quad() --[[tilequads[w].quad]]
 								if w == 1 and pastemode == false then 
@@ -835,30 +832,6 @@ function editor_draw()
 								else
 									love.graphics.setColor(1, 1, 1, 0.3)
 									love.graphics.draw(tilequads[w].image, quad, math.floor((x-xscroll-1 + pastecenter[1])*16*scale+(i-1)*16*scale), ((y-yscroll-1 + pastecenter[2])*16+8)*scale+((j-1)*16*scale), 0, scale, scale)
-								end
-								
-								if u[2] then -- ENTITIES!!1!
-									local ent = u[2]
-									local img = nil
-									quad = nil
-									
-									if entityquads[ent] then -- entity
-										img = entityquads[ent].image
-										quad = entityquads[ent].quad
-									elseif enemiesdata[ent] then -- enemy
-										img = enemiesdata[ent].graphic
-										quad = enemiesdata[ent].quad
-									-- else do nothing i guess
-									end
-									
-									if img and quad then
-										if enemiesdata[ent] then
-											love.graphics.setColor(1, 0, 0, 0.3)
-											love.graphics.rectangle("fill", math.floor((x-xscroll-1 + pastecenter[1])*16*scale+(i-1)*16*scale), ((y-yscroll-1 + pastecenter[2])*16+8)*scale+((j-1)*16*scale), 16*scale, 16*scale)
-										end
-										love.graphics.setColor(1, 1, 1, 0.3)
-										love.graphics.draw(img, quad, math.floor((x-xscroll-1 + pastecenter[1])*16*scale+(i-1)*16*scale), ((y-yscroll-1 + pastecenter[2])*16+8)*scale+((j-1)*16*scale), 0, scale, scale)
-									end
 								end
 							end
 						end
@@ -1653,10 +1626,9 @@ function editor_draw()
 					if math.floor(i-1)*17*scale+42*scale-multitilesoffset < 200*scale then
 						properprint(multitileobjectnames[i], 8*scale, math.floor(i-1)*17*scale+42*scale-multitilesoffset)
 					end
-					properprint("_dir4", 318*scale, math.floor(i-1)*17*scale+42*scale-multitilesoffset)
-					properprint("_dir6", 333*scale, math.floor(i-1)*17*scale+42*scale-multitilesoffset)
-					properprint("x", 348*scale, math.floor(i-1)*17*scale+42*scale-multitilesoffset)
-					properprint("r", 363*scale, math.floor(i-1)*17*scale+42*scale-multitilesoffset)
+					properprint("_dir4", 333*scale, math.floor(i-1)*17*scale+42*scale-multitilesoffset)
+					properprint("_dir6", 348*scale, math.floor(i-1)*17*scale+42*scale-multitilesoffset)
+					properprint("x", 363*scale, math.floor(i-1)*17*scale+42*scale-multitilesoffset)
 				end
 				if mtbutton == 1 then
 					properprint("move up", 10*scale, 210*scale)
@@ -1664,8 +1636,6 @@ function editor_draw()
 					properprint("move down", 10*scale, 210*scale)
 				elseif mtbutton == 3 then
 					properprint("delete", 10*scale, 210*scale)
-				elseif mtbutton == 4 then
-					properprint("rename", 10*scale, 210*scale)
 				end	
 			elseif editorstate == "lightdrawcustomize" then
 				love.graphics.setColor(0.5, 0.5, 0.5)
@@ -1953,7 +1923,7 @@ function objectstab()
 	guielements["tabanimations"].active = true
 	guielements["tabobjects"].active = true
 	
-	guielements["objectscrollbar"].active = true
+	guielements["objectscrollbar"].active = true	
 	objectscrollbarheight = math.max(0, math.ceil((#multitileobjects))*17 - 1 - (17*9) - 12)
 	
 	for i, v in pairs(mapbuttons) do
@@ -2227,12 +2197,7 @@ function loadmtobjects()
 					ox = {}
 					local split4 = split3[j]:split(",")
 					for u = 1, #split4 do
-						local tt = {}
-						for i, v in pairs(split4[u]:split(";")) do
-							table.insert(tt, tonumber(v) or v)
-						end
-						--table.insert(ox, tonumber(split4[u]))
-						table.insert(ox, tt)
+						table.insert(ox, tonumber(split4[u]))
 						--print(split4[u]..",")
 					end
 					table.insert(oo, ox)
@@ -2889,7 +2854,7 @@ function editor_mousepressed(x, y, button)
 				selectionstart()
 			else
 				local cox, coy = getMouseTile(x, y+8*scale)
-				if inmap(cox, coy) then
+				if inmap(cox, coy) then					
 					local lx1, ly1, lx2, ly2, slx1, sly1, slx2, sly2
 					lx1 = math.min(tileselectionclick1x, tileselectionclick2x)
 					ly1 = math.min(tileselectionclick1y, tileselectionclick2y)
@@ -2929,26 +2894,8 @@ function editor_mousepressed(x, y, button)
 								if w == 1 and pastemode == false then
 									-- nothing
 								else
-									local mx = x+(i-1 + pastecenter[1])*16*scale
-									local my = y+(j-1 + pastecenter[2])*16*scale
-									local cox, coy = getMouseTile(mx, my+8*scale)
-									currenttile = mtclipboard[i][j][1]
-									if currenttile ~= 1 or pastemode then
-										placetile(mx, my)
-										for k = 2, math.max(#mtclipboard[i][j], #map[cox][coy]) do
-											local frommtc = mtclipboard[i][j][k]
-											if frommtc then
-												if mtclipboard[i][j][k-2] == "link" then
-													frommtc = frommtc + cox
-												elseif mtclipboard[i][j][k-3] == "link" then
-													frommtc = frommtc + coy
-												end
-												map[cox][coy][k]= frommtc
-											else
-												map[cox][coy][k]= nil
-											end
-										end
-									end
+									currenttile = mtclipboard[i][j]
+									placetile(x+(i-1 + pastecenter[1])*16*scale, y+(j-1 + pastecenter[2])*16*scale)
 								end
 							end
 						end
@@ -3049,43 +2996,37 @@ function editor_mousepressed(x, y, button)
 					end
 				end
 			elseif editorstate == "objects" then
-				if not renamingline then
-					local tile = getlistpos(x, y)
-					local mtbutton = getmtbutton(x)
-					--editmtobjects = false
-					--editentities = false
-					print(tile)
-					if tile then
-						if mtbutton == 0 then
-							allowdrag = false
-							editorclose()
-							mtclipboard = multitileobjects[tile+1]
-							--for i, v in pairs(mtclipboard) do
-								--for j, w in pairs(v) do
-									--print(w)
-								--end
+				local tile = getlistpos(x, y)
+				local mtbutton = getmtbutton(x)
+				--editmtobjects = false
+				--editentities = false
+				print(tile)
+				if tile then
+					if mtbutton == 0 then
+						allowdrag = false
+						editorclose()
+						mtclipboard = multitileobjects[tile+1]
+						--for i, v in pairs(mtclipboard) do
+							--for j, w in pairs(v) do
+								--print(w)
 							--end
-							pastecenter = {0, 0}
-							pastingtiles = true
-							editentities = false
-							editenemies = false
-						else
-							if mtbutton == 1 then
-								moveline("mappacks/" .. mappack .. "/objects.txt",tile+1,"up")
-								loadmtobjects()
-							elseif mtbutton == 2 then
-								moveline("mappacks/" .. mappack .. "/objects.txt",tile+1,"down")
-								loadmtobjects()
-							elseif mtbutton == 3 then
-								deleteline("mappacks/" .. mappack .. "/objects.txt", tile+1)
-								loadmtobjects()
-							elseif mtbutton == 4 then
-								startrenameline("mappacks/" .. mappack .. "/objects.txt", tile+1)
-							end
+						--end
+						pastecenter = {0, 0}
+						pastingtiles = true
+						editentities = false
+						editenemies = false
+					else
+						if mtbutton == 1 then
+							moveline("mappacks/" .. mappack .. "/objects.txt",tile+1,"up")
+							loadmtobjects()
+						elseif mtbutton == 2 then
+							moveline("mappacks/" .. mappack .. "/objects.txt",tile+1,"down")
+							loadmtobjects()
+						elseif mtbutton == 3 then
+							deleteline("mappacks/" .. mappack .. "/objects.txt", tile+1)
+							loadmtobjects()
 						end
 					end
-				else
-					finishrenameline(false)
 				end
 			end
 		end
@@ -3331,12 +3272,6 @@ function editor_keypressed(key)
 	
 	if rightclickm then
 		rightclickm:keypressed(key)
-	end
-	
-	if key == "backspace" or key == "delete" then
-		if tileselectionclick1 == true and tileselectionclick2 == true then
-			emptySelection()
-		end
 	end
 	
 	if ctrlpressed then
@@ -3753,11 +3688,12 @@ end
 
 function getmtbutton(x)
 	local button = 0
-	local buttonCount = 4
-	for i = 1, buttonCount do
-		if x >= (377-(buttonCount+1-i)*14)*scale and x < (377-(buttonCount-i)*14 - 1)*scale then
-			button = i
-		end
+	if x >= 333*scale and x < 347*scale then
+		button = 1
+	elseif x >= 348*scale and x < 362*scale then
+		button = 2
+	elseif x >= 363*scale and x < 377*scale then
+		button = 3
 	end
 	
 	return button
@@ -3800,30 +3736,7 @@ function getTiles(pos1, pos2)
 	for i = 1, xnum do
 		tx = {}
 		for j = 1, ynum do
-			local tt = {}
-			local txpos = tile1x + i - 1
-			local typos = tile1y + j - 1
-			local skip = 0
-			for k = 1, #map[txpos][typos] do -- excludes stuff like gels
-				local subtile = map[txpos][typos][k]
-				if subtile == "link" then -- change the link (or remove it)
-					local linkx = map[txpos][typos][k+2]
-					local linky = map[txpos][typos][k+3]
-					if not (linkx >= tile1x and linkx < tile2x and linky >= tile1y and linky < tile2y) then
-						skip = 4
-					end
-				elseif map[txpos][typos][k-2] == "link" then -- change pos x
-					subtile = subtile - txpos
-				elseif map[txpos][typos][k-3] == "link" then -- change pos y
-					subtile = subtile - typos
-				end
-				if skip == 0 then
-					tt[k] = subtile
-				else
-					skip = skip - 1
-				end
-			end
-			table.insert(tx, tt)
+			table.insert(tx, map[tile1x + i - 1][tile1y + j - 1][1])
 			--print(map[tile1x + i - 1][tile1y + j - 1][1])
 		end
 		table.insert(objecttable, tx)
@@ -3874,14 +3787,7 @@ function savemtobject(objecttable, name)
 	for i = 1, #objecttable do
 		s = objecttable[i] -- x's
 		for j = 1, #s do
-			for k, v in pairs(s[j]) do
-				data = data .. v
-				if k == #s[j] then
-					data = data .. ","
-				else
-					data = data .. ";"
-				end
-			end
+			data = data .. s[j] .. ","
 			n = j
 		end
 		data = string.sub(data, 1, -2)
@@ -3980,50 +3886,7 @@ function deleteline(file, line)
 	love.filesystem.write(file, newdata)
 end
 
-function startrenameline(file, line)
-	if not love.filesystem.getInfo(file) then
-		return false
-	end
-	line = tonumber(line)
-	renamingline = line
-	guielements["objectrename"].y = 39 + (line-1)*17
-	guielements["objectrename"].active = true
-	guielements["objectrename"].value = multitileobjectnames[line]
-end
-
-function finishrenameline(save)
-	local newname = guielements["objectrename"].value
-	guielements["objectrename"].value = ""
-	guielements["objectrename"].active = false
-	if save then
-		renameline("mappacks/" .. mappack .. "/objects.txt", renamingline, newname)
-		loadmtobjects()
-	end
-	renamingline = false
-end
-
-function renameline(file, line, newname)
-	if not love.filesystem.getInfo(file) then
-		return false
-	end
-	line = tonumber(line)
-	local data, newdata, split1
-	data = love.filesystem.read(file)
-	data = string.sub(data, 1, -2)
-	newdata = ""
-	split1 = data:split("\n")
-	for i, v in ipairs(split1) do
-		local linestr = split1[i]
-		if i ~= line then
-			newdata = newdata .. linestr .. "\n"
-		else
-			newdata = newdata .. newname .. "=" .. linestr:split("=")[2] .. "\n"
-		end
-	end
-	love.filesystem.write(file, newdata)
-end
-
-function changeline(file, line, newstring)
+function changeline(file, linenumber, newstring)
 	if not love.filesystem.getInfo(file) then
 		return false
 	end
