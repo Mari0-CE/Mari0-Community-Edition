@@ -2420,6 +2420,15 @@ function convertmappack(name)
 		end
 	end
 	
+	-- copy "default" bg
+	local defbg = false
+	local bgi = 1
+	while love.filesystem.getInfo(oldmappackpath .. "background" .. bgi .. ".png", "file") do
+		cpy(oldmappackpath .. "background" .. bgi .. ".png", newmappackpath .. "backgrounds/default" .. bgi .. ".png")
+		bgi = bgi + 1
+		defbg = true
+	end
+	
 	tilequads = {}
 	rgblist = {}
 	if cpy(oldmappackpath .. "tiles.png", newmappackpath .. "tiles.png") then
@@ -2448,7 +2457,17 @@ function convertmappack(name)
 	for i, v in pairs(love.filesystem.getDirectoryItems(oldmappackpath)) do
 		if v:find("^%d+%-%d+.txt$") or v:find("^%d+%-%d+_%d+.txt$") then -- file is in format world-level.txt or world-level_sub.txt
 			if loadmapold(oldmappackpath .. v) then
-				print(v:sub(1, -5))
+				bgi = 1
+				while love.filesystem.getInfo(oldmappackpath .. v:sub(1, -5) .. "background" .. bgi .. ".png", "file") do
+					cpy(oldmappackpath .. v:sub(1, -5) .. "background" .. bgi .. ".png", newmappackpath .. "backgrounds/" .. v:sub(1, -5) .. bgi .. ".png")
+					if custombackground == true then
+						custombackground = v:sub(1, -5)
+					end
+					bgi = bgi + 1
+				end
+				if custombackground == true and defbg then
+					custombackground = "default"
+				end
 				savemap(v:sub(1, -5), true)
 			end
 		end
@@ -2503,7 +2522,6 @@ function loadmapold(path)
 				underwater = true
 			elseif i == 1 then
 				local mapsplit = v:split(",")
-				print(tostring(#mapsplit) .. " " .. tostring(#mapsplit%15))
 				if #mapsplit%15 ~= 0 then
 					print("Level isn't 15 tiles tall!!!")
 					return false
