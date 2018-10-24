@@ -2381,34 +2381,7 @@ function changecharacter(i)
 	colorsetedit = 1
 end
 
-function convertmappack(name)
-	-- old format, which, unless modded, should only have 8 worlds, 4 levels per world and 6 sublevels per level (main included)
-	-- BUT!!!!!!!!!!! Imma make while loops just to be sure
-	
-	-- save everything to not mess up stuff
-	local mappackbkp = mappack
-	local customtilesbkp = customtiles
-	local customtilesimgbkp = customtilesimg
-	local tilequadsbkp = tilequads
-	local rgblistbkp = rgblist
-	local mapbkp = map
-	local coinmapbkp = coinmap
-	local backgroundbkp = background
-	local spritesetbkp = spriteset
-	local musicnamebkp = musicname
-	local intermissionbkp = intermission
-	local haswarpzonebkp = haswarpzone
-	local underwaterbkp = underwater
-	local custombackgroundbkp = custombackground
-	local customforegroundbkp = customforeground
-	local mariotimelimitbkp = mariotimelimit
-	local scrollfactorbkp = scrollfactor
-	local fscrollfactorbkp = fscrollfactor
-	local portalsavailablebkp = portalsavailable
-	local levelscreenbacknamebkp = levelscreenbackname
-	local mapwidthbkp = mapwidth
-	local mapheightbkp = mapheight
-	
+function convertmappack(name)	
 	local oldmappackpath = "toconvert/" .. name .. "/"
 	local newmappackpath = "mappacks/" .. name .. "/"
 	mappack = name
@@ -2449,14 +2422,13 @@ function convertmappack(name)
 	
 	tilequads = {}
 	rgblist = {}
-	if love.filesystem.getInfo(oldmappackpath .. "tiles.png", "file") then
-		love.filesystem.write(newmappackpath .. "tiles.png", love.filesystem.read(oldmappackpath .. "tiles.png"))
+	if cpy(oldmappackpath .. "tiles.png", newmappackpath .. "tiles.png") then
 		customtiles = true
 		customtilesimg = love.graphics.newImage(newmappackpath .. "tiles.png")
 		local imgwidth, imgheight = customtilesimg:getWidth(), customtilesimg:getHeight()
 		local width = math.floor(imgwidth/17)
 		local height = math.floor(imgheight/17)
-		local imgdata = love.image.newImageData("mappacks/" .. mappack .. "/tiles.png")
+		local imgdata = love.image.newImageData(newmappackpath .. "tiles.png")
 		
 		for y = 1, height do
 			for x = 1, width do
@@ -2466,110 +2438,77 @@ function convertmappack(name)
 			end
 		end
 		customtilecount = width*height
+		customspritebatch = love.graphics.newSpriteBatch( customtilesimg, 10000 )
+		customspritebatchfront = love.graphics.newSpriteBatch( customtilesimg, 10000 )
 	else
 		customtiles = false
 		customtilesimg = nil
 	end
 	
-	while love.filesystem.getInfo(oldmappackpath .. cw .. "-1.txt", "file") do -- this world exists, this level?
-		while love.filesystem.getInfo(oldmappackpath .. cw .. "-" .. cl .. ".txt", "file") do -- this level exists, this sub???
-			while love.filesystem.getInfo(oldmappackpath .. cw .. "-" .. cl .. (cs == 0 and "" or ("_" .. cs)) .. ".txt", "file") do -- this sub exists, convert
-				local oldmap = loadmapold(oldmappackpath .. cw .. "-" .. cl .. (cs == 0 and "" or ("_" .. cs)) .. ".txt", cw, cl, cs)
-				if oldmap then -- could have failed (see for example the #mapsplit%15 part)
-					map = oldmap.map
-					coinmap = oldmap.coinmap
-					background = backgroundcolor[oldmap.bgcolor]
-					spriteset = oldmap.spriteset
-					if oldmap.music == 7 then
-						musicname = custommusicname
-					else
-						musicname = musiclist[oldmap.music]
-					end
-					intermission = oldmap.intermission
-					bonusstage = oldmap.bonusstage
-					haswarpzone = oldmap.haswarpzone
-					underwater = oldmap.underwater
-					custombackground = oldmap.portalbg
-					customforeground = false
-					mariotimelimit = oldmap.timer
-					scrollfactor = oldmap.scrollfactor
-					fscrollfactor = 0
-					portalsavailable = {true, true}
-					levelscreenbackname = false
-					mapwidth = oldmap.width
-					
-					savemap(cw .. "-" .. cl .. (cs == 0 and "" or ("_" .. cs)), true)
-				end
-				cs = cs + 1
+	for i, v in pairs(love.filesystem.getDirectoryItems(oldmappackpath)) do
+		if v:find("^%d+%-%d+.txt$") or v:find("^%d+%-%d+_%d+.txt$") then -- file is in format world-level.txt or world-level_sub.txt
+			if loadmapold(oldmappackpath .. v) then
+				print(v:sub(1, -5))
+				savemap(v:sub(1, -5), true)
 			end
-			cs = 0
-			cl = cl + 1
 		end
-		cl = 1
-		cw = cw + 1
 	end
-	
-	customtiles = customtilesbkp
-	customtilesimg = customtilesimgbkp
-	tilequads = tilequadsbkp
-	rgblist = rgblistbkp
-	map = mapbkp
-	coinmap = coinmapbkp
-	background = backgroundbkp
-	spriteset = spritesetbkp
-	musicname = musicnamebkp
-	intermission = intermissionbkp
-	haswarpzone = haswarpzonebkp
-	underwater = underwaterbkp
-	custombackground = custombackgroundbkp
-	customforeground = customforegroundbkp
-	mariotimelimit = mariotimelimitbkp
-	scrollfactor = scrollfactorbkp
-	fscrollfactor = fscrollfactorbkp
-	portalsavailable = portalsavailablebkp
-	levelscreenbackname = levelscreenbacknamebkp
-	mappack = mappackbkp
 	
 	notice.new("mappack converted successfully")
 end
 
-function loadmapold(path, w, l, s)
+function loadmapold(path)
 	if love.filesystem.getInfo(path, "file") then
 		-- start to fill important info
-		local oldmap = {
-			map = {}, coinmap = {}, timer = 400, bgcolor = 1, music = 2, spriteset = 1, portalbg = false,
-			intermission = false, bonusstage = false, haswarpzone = false, underwater = false, scrollfactor = 0, width = 25
-		}
+		map = {}
+		coinmap = {}
+		mariotimelimit = 400
+		background = backgroundcolor[1]
+		musicname = "overworld.ogg"
+		spriteset = 1
+		custombackground = false
+		customforeground = false
+		intermission = false
+		bonusstage = false
+		haswarpzone = false
+		underwater = false
+		scrollfactor = 0
+		fscrollfactor = 0
+		portalsavailable = {true, true}
+		levelscreenbackname = false
+		mapwidth = 25
+		
 		local data = love.filesystem.read(path):split(";")
 		for i, v in pairs(data) do
 			local spl = v:split("=")
 			if spl[1] == "timelimit" then
-				oldmap.timer = tonumber(spl[2])
+				mariotimelimit = tonumber(spl[2])
 			elseif spl[1] == "background" then
-				oldmap.bgcolor = tonumber(spl[2])
+				background = backgroundcolor[tonumber(spl[2])]
 			elseif spl[1] == "music" then
-				oldmap.music = tonumber(spl[2])
+				musicname = musiclist[tonumber(spl[2])]
 			elseif spl[1] == "spriteset" then
-				oldmap.spriteset = tonumber(spl[2])
+				spriteset = tonumber(spl[2])
 			elseif spl[1] == "scrollfactor" then
-				oldmap.scrollfactor = tonumber(spl[2])
-			elseif v == "portalbackground" then
-				oldmap.portalbg = true
+				scrollfactor = tonumber(spl[2])
+			elseif v == "portalbackground" or v == "custombackground" then
+				custombackground = true -- todo, make it so curr background is saved
 			elseif v == "intermission" then
-				oldmap.intermission = true
+				intermission = true
 			elseif v == "bonusstage" then
-				oldmap.bonusstage = true
+				bonusstage = true
 			elseif v == "haswarpzone" then
-				oldmap.haswarpzone = true
+				haswarpzone = true
 			elseif v == "underwater" then
-				oldmap.underwater = true
-			else -- the map itself, watch out ><'
+				underwater = true
+			elseif i == 1 then
 				local mapsplit = v:split(",")
-				if #mapsplit%15 ~= 0 then -- map isn't valid for VANILLA!!! Mari0 1.6
-					return
+				print(tostring(#mapsplit) .. " " .. tostring(#mapsplit%15))
+				if #mapsplit%15 ~= 0 then
+					print("Level isn't 15 tiles tall!!!")
+					return false
 				end
-				local mapwidth = math.floor(#mapsplit/15)
-				oldmap.width = mapwidth
+				mapwidth = math.floor(#mapsplit/15)
 				local x = 0
 				local y = 1
 				for j, w in pairs(mapsplit) do
@@ -2579,9 +2518,9 @@ function loadmapold(path, w, l, s)
 						x = 1
 						y = y + 1
 					end
-					if not oldmap.map[x] then
-						oldmap.map[x] = {}
-						oldmap.coinmap[x] = {}
+					if not map[x] then
+						map[x] = {}
+						coinmap[x] = {}
 					end
 					
 					local tileid = tonumber(spl2[1])
@@ -2595,15 +2534,15 @@ function loadmapold(path, w, l, s)
 					
 					local shouldbecoin = tilequads[tileid] and tilequads[tileid]:getproperty("coin")
 					
-					oldmap.map[x][y] = {shouldbecoin and 1 or tileid}
+					map[x][y] = {shouldbecoin and 1 or tileid}
 					for subent = 1, #entity do
-						table.insert(oldmap.map[x][y], entity[subent])
+						table.insert(map[x][y], entity[subent])
 					end
-					oldmap.coinmap[x][y] = shouldbecoin
+					coinmap[x][y] = shouldbecoin
 				end
 			end
 		end
-		return oldmap
+		return true
 	end
 end
 
@@ -2638,8 +2577,8 @@ function convertentity(entity)
 			newent = {3}
 		elseif entid == 18 or entid == 19 then -- platforms
 			newent = {18, entity[2], entid == 18 and 0 or 3.31, entid == 19 and 0 or 3.31, 4}
-		elseif entid == 21 then -- pipe enter
-			newent = {21, entity[2]+1}
+		elseif entid == 14 or entid == 21 or entid == 31 then -- pipe enter/exit / vine
+			newent = {entid, entity[2]+1}
 		elseif entid == 22 then -- lakitu
 			newent = {"lakito"}
 		elseif entid == 26 or entid == 27 then -- emance grid
@@ -2677,7 +2616,7 @@ function convertentity(entity)
 			newent = {"kooparedflying"}
 		elseif entid == 78 then -- parakoopa
 			newent = {"koopaflying"}
-		elseif entid == 79 or entid == 81 then -- fire sticks
+		elseif entid == 79 or entid == 82 then -- fire sticks
 			newent = {79, 6, 0.11, tostring(entid == 78)}
 		elseif entid == 80 then -- seesaw
 			-- line below copied from 1.6 src
@@ -2720,11 +2659,6 @@ function convertentity(entity)
 									toskip = toskip - 1
 								end
 							end
-						end
-						if linktype == "" then
-							print_r(rcmenu)
-							print(linkcount)
-							error("Why can't you be ~~normal~~ linked?")
 						end
 						table.insert(newent, "link")
 						table.insert(newent, linktype)
