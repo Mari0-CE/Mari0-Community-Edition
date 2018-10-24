@@ -2705,29 +2705,33 @@ function convertentity(entity)
 		end
 		
 		local linkcount = 0
-		local rcmenu = rightclickmenues[entitylist[entity[1]].t]
-		if rcmenu then
-			for i = 1, #entity do
-				if entity[i] == "link" then
-					local linktype = nil
-					local toskip = linkcount
-					for j, v in pairs(rcmenu) do
-						if v.t == "linkbutton" then
-							if toskip == 0 then
-								linktype = v.link
-							else
-								toskip = toskip - 1
+		if newent[1] and entitylist[newent[1]] then
+			local rcmenu = rightclickmenues[entitylist[newent[1]].t]
+			if rcmenu then
+				for i = 1, #entity do
+					if entity[i] == "link" then
+						local linktype = ""
+						local toskip = linkcount
+						for j, v in pairs(rcmenu) do
+							if v.t == "linkbutton" then
+								if toskip == 0 then
+									linktype = v.link
+								else
+									toskip = toskip - 1
+								end
 							end
 						end
-					end
-					if linktype then
+						if linktype == "" then
+							print_r(rcmenu)
+							print(linkcount)
+							error("Why can't you be ~~normal~~ linked?")
+						end
 						table.insert(newent, "link")
 						table.insert(newent, linktype)
 						table.insert(newent, entity[i+1])
 						table.insert(newent, entity[i+2])
+						linkcount = linkcount + 1
 					end
-					i = i + 3 -- skip the newly added coords
-					linkcount = linkcount + 1
 				end
 			end
 		end
