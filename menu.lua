@@ -2416,7 +2416,7 @@ function convertmappack(name)
 	local custommusicname = ""
 	for _, ext in pairs({"mp3", "ogg"}) do
 		if cpy(oldmappackpath .. "music." .. ext, newmappackpath .. "music/custom." .. ext) then
-			custommusicname = "music/custom." .. ext
+			custommusicname = "custom." .. ext
 		end
 	end
 	
@@ -2429,8 +2429,11 @@ function convertmappack(name)
 		defbg = true
 	end
 	
-	tilequads = {}
-	rgblist = {}
+	local customstart = smbtilecount + portaltilecount + 1
+	for i = customstart, #tilequads do
+		tilequads[i] = nil
+		rgblist[i] = nil
+	end
 	if cpy(oldmappackpath .. "tiles.png", newmappackpath .. "tiles.png") then
 		customtiles = true
 		customtilesimg = love.graphics.newImage(newmappackpath .. "tiles.png")
@@ -2467,6 +2470,9 @@ function convertmappack(name)
 				end
 				if custombackground == true and defbg then
 					custombackground = "default"
+				end
+				if musicname == "custom.ext" then
+					musicname = custommusicname
 				end
 				savemap(v:sub(1, -5), true)
 			end
@@ -2505,7 +2511,12 @@ function loadmapold(path)
 			elseif spl[1] == "background" then
 				background = backgroundcolor[tonumber(spl[2])]
 			elseif spl[1] == "music" then
-				musicname = musiclist[tonumber(spl[2])]
+				local musici = tonumber(spl[2])
+				if musici == 7 then
+					musicname = "custom.ext"
+				else
+					musicname = musiclist[tonumber(spl[2])]
+				end
 			elseif spl[1] == "spriteset" then
 				spriteset = tonumber(spl[2])
 			elseif spl[1] == "scrollfactor" then
@@ -2550,9 +2561,13 @@ function loadmapold(path)
 					end
 					entity = convertentity(entity)
 					
-					local shouldbecoin = tilequads[tileid] and tilequads[tileid]:getproperty("coin")
+					local shouldbecoin = false
+					if tilequads[tileid] and tilequads[tileid]:getproperty("coin") then
+						shouldbecoin = true
+						tileid = 1
+					end
 					
-					map[x][y] = {shouldbecoin and 1 or tileid}
+					map[x][y] = {tileid}
 					for subent = 1, #entity do
 						table.insert(map[x][y], entity[subent])
 					end
@@ -2635,12 +2650,14 @@ function convertentity(entity)
 		elseif entid == 78 then -- parakoopa
 			newent = {"koopaflying"}
 		elseif entid == 79 or entid == 82 then -- fire sticks
-			newent = {79, 6, 0.11, tostring(entid == 78)}
+			newent = {79, 6, 0.11, tostring(entid == 79)}
 		elseif entid == 80 then -- seesaw
 			-- line below copied from 1.6 src
 			local seesaws = {{7,4,6,3}, {4,2,6,3}, {7,3,6,3}, {8,3,7,3}, {5,3,7,3}, {6,3,7,3}, {4,3,7,1.5}, {3,3,7,1.5}, {3,4,7,1.5}}
 			local seesawtype = seesaws[entity[2]]
 			newent = {80, seesawtype[1], seesawtype[2], seesawtype[3], seesawtype[4]}
+		elseif entid == 84 then -- not gate
+			newent = {84, "true"}
 		elseif entid >= 85 and entid <= 88 then -- gels
 			newent = {85, entity[2], entid == 86, entid == 85, entid == 88, entid == 87}
 		elseif entid == 94 then -- squid
@@ -2652,7 +2669,7 @@ function convertentity(entity)
 		elseif entid == 99 then -- spiney half
 			newent = {"spikeyhalf"}
 		elseif entid == 100 then -- checkpoint
-			newent = {100, "true", "false", "false", "false", "false", "false", "false", "region:m15:m15:30:30"}
+			newent = {100, "true", "false", "false", "false", "false", "false", "false", "region:0:m15:1:30"}
 		else -- every other entity
 			local i = 1
 			while entity[i] ~= "link" and i <= #entity do
