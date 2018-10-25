@@ -2605,7 +2605,7 @@ function convertentity(entity)
 			newent = {28, entid == 29 and "hor" or "ver", "false", "false"}
 		elseif entid >= 36 and entid <= 39 then -- light bridges
 			local dirs = {"right", "left", "down", "up"}
-			newent = {36, dirs[entid - 35], "false"}
+			newent = {36, dirs[entid - 35], tostring(tablecontains(entity, "link"))}
 		elseif entid == 41 or entid == 42 then -- infinite platforms
 			newent = {41, entid == 41 and "down" or "up", entity[2], 3.5, 2.18}
 		elseif entid >= 49 and entid <= 51 then -- faithplate
@@ -2613,7 +2613,7 @@ function convertentity(entity)
 			newent = {49, speeds[entid - 48][1], speeds[entid - 48][2], "false"}
 		elseif entid >= 52 and entid <= 55 then -- laser
 			local dirs = {"right", "down", "left", "up"}
-			newent = {52, dirs[entid - 51], "false"}
+			newent = {52, dirs[entid - 51], tostring(tablecontains(entity, "link"))}
 		elseif entid >= 56 and entid <= 59 then -- laser detector
 			local dirs = {"right", "down", "left", "up"}
 			newent = {56, dirs[entid - 55], "false"}
