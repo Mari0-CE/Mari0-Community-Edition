@@ -591,6 +591,7 @@ function love.load(arg)
 		soundenabled = true
 	end
 	love.filesystem.createDirectory( "mappacks" )
+	love.filesystem.createDirectory( "toconvert" )
 	editormode = false
 	yoffset = 0
 	love.graphics.setPointSize(3*scale)
