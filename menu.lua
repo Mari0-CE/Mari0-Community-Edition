@@ -2628,8 +2628,8 @@ function convertentity(entity)
 			newent = {"plant"}
 		elseif entid == 75 then -- beetle
 			newent = {"beetle"}
-		elseif entid == 76 then -- beetle hal... wait!
-			newent = {"beetle"}
+		elseif entid == 76 then -- beetle half
+			newent = {"beetlehalf"}
 		elseif entid == 77 then -- parakoopa red
 			newent = {"kooparedflying"}
 		elseif entid == 78 then -- parakoopa
