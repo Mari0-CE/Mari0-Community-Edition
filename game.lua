@@ -4859,7 +4859,7 @@ function getMouseTile(x, y)
 	return xout, yout
 end
 
-function savemap(filename, silent)
+function savemap(filename)
 	local s = ""
 	local v = 1
 	
@@ -5005,10 +5005,8 @@ function savemap(filename, silent)
 		previewimg:encode("mappacks/" .. mappack .. "/" .. filename .. ".png")
 	end
 	
-	if not silent then
-		print("Map saved as " .. "mappacks/" .. filename .. ".txt")
-		notice.new("Map saved!", notice.white, 2)
-	end
+	print("Map saved as " .. "mappacks/" .. filename .. ".txt")
+	notice.new("Map saved!", notice.white, 2)
 end
 
 function renderpreview()
