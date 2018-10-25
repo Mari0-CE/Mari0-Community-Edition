@@ -528,6 +528,9 @@ function menu_draw()
 			end
 			
 			love.graphics.translate(- round(mappackhorscrollrange*scale - mappackhorscrollsmooth*scale*mappackhorscrollrange), 0)
+			----------------
+			--OLD MAPPACKS--
+			----------------
 			
 			love.graphics.translate(round(mappackhorscrollrange*scale*2 - mappackhorscrollsmooth*scale*mappackhorscrollrange), 0)
 			
@@ -599,11 +602,10 @@ function menu_draw()
 					end
 				end
 				
+				love.graphics.translate(0, round(toconvertmappackscrollsmooth*60*scale))
 				local i = toconvertmappackscrollsmooth / (#toconvertmappacklist-3.233)
 			
 				love.graphics.draw(mappackscrollbar, 227*scale, (20+i*160)*scale, 0, scale, scale)
-				
-				love.graphics.translate(0, round(toconvertmappackscrollsmooth*60*scale))
 				love.graphics.setScissor()
 			end
 			
