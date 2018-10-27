@@ -15,7 +15,7 @@ quad = class("quad")
 --BRIDGE?
 --SPIKES?
 --FOREGROUND?
-
+--BIG?
 function quad:init(img, imgdata, x, y, width, height)
 	--get if empty?
 
@@ -145,5 +145,10 @@ function getquadprops(imgdata, x, y)
 		self.foreground = true
 	end
 	
+	self.big = false
+	local r, g, b, a = imgdata:getPixel(x*17-3, (y-1)*17+16)
+	if a > 0.5 then
+		self.big = true
+	end
 	return self
 end

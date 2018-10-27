@@ -807,6 +807,8 @@ function checkrect(x, y, width, height, list, statics)
 	
 	local inobj
 	
+	local catlist = ""
+	
 	if type(list) == "table" and list[1] == "exclude" then
 		inobj = {unpack(list)}
 		table.remove(inobj, 1)
@@ -820,6 +822,9 @@ function checkrect(x, y, width, height, list, statics)
 			for j = 1, #list do
 				if list[j] == i then
 					contains = true
+				elseif tonumber(list[j]) and "enemy" == i then
+					contains = true
+					catlist = tonumber(list[j])
 				end
 			end
 		end
@@ -837,13 +842,16 @@ function checkrect(x, y, width, height, list, statics)
 							if (v.mask ~= nil and v.mask[w.category] == true) or (w.mask ~= nil and w.mask[v.category] == true) then
 								skip = true
 							end
+							
 						end
 					end
 					if not skip then
 						if w.active then
 							if aabb(x, y, width, height, w.x, w.y, w.width, w.height) then
-								table.insert(out, i)
-								table.insert(out, j)
+								if (i=="enemy" and catlist == w.category) or catlist == "" or i ~= "enemy" then
+									table.insert(out, i)
+									table.insert(out, j)
+								end
 							end
 						end
 					end

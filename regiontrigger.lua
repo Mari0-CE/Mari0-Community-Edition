@@ -16,6 +16,10 @@ function regiontrigger:init(x, y, r)
 	
 	self.checktable = {}
 	
+	for a,b in pairs(self.r) do
+		dbprint(a,b)
+	end
+	
 	--TRIGGER ON PLAYER?
 	if #self.r > 0 and self.r[1] ~= "link" then
 		if self.r[1] == "true" then
@@ -26,9 +30,12 @@ function regiontrigger:init(x, y, r)
 	
 	--TRIGGER ON ENEMY?
 	if #self.r > 0 and self.r[1] ~= "link" then
-		if self.r[1] == "true" then
+		if self.r[1] == "true" or self.r[1] == "all" then
 			table.insert(self.checktable, "enemy")
-		end			
+		elseif tonumber(self.r[1]) then
+			table.insert(self.checktable, self.r[1])
+		end	
+	
 		table.remove(self.r, 1)
 	end
 	

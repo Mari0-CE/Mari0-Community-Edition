@@ -122,7 +122,7 @@ function love.errhand(msg)
 	table.insert(err, "Mari0 Over.")
 	table.insert(err, "Crash = Very Yes.\n\n")
 	if not versionerror then
-		table.insert(err, "Send us a screenshot of this to https://github.com/HugoBDesigner/Mari0-Community-Edition/issues , that'd be swell.\nAlso tell us what you were doing.\n")
+		table.insert(err, "Tell us what happened at github.com/HugoBDesigner/Mari0-Community-Edition/issues, that'd be swell.\nAlso send us a screenshot.\n")
 	end
 	table.insert(err, "Mari0 " .. (marioversion or "UNKNOWN") .. ", LOVE " .. (love._version or "UNKNOWN") .. " running on " .. (love._os or "UNKNOWN") .. "\n")
 	if love.graphics.getRendererInfo then
@@ -140,6 +140,9 @@ function love.errhand(msg)
 		end
 	end
 
+	for m,p in pairs(err) do
+		print(p)
+	end
 	--error_printer(msg, 2)
 
 	if versionerror then
@@ -459,7 +462,7 @@ function love.load(arg)
 	
 	love.graphics.draw(logo, love.graphics.getWidth()/2, love.graphics.getHeight()/2, 0, logoscale, logoscale, 142, 150)
 	love.graphics.setColor(0.6, 0.6, 0.6)
-	properprint("loading mari0 se..", love.graphics.getWidth()/2-string.len("loading mari0 se..")*4*scale, love.graphics.getHeight()/2-170*logoscale-7*scale)
+	properprint("loading mari0 ce..", love.graphics.getWidth()/2-string.len("loading mari0 ce..")*4*scale, love.graphics.getHeight()/2-170*logoscale-7*scale)
 	love.graphics.setColor(0.2, 0.2, 0.2)
 	properprint(loadingtext, love.graphics.getWidth()/2-string.len(loadingtext)*4*scale, love.graphics.getHeight()/2+165*logoscale)
 	love.graphics.present()
@@ -554,6 +557,8 @@ function love.load(arg)
 	require "animationsystem"
 	require "regiondrag"
 	require "regiontrigger"
+	require "zgbooltrigger"
+	require "zginttrigger"
 	require "checkpoint"
 	require "portal"
 	require "portalent"
@@ -563,6 +568,7 @@ function love.load(arg)
 	require "dialogbox"
 	require "itemanimation"
 	require "animatedtimer"
+	require "animatedbooltimer"
 	require "animatedtiletrigger"
 	require "delayer"
 	require "entitylistitem"
@@ -591,6 +597,7 @@ function love.load(arg)
 		soundenabled = true
 	end
 	love.filesystem.createDirectory( "mappacks" )
+	love.filesystem.createDirectory( "toconvert" )
 	editormode = false
 	yoffset = 0
 	love.graphics.setPointSize(3*scale)
@@ -965,7 +972,8 @@ function love.load(arg)
 	--sounds
 	soundstoload = {"jump", "jumpbig", "stomp", "shot", "blockhit", "blockbreak", "coin", "pipe", "boom", "mushroomappear", "mushroomeat", "shrink", "death", "gameover", "fireball",
 					"oneup", "levelend", "castleend", "scorering", "intermission", "fire", "bridgebreak", "bowserfall", "vine", "swim", "rainboom", "konami", "pause", "bulletbill",
-					"lowtime", "tailwag", "planemode", "stab", "portal1open", "portal2open", "portalenter", "portalfizzle"}
+					"lowtime", "tailwag", "planemode", "stab", "portal1open", "portal2open", "portalenter", "portalfizzle",
+					"match", "nomatch", "getitem", "zelda", "unlock", "spawnkey", "kingcannon", "checkpoint", "bomb", "no"}
 				
 	soundlist = {}
 	
@@ -2297,6 +2305,41 @@ function loadcustomtiles()
 	end
 end
 
+function loadmodcustomtiles()
+	local files = love.filesystem.getDirectoryItems("mappacks/" .. mappack .. "/tiles")
+	for i,j in pairs(files) do
+		print(i,j)
+		if string.sub(j, -4) ~= ".png" then
+			table.remove(files, i)
+			print(true)
+		end
+	end
+	if files ~= nil then
+		modcustomtiles = #files
+		modcustomtilesimg = {}
+		modcustomtilecount = {}
+		for i = 1, modcustomtiles do
+			modcustomtilesimg[i] = love.graphics.newImage("mappacks/" .. mappack .. "/tiles/" .. files[i])
+			local imgwidth, imgheight = modcustomtilesimg[i]:getWidth(), modcustomtilesimg[i]:getHeight()
+			local width = math.floor(imgwidth/17)
+			local height = math.floor(imgheight/17)
+			local imgdata = love.image.newImageData("mappacks/" .. mappack .. "/tiles/" .. files[i])
+			
+			for y = 1, height do
+				for x = 1, width do
+					table.insert(tilequads, quad:new(modcustomtilesimg[i], imgdata, x, y, imgwidth, imgheight))
+					local r, g, b = getaveragecolor(imgdata, x, y)
+					table.insert(rgblist, {r, g, b})
+				end
+			end
+			modcustomtilecount[i] = (modcustomtilecount[i-1] or 0) + width*height
+		end
+	else
+		modcustomtiles = false
+		modcustomtilecount = {0}
+	end
+end
+
 function love.quit()
 	
 end
@@ -2367,4 +2410,8 @@ function mouse.getY()
 	else
 		return love.mouse.getY()
 	end
+end
+
+function dbprint(x) --debugprint, can easily comment out the "print" thing
+	print(x)
 end

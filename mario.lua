@@ -2620,7 +2620,12 @@ function mario:globalcollide(a, b, c, d, dir)
 			return true
 		end
 	end
-	
+	if b.booloncollect and b.boolactoncollect then
+		globoolSH(b.booloncollect, b.boolactoncollect)
+	end
+	if b.intoncollect and b.intactoncollect and b.intactvalue then
+		globintSH(b.intoncollect, b.intactoncollect, b.intactvalue)
+	end
 	if a == "screenboundary" then
 		if self.x+self.width/2 > b.x then
 			self.x = b.x
@@ -2661,6 +2666,26 @@ function mario:globalcollide(a, b, c, d, dir)
 		end
 	elseif b.makesmariogrow then
 		self:grow()
+		return true
+	elseif b.givesacoin then
+		local GCA = b.givescoinamount or 1
+		if mariocoincount + GCA >= 100 then
+			if mariolivecount ~= false then
+					for i = 1, players do
+						mariolives[i] = mariolives[i] + 1
+						respawnplayers()
+					end
+			end
+				mariocoincount = mariocoincount + GCA - 100
+				playsound("oneup")
+				return true
+		else 
+		mariocoincount = mariocoincount + GCA
+		playsound("coin")
+		return true
+		end
+	elseif b.givestime then
+		mariotime = mariotime + (b.givestimeamount or 20)
 		return true
 	elseif b.givesalife then
 		givelive(self.playernumber, b)

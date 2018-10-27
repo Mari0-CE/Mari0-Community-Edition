@@ -16,10 +16,13 @@ function animatedtimer:init(x, y, tileno)
 	end
 	self.dir = 0
 	
+	
 	table.insert(animatedtimerlist, self)
 end
 
 function animatedtimer:update(dt)
+	
+	
 	local oldi = self:geti()
 	self.timer = self.timer + dt*self.dir
 	

@@ -648,7 +648,7 @@ function editor_update(dt)
 						currenttile = currenttile-22
 					end
 					currenttile = math.max(1, currenttile)
-					currenttile = math.min(currenttile, smbtilecount + portaltilecount + customtilecount)
+					currenttile = math.min(currenttile, smbtilecount + portaltilecount + customtilecount + (modcustomtilecount[modcustomtiles] or 0))
 				end
 				love.mouse.setPosition(middlemode[2], middlemode[3])
 			end
@@ -1381,19 +1381,13 @@ function editor_draw()
 				else
 					if tile and tilequads[tile+tileliststart-1] and tile+tileliststart-1 <= tilelistcount+tileliststart then
 						--Local variables
-						local propertylist = {"collision", "invisible", "breakable", "coinblock", "coin", "slantupleft", "slantupright", "mirror", "grate", "platform", "water", "bridge", "spikesleft", "spikestop","spikesright", "spikesbottom", "foreground"}
+						local propertylist = {"collision", "invisible", "breakable", "coinblock", "coin", "slantupleft", "slantupright", "mirror", "grate", "platform", "water", "bridge", "spikesleft", "spikestop","spikesright", "spikesbottom", "foreground", "big"}
 						local propertytable = {}
 						local longestpropertylength = 0
 						local propertycount = -10
 						local s = ""
 						--2*2 Tile
-						if tile+tileliststart-1 == 136 then
-							table.insert(propertytable, "2*2 tile")
-							propertycount = propertycount + 10
-							if 8 >= longestpropertylength then
-								longestpropertylength = 8
-							end
-						end
+						
 						--Unportalable
 						if not tilequads[tile+tileliststart-1]:getproperty("portalable") then
 							table.insert(propertytable, "unportalable")
@@ -1403,7 +1397,7 @@ function editor_draw()
 							end
 						end
 						--Properties
-						for i = 1, 18 do
+						for i = 1, #propertylist do
 							if tilequads[tile+tileliststart-1]:getproperty(propertylist[i]) then
 								table.insert(propertytable, propertylist[i])
 								propertycount = propertycount + 10
@@ -2278,9 +2272,15 @@ function mapwidthapply()
 	
 	--Update animatedtimers
 	animatedtimers = {}
+	animatedbooltimers = {}
 	for x = 1, mapwidth do
 		if not animatedtimers[x] then
 			animatedtimers[x] = {}
+		end
+	end
+	for x = 1, mapwidth do
+		if not animatedbooltimers[x] then
+			animatedbooltimers[x] = {}
 		end
 	end
 	
@@ -2361,13 +2361,13 @@ function tilesall()
 	
 	animatedtilelist = false
 	tileliststart = 1
-	tilelistcount = smbtilecount + portaltilecount + customtilecount -1
+	tilelistcount = smbtilecount + portaltilecount + customtilecount + (modcustomtilecount[modcustomtiles] or 0)  -1
 	
 	if editentities or editenemies then
 		currenttile = 1
 	end
 	
-	tilescrollbarheight = math.max(0, math.ceil((smbtilecount + portaltilecount + customtilecount)/22)*17 - 1 - (17*9) - 12)
+	tilescrollbarheight = math.max(0, math.ceil((smbtilecount + portaltilecount + customtilecount + (modcustomtilecount[modcustomtiles] or 0))/22)*17 - 1 - (17*9) - 12)
 	editentities = false
 	editenemies = false
 end
@@ -2427,13 +2427,13 @@ function tilescustom()
 	
 	animatedtilelist = false
 	tileliststart = smbtilecount + portaltilecount + 1
-	tilelistcount = customtilecount - 1
+	tilelistcount = customtilecount + (modcustomtilecount[modcustomtiles] or 0) - 1
 	
 	if editentities or editenemies then
 		currenttile = 1
 	end
 	
-	tilescrollbarheight = math.max(0, math.ceil((customtilecount)/22)*17 - 1 - (17*9) - 12)
+	tilescrollbarheight = math.max(0,  math.ceil((customtilecount + (modcustomtilecount[modcustomtiles] or 0))/22)*17 - 1 - (17*9) - 12)
 	editentities = false
 	editenemies = false
 end
@@ -2521,10 +2521,10 @@ function placetile(x, y, t, ent)
 			generatespritebatch()
 		end
 		
-		if currenttile == 136 then
-			placetile(x+16*scale, y, 137)
-			placetile(x, y+16*scale, 138)
-			placetile(x+16*scale, y+16*scale, 139)
+		if tilequads[currenttile]:getproperty("big") then
+			placetile(x+16*scale, y, currenttile+1)
+			placetile(x, y+16*scale, currenttile+2)
+			placetile(x+16*scale, y+16*scale, currenttile+3)
 		end
 		
 	else
@@ -3075,7 +3075,7 @@ function editor_mousepressed(x, y, button)
 				if currenttile > 0 and currenttile <= 10000 then
 					currenttile = currenttile - 1
 					if currenttile == 0 then
-						currenttile = smbtilecount+portaltilecount+customtilecount
+						currenttile = smbtilecount+portaltilecount+customtilecount+(modcustomtilecount[modcustomtiles] or 0)
 					end
 				else
 					currenttile = currenttile - 1
@@ -3126,9 +3126,9 @@ function editor_mousepressed(x, y, button)
 					-- end
 				-- end
 			else
-				if currenttile <= smbtilecount+portaltilecount+customtilecount then
+				if currenttile <= smbtilecount+portaltilecount+customtilecount+(modcustomtilecount[modcustomtiles] or 0) then
 					currenttile = currenttile + 1
-					if currenttile > smbtilecount+portaltilecount+customtilecount then
+					if currenttile > smbtilecount+portaltilecount+customtilecount+(modcustomtilecount[modcustomtiles] or 0) then
 						currenttile = 1
 					end
 				else

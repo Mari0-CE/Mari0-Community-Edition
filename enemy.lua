@@ -1388,6 +1388,16 @@ function enemy:spawnenemy(t)
 end
 
 function enemy:transform(t)
+
+	if self.transfoutid and self.transfoutaction then
+		if self.transfoutvalue then
+			globintSH(self.transfoutid, self.transfoutaction, self.transfoutvalue)
+		else
+			globoolSH(self.transfoutid, self.transfoutaction)
+		end
+	end
+
+if not self.dontactuallytransform then
 	local xoffset = self.transformsoffsetx or 0
 	local yoffset = self.transformsoffsety or 0
 	if self.transformsintorandoms then
@@ -1413,6 +1423,7 @@ function enemy:transform(t)
 	self.kill = true
 	self.active = false
 	self.drawable = false
+end
 end
 
 function enemy:emancipate()

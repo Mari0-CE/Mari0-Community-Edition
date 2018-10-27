@@ -2,6 +2,7 @@ dialogbox = class("dialogbox")
 
 function dialogbox:init(text, speaker)
 	self.text = string.lower(text)
+	self.textsplit = self.text:split(" ")
 	self.speaker = string.lower(speaker)
 	self.timer = 0
 	self.curchar = 0
@@ -9,6 +10,40 @@ function dialogbox:init(text, speaker)
 	
 	self.lifetime = 5
 	self.chardelay = 0.05
+	--initialize prefixes
+	self.hasaprefix = false
+	for n, i in pairs(self.textsplit) do
+		local prefix = string.sub(i,1,3)
+		if  prefix == "db:" then
+			print(i)
+			self.textsplit[n] = string.sub(i,4)
+			self.hasaprefix = true
+		elseif prefix == "gb:" then
+			print(i, "bool")
+			self.textsplit[n] = globoolSH(string.sub(i,4), "check")
+			self.hasaprefix = true
+		elseif prefix == "gi:" then
+			print(i, "int")
+			self.textsplit[n] = globints[string.sub(i,4)] or "uninit"
+			self.hasaprefix = true
+		elseif prefix == "bi:" then
+			print(i, "g_")
+			self.textsplit[n] = _G[string.sub(i,4)] or "typo"
+			self.hasaprefix = true
+		elseif prefix == "bb:" then
+			local splitup = string.sub(i,4)
+			splitup = splitup:split("/")
+				if globoolSH(splitup[1], "check") then
+					self.textsplit[n] = splitup[2]
+				else
+					self.textsplit[n] = splitup[2]
+				end
+			self.hasaprefix = true
+		end
+	end
+	if self.hasaprefix then
+	self.text = table.concat(self.textsplit, " ")
+	end
 	
 	--initialize colors
 	local curcolor = {255, 255, 255}
@@ -29,6 +64,8 @@ function dialogbox:init(text, speaker)
 			self.textcolors[i] = {tonumber(curcolor[1]) / COLORCONVERT, tonumber(curcolor[2]) / COLORCONVERT, tonumber(curcolor[3]) / COLORCONVERT}
 			i = i + 1
 		end
+		
+		
 	end
 end
 
