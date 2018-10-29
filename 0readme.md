@@ -48,3 +48,17 @@ random fix: the intro now actually says CE for more than one frame
 integrated turretbot's MultiCustomTiles mod unsuccessfully - help me successfully integrate it and also add a dropdown for selecting between tilesets http://forum.stabyourself.net/viewtopic.php?f=13&t=4649
 
 updated title image - do you like it? If you don't, you don't need to include it
+
+
+
+added behaviour "directfromblock" to make a custom enemy not do an itemanimation
+
+also added "collectsound" which does exactly what it says on the tin
+
+implemented D-prog-55:sound-stuff, successfully this time
+
+finished raccoon character
+
+unadded sounds
+
+will make trueflyhorizontal/trueflyvertical that actually travels using speedx

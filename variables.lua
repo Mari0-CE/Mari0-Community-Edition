@@ -344,9 +344,11 @@ castleanimationmariostop = 2.3 -- when mario stops next to toad, relative to sta
 castleanimationtextfirstline = 3.2 -- when camera stops and first line of text appears, relative to the start of his move
 castleanimationtextsecondline = 5.3 --second line appears
 castleanimationnextlevel = 9.47 -- splash screen for next level appears
+castleendmusicstopdelay = 3.41 -- delay after the music stops
 
 endanimationtextfirstline = 3.2 -- when camera stops and first line of text appears, relative to the start of his move
 endanimationtextsecondline = 7.4 --second line appears
+endmusicstopdelay = 1.337 -- delay after the music stops (before peach music)
 endanimationtextthirdline = 8.4 --third line appears
 endanimationtextfourthline = 9.4 --fourth line appears
 endanimationtextfifthline = 10.4 --fifth line appears
