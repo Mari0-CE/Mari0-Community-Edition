@@ -20,7 +20,7 @@ added outputting on transform:
 
 added playsound for animations.
 
-added a couple sounds. 
+~added a couple sounds.~ 
 
 
 
@@ -29,7 +29,7 @@ planned features for next commit; more things to do with integers (such as using
 new random thing: animations now accept names of globints as numinput. it can also take a built-in variable such as marioworld or mariocoincount with the input "g:marioworld" or "g:mariocoincount". I think. 
 I may also add this to globinttrigger entities.
 
-tile property #19 (next to foreground): 2x2.
+tile property #19 (next to foreground): 2x2. this has been added to the portal tiles, since it's no longer hardcoded.
 
 fix: the lowtime sound can now only play once, usually.
 
@@ -57,8 +57,6 @@ also added "collectsound" which does exactly what it says on the tin
 
 implemented D-prog-55:sound-stuff, successfully this time
 
-finished raccoon character
-
-unadded sounds
+finished raccoon character - question: who resprited it? it doesn't look horrible anymore
 
 will make trueflyhorizontal/trueflyvertical that actually travels using speedx
