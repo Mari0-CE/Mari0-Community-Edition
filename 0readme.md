@@ -29,8 +29,6 @@ planned features for next commit; more things to do with integers (such as using
 new random thing: animations now accept names of globints as numinput. it can also take a built-in variable such as marioworld or mariocoincount with the input "g:marioworld" or "g:mariocoincount". I think. 
 I may also add this to globinttrigger entities.
 
-tile property #19 (next to foreground): 2x2. this has been added to the portal tiles, since it's no longer hardcoded.
-
 fix: the lowtime sound can now only play once, usually.
 
 ...If anything about this is broken, help me fix it, please.
@@ -45,7 +43,7 @@ also added the prefix "bb:" for a human-readable version of a globool... could n
 
 random fix: the intro now actually says CE for more than one frame
 
-integrated turretbot's MultiCustomTiles mod unsuccessfully - help me successfully integrate it and also add a dropdown for selecting between tilesets http://forum.stabyourself.net/viewtopic.php?f=13&t=4649
+integrated turretbot's MultiCustomTiles mod - request: someone help me add a dropdown for selecting between tilesets http://forum.stabyourself.net/viewtopic.php?f=13&t=4649
 
 updated title image - do you like it? If you don't, you don't need to include it
 

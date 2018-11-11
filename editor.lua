@@ -2521,7 +2521,7 @@ function placetile(x, y, t, ent)
 			generatespritebatch()
 		end
 		
-		if tilequads[currenttile]:getproperty("big") then
+		if currenttile == 136 then
 			placetile(x+16*scale, y, currenttile+1)
 			placetile(x, y+16*scale, currenttile+2)
 			placetile(x+16*scale, y+16*scale, currenttile+3)
