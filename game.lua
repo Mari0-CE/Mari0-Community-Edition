@@ -3908,7 +3908,7 @@ function generatespritebatch()
 								portalspritebatchfront:add( tilequads[tilenumber]:quad(), (x-1)*16*scale, ((y)*16-8)*scale, 0, scale, scale )
 							elseif tilenumber <= smbtilecount+portaltilecount+customtilecount then
 								customspritebatchfront:add( tilequads[tilenumber]:quad(), (x-1)*16*scale, ((y)*16-8)*scale, 0, scale, scale )
-							elseif tilenumber <= smbtilecount+portaltilecount+customtilecount+modcustomtilecount[modcustomtiles or 1] then
+							elseif tilenumber <= smbtilecount+portaltilecount+customtilecount+(modcustomtilecount[modcustomtiles] or 0) then
 								for i = 1, modcustomtiles do
 									if tilenumber <= smbtilecount+portaltilecount+customtilecount+modcustomtilecount[i] then
 										modcustomspritebatch[i]:add( tilequads[tilenumber]:quad(), (x-1)*16*scale, ((y)*16-8)*scale, 0, scale, scale )

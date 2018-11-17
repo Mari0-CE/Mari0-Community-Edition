@@ -75,5 +75,6 @@ function pushbutton:used()
 				self.outtable[i][1]:input("toggle", self.outtable[i][2])
 			end
 		end
+		playsound("pushbutton")
 	end
 end

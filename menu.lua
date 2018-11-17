@@ -1227,6 +1227,7 @@ end
 
 function loadbackground(backgroundlevel)
 	loadcustomimages("mappacks/" .. mappack .. "/graphics")
+	loadcustomsounds("mappacks/" .. mappack .. "/sounds")
 	loadcustombackgrounds()
 	loadcustommusics()
 	loadanimatedtiles()
@@ -2277,7 +2278,7 @@ function createmappack()
 	love.filesystem.write("mappacks/" .. mappack .. "/settings.txt", s)
 	
 	--Create folders for all sorts of stuff.
-	local folderlist = {"animated", "animations", "backgrounds", "enemies", "graphics", "levelscreens", "music"}
+	local folderlist = {"animated", "animations", "backgrounds", "enemies", "graphics", "levelscreens", "music", "sounds"}
 	
 	for i, v in pairs(folderlist) do
 		love.filesystem.createDirectory("mappacks/" .. mappack .. "/" .. v .. "/")
