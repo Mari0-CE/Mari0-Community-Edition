@@ -100,6 +100,7 @@ function editor_load()
 	splitxscroll = {0, 0}
 	
 	animationguiarea =  {12, 33, 399, 212}
+	objectsguiarea = {5, 21, 378, 203}
 	mapbuttonarea =  {4, 21, 381, 220}
 	animationlineinset = 14
 	
@@ -316,8 +317,9 @@ function editor_load()
 	guielements["animationsavebutton"] = guielement:new("button", 150, 19, "save", saveanimation, 1)
 		
 	--OBJECTS fun fact: objects were originally in the tiles tab
-	guielements["objectscrollbar"] = guielement:new("scrollbar", 381, 21, 199, 15, 40, 0, "ver", nil, nil, nil, nil, true)
+	guielements["objectscrollbar"] = guielement:new("scrollbar", 381, 21, objectsguiarea[4]-objectsguiarea[2], 15, 40, 0, "ver", nil, nil, nil, nil, true)
 	guielements["renamebar"] = guielement:new("input", 7, 0, 20, nil, nil, 20, 1, false, 0)
+	guielements["renamebar"].active = false
 	
 	--POWERLINE "SUBTAB"
 	drawtools = 2
@@ -760,6 +762,10 @@ function editor_update(dt)
 		end
 	elseif editorstate == "objects" then
 		multitilesoffset = guielements["objectscrollbar"].value * objectscrollbarheight * scale
+		if guielements["renamebar"].active then
+			guielements["renamebar"].y = objectsguiarea[2]+1-multitilesoffset/scale + (guielements["renamebar"].tile*17)
+			-- guielements["renamebar"]:update(dt)
+		end
 	end
 	
 	
@@ -1615,17 +1621,26 @@ function editor_draw()
 					drawrectangle(animationguiarea[1]-10, animationguiarea[4], 10, 10)
 				end
 			elseif editorstate == "objects" then
+				love.graphics.setScissor(objectsguiarea[1]*scale, objectsguiarea[2]*scale, (objectsguiarea[3]-objectsguiarea[1])*scale, (objectsguiarea[4]-objectsguiarea[2])*scale)
+				
 				local mtbutton = getmtbutton(love.mouse.getX())
 				for i = 1, #multitileobjects do
 					love.graphics.setColor(1, 1, 1, 1)
-					if math.floor(i-1)*17*scale+42*scale-multitilesoffset < 200*scale then
-						properprint(multitileobjectnames[i], 8*scale, math.floor(i-1)*17*scale+42*scale-multitilesoffset)
-					end
-					properprint("r", 318*scale, math.floor(i-1)*17*scale+42*scale-multitilesoffset)
-					properprint("_dir4", 333*scale, math.floor(i-1)*17*scale+42*scale-multitilesoffset)
-					properprint("_dir6", 348*scale, math.floor(i-1)*17*scale+42*scale-multitilesoffset)
-					properprint("x", 363*scale, math.floor(i-1)*17*scale+42*scale-multitilesoffset)
+					properprint(multitileobjectnames[i], (objectsguiarea[1]+3)*scale, math.floor(i-1)*17*scale+(objectsguiarea[2]+3)*scale-multitilesoffset)
+					properprint("r", (objectsguiarea[3]-15*4)*scale, math.floor(i-1)*17*scale+(objectsguiarea[2]+3)*scale-multitilesoffset)
+					properprint("_dir4", (objectsguiarea[3]-15*3)*scale, math.floor(i-1)*17*scale+(objectsguiarea[2]+3)*scale-multitilesoffset)
+					properprint("_dir6", (objectsguiarea[3]-15*2)*scale, math.floor(i-1)*17*scale+(objectsguiarea[2]+3)*scale-multitilesoffset)
+					properprint("x", (objectsguiarea[3]-15*1)*scale, math.floor(i-1)*17*scale+(objectsguiarea[2]+3)*scale-multitilesoffset)
 				end
+				if guielements["renamebar"].active then
+					guielements["renamebar"]:draw()
+				end
+				
+				love.graphics.setScissor()
+				
+				love.graphics.setColor(0.35, 0.35, 0.35)
+				drawrectangle(objectsguiarea[1], objectsguiarea[2], objectsguiarea[3]-objectsguiarea[1], objectsguiarea[4]-objectsguiarea[2])
+				
 				if mtbutton == 1 then
 					properprint("rename", 10*scale, 210*scale)
 				elseif mtbutton == 2 then
@@ -1648,7 +1663,7 @@ function editor_draw()
 	if minimapdragging == false then
 		--GUI not priority
 		for i, v in pairs(guielements) do
-			if not v.priority and v.active then
+			if not v.priority and v.active and i ~= "renamebar" then
 				v:draw()
 			end
 		end
@@ -1922,7 +1937,7 @@ function objectstab()
 	guielements["tabobjects"].active = true
 	
 	guielements["objectscrollbar"].active = true	
-	objectscrollbarheight = math.max(0, math.ceil((#multitileobjects))*17 - 1 - (17*9) - 12)
+	objectscrollbarheight = math.max(0, math.ceil((#multitileobjects-1))*17 - 1 - (17*9) - 12)
 	
 	for i, v in pairs(mapbuttons) do
 		v.active = false
@@ -3005,24 +3020,31 @@ function editor_mousepressed(x, y, button)
 				--editmtobjects = false
 				--editentities = false
 				if tile then
-					if mtbutton == 0 and not guielements["renamebar"].active then
-						allowdrag = false
-						editorclose()
-						mtclipboard = multitileobjects[tile+1]
-						--for i, v in pairs(mtclipboard) do
-							--for j, w in pairs(v) do
-								--print(w)
+					if mtbutton == 0 then
+						if not guielements["renamebar"].active then
+							allowdrag = false
+							editorclose()
+							mtclipboard = multitileobjects[tile+1]
+							--for i, v in pairs(mtclipboard) do
+								--for j, w in pairs(v) do
+									--print(w)
+								--end
 							--end
-						--end
-						pastecenter = {0, 0}
-						pastingtiles = true
-						editentities = false
-						editenemies = false
+							pastecenter = {0, 0}
+							pastingtiles = true
+							editentities = false
+							editenemies = false
+						elseif guielements["renamebar"].tile ~= tile then
+							guielements["renamebar"].active = false
+						else
+							guielements["renamebar"]:click(x, y, button)
+						end
 					else
 						if mtbutton == 1 then
 							guielements["renamebar"].active = true
 							guielements["renamebar"].value = multitileobjectnames[tile+1]
-							guielements["renamebar"].y = 40-multitilesoffset/2 + (tile*17)
+							guielements["renamebar"].tile = tile
+							guielements["renamebar"].y = objectsguiarea[2]+1-multitilesoffset/scale + (tile*17)
 							guielements["renamebar"].func = function()
 								if guielements["renamebar"].value ~= "" then
 									guielements["renamebar"].value = string.gsub(guielements["renamebar"].value, "=", " ")
@@ -3289,6 +3311,10 @@ function editor_keypressed(key)
 		rightclickm:keypressed(key)
 	end
 	
+	-- if guielements["renamebar"].active then
+		-- guielements["renamebar"]:keypress(key)
+	-- end
+	
 	if ctrlpressed then
 		if key == "s" then
 			if tileselectionclick1 and tileselectionclick2 then
@@ -3431,6 +3457,10 @@ function editor_textinput(text)
 	if rightclickm then
 		rightclickm:textinput(text)
 	end
+	
+	-- if guielements["renamebar"].active then
+		-- guielements["renamebar"]:textinput(text)
+	-- end
 
 	if animationguilines then
 		for i, v in pairs(animationguilines) do
@@ -3685,10 +3715,10 @@ function gettilelistpos(x, y)
 end
 
 function getlistpos(x, y)
-	if x >= 5*scale and y >= 38*scale and x < 378*scale and y < 203*scale then
-		x = (x - 5*scale)/scale
+	if x >= objectsguiarea[1]*scale and y >= objectsguiarea[2]*scale and x < objectsguiarea[3]*scale and y < objectsguiarea[4]*scale then
+		x = (x - objectsguiarea[1]*scale)/scale
 		y = y + multitilesoffset
-		y = (y - 38*scale)/scale
+		y = (y - objectsguiarea[2]*scale)/scale
 		
 		
 		--out = math.floor(x/17)+1
@@ -3705,13 +3735,13 @@ end
 
 function getmtbutton(x)
 	local button = 0
-	if x >= 318*scale and x < 332*scale then
+		if x >= (objectsguiarea[3]-15*4)*scale and x < (objectsguiarea[3]-1-15*3)*scale then
 		button = 1
-	elseif x >= 333*scale and x < 347*scale then
+	elseif x >= (objectsguiarea[3]-15*3)*scale and x < (objectsguiarea[3]-1-15*2)*scale then
 		button = 2
-	elseif x >= 348*scale and x < 362*scale then
+	elseif x >= (objectsguiarea[3]-15*2)*scale and x < (objectsguiarea[3]-1-15*1)*scale then
 		button = 3
-	elseif x >= 363*scale and x < 377*scale then
+	elseif x >= (objectsguiarea[3]-15*1)*scale and x < (objectsguiarea[3]-1-15*0)*scale then
 		button = 4
 	end
 	
