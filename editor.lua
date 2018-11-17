@@ -336,9 +336,7 @@ function editor_load()
 	loadmtgroups()
 
 	hotkeys = {}
-	hotkeyset = {}
 	loadHotKeys()
-	hotkeyfileexists = love.filesystem.getInfo("mappacks/" .. mappack .. "/hotkeys.txt")
 	
 	tilesall()
 	if editorloadopen then
@@ -1322,17 +1320,36 @@ function editor_draw()
 							else
 								love.graphics.setStencil()
 							end
+							local hotkey = hasHotkey(3, i)
+							if hotkey then
+								love.graphics.setColor(1, 0, 0, .5)
+								drawrectangle(math.mod((i-1), 22)*17+5, math.floor((i-1)/22)*17+38-tilesoffset/scale, 16, 16)
+								love.graphics.setColor(1, 1, 1)
+							end
 						end
 					else
 						--ENTITIES
 						for i, v in ipairs(entitylistitems) do
 							properprint(v.t, (5)*scale, (v.entries[1].y+30)*scale-tilesoffset)
 							for j, k in ipairs(v.entries) do
+								local hotkey = hasHotkey(2, k.i)
 								love.graphics.draw(entityquads[k.i].image, entityquads[k.i].quad, (k.x+5)*scale, (k.y+38)*scale-tilesoffset, 0, scale, scale)
+								if hotkey then
+									love.graphics.setColor(1, 0, 0, .5)
+									drawrectangle(k.x+5, k.y+38-tilesoffset/scale, 16, 16)
+									love.graphics.setColor(1, 1, 1, 1)
+								end
 								if k:gethighlight(mouse.getX(), mouse.getY()) then
-									love.graphics.setColor(1, 1, 1, 0.5)
+									if hotkey then
+										love.graphics.setColor(1, 0, 0, .5)
+									else
+										love.graphics.setColor(1, 1, 1, 0.5)
+									end
 									love.graphics.rectangle("fill", (k.x+5)*scale, (k.y+38)*scale-tilesoffset, 16*scale, 16*scale)
 									love.graphics.setColor(1, 1, 1, 1)
+									if hotkey then
+										properprint(hotkey, (k.x+5)*scale+7*scale, (k.y+38)*scale-tilesoffset+8*scale)
+									end
 								end
 							end
 						end
@@ -1346,12 +1363,24 @@ function editor_draw()
 								drawrectangle(math.mod((i-1), 22)*17+5, math.floor((i-1)/22)*17+38-tilesoffset/scale, 16, 16)
 								love.graphics.setColor(1, 1, 1)
 							end
+							local hotkey = hasHotkey(1, i+tileliststart-1+10000)
+							if hotkey then
+								love.graphics.setColor(1, 0, 0, .5)
+								drawrectangle(math.mod((i-1), 22)*17+5, math.floor((i-1)/22)*17+38-tilesoffset/scale, 16, 16)
+								love.graphics.setColor(1, 1, 1)
+							end
 						end
 					else
 						for i = 1, tilelistcount+1 do
 							love.graphics.draw(tilequads[i+tileliststart-1].image, tilequads[i+tileliststart-1]:quad(), math.mod((i-1), 22)*17*scale+5*scale, math.floor((i-1)/22)*17*scale+38*scale-tilesoffset, 0, scale, scale)
 							if multitilegroups[tostring(i+tileliststart-1)] then
 								love.graphics.setColor(0, .5, 0)
+								drawrectangle(math.mod((i-1), 22)*17+5, math.floor((i-1)/22)*17+38-tilesoffset/scale, 16, 16)
+								love.graphics.setColor(1, 1, 1)
+							end
+							local hotkey = hasHotkey(1, i+tileliststart-1)
+							if hotkey then
+								love.graphics.setColor(1, 0, 0, .5)
 								drawrectangle(math.mod((i-1), 22)*17+5, math.floor((i-1)/22)*17+38-tilesoffset/scale, 16, 16)
 								love.graphics.setColor(1, 1, 1)
 							end
@@ -1362,15 +1391,31 @@ function editor_draw()
 				local tile = gettilelistpos(mouse.getX(), mouse.getY())
 				if editentities == false then
 					if tile and tile <= tilelistcount+1 then
-						love.graphics.setColor(1, 1, 1, 0.5)
+						local hotkey = hasHotkey(1, tile+tileliststart-1+(animatedtilelist and 10000 or 0))
+						if hotkey then
+							love.graphics.setColor(1, 0, 0, .5)
+						else
+							love.graphics.setColor(1, 1, 1, 0.5)
+						end
 						love.graphics.rectangle("fill", (5+math.mod((tile-1), 22)*17)*scale, (38+math.floor((tile-1)/22)*17)*scale-tilesoffset, 16*scale, 16*scale)
+						if hotkey then
+							love.graphics.setColor(1, 1, 1, 1)
+							properprint(hotkey, (5+math.mod((tile-1), 22)*17)*scale+7*scale, (38+math.floor((tile-1)/22)*17)*scale-tilesoffset+8*scale)
+						end
 					end
-				elseif editenemies == false then
-					
-				else
+				elseif editenemies then
 					if tile and tile <= #enemies then
-						love.graphics.setColor(1, 1, 1, 0.5)
+						local hotkey = hasHotkey(3, tile)
+						if hotkey then
+							love.graphics.setColor(1, 0, 0, .5)
+						else
+							love.graphics.setColor(1, 1, 1, 0.5)
+						end
 						love.graphics.rectangle("fill", (5+math.mod((tile-1), 22)*17)*scale, (38+math.floor((tile-1)/22)*17)*scale-tilesoffset, 16*scale, 16*scale)
+						if hotkey then
+							love.graphics.setColor(1, 1, 1, 1)
+							properprint(hotkey, (5+math.mod((tile-1), 22)*17)*scale+7*scale, (38+math.floor((tile-1)/22)*17)*scale-tilesoffset+8*scale)
+						end
 					end
 				end
 				
@@ -1715,6 +1760,15 @@ function editor_draw()
 	if editentities and not editenemies and editorstate == "tiles" and editormenuopen and entitytooltipobject then
 		entitytooltipobject:draw(math.max(0, tooltipa))
 	end
+end
+
+function hasHotkey(tiletype, id)
+	for i = 1, 9 do
+		if hotkeys[tostring(i)] and hotkeys[tostring(i)][1] == tiletype and hotkeys[tostring(i)][2] == id then
+			return i
+		end
+	end
+	return false
 end
 
 function maintab()
@@ -3435,7 +3489,7 @@ function editor_keypressed(key)
 			tileselectionclick2x = mapwidth
 			tileselectionclick2y = 14
 		end
-	else
+	elseif editormenuopen then
 		if key == "u" then
 			if editorstate == "tiles" then
 				local x, y = love.mouse.getPosition()
@@ -3468,17 +3522,29 @@ function editor_keypressed(key)
 					if editorstate == "tiles" then
 						local x, y = love.mouse.getPosition()
 						local tile = gettilelistpos(x, y)
-						if editentities then
-							if tile and tile <= entitiescount then
-								changeHotKey(i,2,tile)
+						if editentities and editenemies then
+							if tile and tile <= #enemies then
+								changeHotKey(i,3,tile)
 								saveHotKeys()
 							end
-						elseif editmtobjects then
-							-- nothing
-						else
-							if tile and tile <= tilelistcount+1 then
-								changeHotKey(i,1,tile + tileliststart-1)
+						elseif editentities then
+							tile = getentityhighlight(x, y)
+							
+							if tile and tile.i and tile.i <= entitiescount then
+								changeHotKey(i,2,tile.i)
 								saveHotKeys()
+							end
+						elseif not editmtobjects then
+							if animatedtilelist then
+								if tile and tile <= tilelistcount+1 then
+									changeHotKey(i,1,tile + tileliststart-1+10000)
+									saveHotKeys()
+								end
+							else
+								if tile and tile <= tilelistcount+1 then
+									changeHotKey(i,1,tile + tileliststart-1)
+									saveHotKeys()
+								end
 							end
 						end
 					end
@@ -3554,6 +3620,31 @@ function editor_keypressed(key)
 			loadstate()
 			if ok then
 				notice.new("Changes redone!", notice.white, 1)
+			end
+		else
+			for i = 1, 9 do
+				if key == tostring(i) then --HOTKEY
+					if hotkeys[key] then
+						if hotkeys[key][1] == 1 then --TILES
+							editorstate = "tiles"
+							tilesall()
+							currenttile = hotkeys[key][2]
+							if currenttile >= 10000 then
+								animatedtilelist = true
+								tilesanimated()
+							end
+						elseif hotkeys[key][1] == 2 then --ENTITIES
+							editorstate = "tiles"
+							generateentitylist()
+							tilesentities()
+							currenttile = hotkeys[key][2]
+						elseif hotkeys[key][1] == 3 then --ENEMIES
+							editorstate = "tiles"
+							tilesenemies()
+							currenttile = enemies[hotkeys[key][2]]
+						end
+					end
+				end
 			end
 		end
 	end
@@ -3916,78 +4007,44 @@ end
 
 function loadHotKeys()
 	hotkeys = {}
-	hotkeyset = {}
-	local hktmp = {}
-	local nohotkeys = false
-	local fileexists = false
 
 	-- override with file data
 	if love.filesystem.getInfo("mappacks/" .. mappack .. "/hotkeys.txt") then
-		fileexists = true
 		local data = love.filesystem.read("mappacks/" .. mappack .. "/hotkeys.txt")
 		if #data > 0 then
-			--data = string.sub(data, 1, -2)
-			--print(data)
 			local split1 = data:split("\n")
-			local split2
+			local split2, split3
 			for i = 1, #split1 do
-				split2 = split1[i]:split(",")
-				table.insert(hotkeys, {tonumber(split2[1]), tonumber(split2[2])})
-				table.insert(hktmp, tostring(split2[1]) .. "," .. tostring(split2[2]))
+				split2 = split1[i]:split("=")
+				split3 = split2[2]:split(",")
+				hotkeys[tostring(split2[1])] = {tonumber(split3[1]), tonumber(split3[2])}
 			end
-			hotkeyset = Set(hktmp)
-		else
-			nohotkeys = true
 		end
-	else
-		nohotkeys = true
 	end
-
-	if nohotkeys then
-		local hktmp = {}
-		for i = 1, 9 do
-			table.insert(hotkeys, {1, i})
-			table.insert(hktmp, tostring(1) .. "," .. tostring(i))
-		end
-		hotkeyset = Set(hktmp)
-	end
-	return fileexists
 end
 
 function saveHotKeys()
 	local data = ""
 	for i = 1, 9 do
-		data = data .. tostring(hotkeys[i][1]) .. "," .. tostring(hotkeys[i][2]) .. "\n"
+		if hotkeys[tostring(i)] then
+			data = data .. i .. "=" .. tostring(hotkeys[tostring(i)][1]) .. "," .. tostring(hotkeys[tostring(i)][2]) .. "\n"
+		end
 	end
 	data = string.sub(data, 0, -2)
 	love.filesystem.write("mappacks/" .. mappack .. "/hotkeys.txt", data)
-	hotkeyfileexists = true
 end
 
 function changeHotKey(key, tiletype, id)
 	if key == 0 then
 		for i = 1, 9 do
-			if hotkeys[i][1] == tiletype and hotkeys[i][2] == id then
-				hotkeys[i] = {false, false}
+			if hotkeys[tostring(i)] and hotkeys[tostring(i)][1] == tiletype and hotkeys[tostring(i)][2] == id then
+				hotkeys[tostring(i)] = nil
 				break
 			end
 		end
+	else
+		hotkeys[tostring(key)] = {tiletype, id}
 	end
-	local hktmp = {}
-	if key ~= 0 then
-		hotkeys[key][1] = tiletype
-		hotkeys[key][2] = id
-	end
-	for i = 1, 9 do
-		table.insert(hktmp, tostring(hotkeys[i][1]) .. "," .. tostring(hotkeys[i][2]))
-	end
-	hotkeyset = Set(hktmp)
-end
-
-function Set(list)
-	local set = {}
-	for _, l in ipairs(list) do set[l] = true end
-	return set
 end
 
 function savesettings()
