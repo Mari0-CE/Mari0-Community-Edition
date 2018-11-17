@@ -317,6 +317,7 @@ function editor_load()
 		
 	--OBJECTS fun fact: objects were originally in the tiles tab
 	guielements["objectscrollbar"] = guielement:new("scrollbar", 381, 21, 199, 15, 40, 0, "ver", nil, nil, nil, nil, true)
+	guielements["renamebar"] = guielement:new("input", 7, 0, 20, nil, nil, 20, 1, false, 0)
 	
 	--POWERLINE "SUBTAB"
 	drawtools = 2
@@ -1620,15 +1621,18 @@ function editor_draw()
 					if math.floor(i-1)*17*scale+42*scale-multitilesoffset < 200*scale then
 						properprint(multitileobjectnames[i], 8*scale, math.floor(i-1)*17*scale+42*scale-multitilesoffset)
 					end
+					properprint("r", 318*scale, math.floor(i-1)*17*scale+42*scale-multitilesoffset)
 					properprint("_dir4", 333*scale, math.floor(i-1)*17*scale+42*scale-multitilesoffset)
 					properprint("_dir6", 348*scale, math.floor(i-1)*17*scale+42*scale-multitilesoffset)
 					properprint("x", 363*scale, math.floor(i-1)*17*scale+42*scale-multitilesoffset)
 				end
 				if mtbutton == 1 then
-					properprint("move up", 10*scale, 210*scale)
+					properprint("rename", 10*scale, 210*scale)
 				elseif mtbutton == 2 then
-					properprint("move down", 10*scale, 210*scale)
+					properprint("move up", 10*scale, 210*scale)
 				elseif mtbutton == 3 then
+					properprint("move down", 10*scale, 210*scale)
+				elseif mtbutton == 4 then
 					properprint("delete", 10*scale, 210*scale)
 				end	
 			elseif editorstate == "lightdrawcustomize" then
@@ -3000,9 +3004,8 @@ function editor_mousepressed(x, y, button)
 				local mtbutton = getmtbutton(x)
 				--editmtobjects = false
 				--editentities = false
-				print(tile)
 				if tile then
-					if mtbutton == 0 then
+					if mtbutton == 0 and not guielements["renamebar"].active then
 						allowdrag = false
 						editorclose()
 						mtclipboard = multitileobjects[tile+1]
@@ -3017,12 +3020,24 @@ function editor_mousepressed(x, y, button)
 						editenemies = false
 					else
 						if mtbutton == 1 then
+							guielements["renamebar"].active = true
+							guielements["renamebar"].value = multitileobjectnames[tile+1]
+							guielements["renamebar"].y = 40-multitilesoffset/2 + (tile*17)
+							guielements["renamebar"].func = function()
+								if guielements["renamebar"].value ~= "" then
+									guielements["renamebar"].value = string.gsub(guielements["renamebar"].value, "=", " ")
+									renameline("mappacks/" .. mappack .. "/objects.txt",tile+1,guielements["renamebar"].value)
+								end
+								guielements["renamebar"].active = false
+								loadmtobjects()
+							end
+						elseif mtbutton == 2 then
 							moveline("mappacks/" .. mappack .. "/objects.txt",tile+1,"up")
 							loadmtobjects()
-						elseif mtbutton == 2 then
+						elseif mtbutton == 3 then
 							moveline("mappacks/" .. mappack .. "/objects.txt",tile+1,"down")
 							loadmtobjects()
-						elseif mtbutton == 3 then
+						elseif mtbutton == 4 then
 							deleteline("mappacks/" .. mappack .. "/objects.txt", tile+1)
 							loadmtobjects()
 						end
@@ -3362,6 +3377,8 @@ function editor_keypressed(key)
 			closerightclickmenu()
 		elseif changemapwidthmenu then
 			mapwidthcancel()
+		elseif guielements["renamebar"].active then
+			guielements["renamebar"].active = false
 		else
 			if editormenuopen then
 				editorclose()
@@ -3688,12 +3705,14 @@ end
 
 function getmtbutton(x)
 	local button = 0
-	if x >= 333*scale and x < 347*scale then
+	if x >= 318*scale and x < 332*scale then
 		button = 1
-	elseif x >= 348*scale and x < 362*scale then
+	elseif x >= 333*scale and x < 347*scale then
 		button = 2
-	elseif x >= 363*scale and x < 377*scale then
+	elseif x >= 348*scale and x < 362*scale then
 		button = 3
+	elseif x >= 363*scale and x < 377*scale then
+		button = 4
 	end
 	
 	return button
@@ -3880,6 +3899,27 @@ function deleteline(file, line)
 	split1 = data:split("\n")
 	for i, v in ipairs(split1) do
 		if i ~= line then
+			newdata = newdata .. split1[i] .. "\n"
+		end
+	end
+	love.filesystem.write(file, newdata)
+end
+
+function renameline(file, line, newName)
+	if not love.filesystem.getInfo(file) then
+		return false
+	end
+	line = tonumber(line)
+	local data, newdata, split1
+	data = love.filesystem.read(file)
+	data = string.sub(data, 1, -2)
+	newdata = ""
+	split1 = data:split("\n")
+	for i, v in ipairs(split1) do
+		if i == line then
+			local split2 = split1[i]:split("=")
+			newdata = newdata .. newName .. "=" .. split2[#split2] .. "\n"
+		else
 			newdata = newdata .. split1[i] .. "\n"
 		end
 	end
