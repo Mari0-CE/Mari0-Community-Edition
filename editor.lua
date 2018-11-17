@@ -333,6 +333,12 @@ function editor_load()
 	multitileobjects = {}
 	multitileobjectnames = {}
 	loadmtobjects()
+	loadmtgroups()
+
+	hotkeys = {}
+	hotkeyset = {}
+	loadHotKeys()
+	hotkeyfileexists = love.filesystem.getInfo("mappacks/" .. mappack .. "/hotkeys.txt")
 	
 	tilesall()
 	if editorloadopen then
@@ -1335,10 +1341,20 @@ function editor_draw()
 					if animatedtilelist then
 						for i = 1, tilelistcount+1 do
 							love.graphics.draw(tilequads[i+tileliststart-1+10000].image, tilequads[i+tileliststart-1+10000]:quad(), math.mod((i-1), 22)*17*scale+5*scale, math.floor((i-1)/22)*17*scale+38*scale-tilesoffset, 0, scale, scale)
+							if multitilegroups[tostring(i+tileliststart-1+10000)] then
+								love.graphics.setColor(0, .5, 0)
+								drawrectangle(math.mod((i-1), 22)*17+5, math.floor((i-1)/22)*17+38-tilesoffset/scale, 16, 16)
+								love.graphics.setColor(1, 1, 1)
+							end
 						end
 					else
 						for i = 1, tilelistcount+1 do
 							love.graphics.draw(tilequads[i+tileliststart-1].image, tilequads[i+tileliststart-1]:quad(), math.mod((i-1), 22)*17*scale+5*scale, math.floor((i-1)/22)*17*scale+38*scale-tilesoffset, 0, scale, scale)
+							if multitilegroups[tostring(i+tileliststart-1)] then
+								love.graphics.setColor(0, .5, 0)
+								drawrectangle(math.mod((i-1), 22)*17+5, math.floor((i-1)/22)*17+38-tilesoffset/scale, 16, 16)
+								love.graphics.setColor(1, 1, 1)
+							end
 						end
 					end
 				end
@@ -2222,6 +2238,40 @@ function loadmtobjects()
 	end
 end
 
+function loadmtgroups()
+	multitilegroups = nil
+	multitilegroups = {}
+	if love.filesystem.getInfo("mappacks/" .. mappack .. "/groups.txt") then
+		local data = love.filesystem.read("mappacks/" .. mappack .. "/groups.txt")
+		if #data > 0 then
+			data = string.sub(data, 1, -2)
+			local split1 = data:split("\n")
+			local split2, split3
+			for i = 1, #split1 do
+				-- groups
+				split2 = split1[i]:split("=")
+				-- rows
+				if string.find(split1[i],":") then
+					split3 = split2[2]:split(":")
+				else
+					split3 = {split2[2]}
+				end
+				local ox = {}
+				local oo = {}
+				for j = 1, #split3 do
+					ox = {}
+					local split4 = split3[j]:split(",")
+					for u = 1, #split4 do
+						table.insert(ox, tonumber(split4[u]))
+					end
+					table.insert(oo, ox)
+				end
+				multitilegroups[split2[1]] = oo
+			end
+		end
+	end
+end
+
 function openchangewidth()
 	for i, v in pairs(guielements) do
 		v.active = false
@@ -2514,7 +2564,7 @@ function tilesenemies()
 	currenttile = enemies[1]
 end
 
-function placetile(x, y, t, ent)
+function placetile(x, y, t, ent, preventMultiTile)
 	local editentities = ent or editentities
 	local currenttile = t or currenttile
 	local cox, coy = getMouseTile(x, y+8*scale)
@@ -2540,10 +2590,16 @@ function placetile(x, y, t, ent)
 			generatespritebatch()
 		end
 		
-		if currenttile == 136 then
-			placetile(x+16*scale, y, currenttile+1)
-			placetile(x, y+16*scale, currenttile+2)
-			placetile(x+16*scale, y+16*scale, currenttile+3)
+		--Tile grouping
+		--Decided to remove the tile 136 as default. Figured if people cared, they could just set it up themselves
+		if multitilegroups[tostring(currenttile)] and not preventMultiTile then
+			for tx, v in ipairs(multitilegroups[tostring(currenttile)]) do
+				for ty, w in ipairs(v) do
+					if tx ~= 1 or ty ~= 1 then
+						placetile(x + (tx-1)*16*scale, y + (ty-1)*16*scale, w, ent, true)
+					end
+				end
+			end
 		end
 		
 	else
@@ -3318,37 +3374,37 @@ function editor_keypressed(key)
 	if ctrlpressed then
 		if key == "s" then
 			if tileselectionclick1 and tileselectionclick2 then
-				local lx1, ly1, lx2, ly2, slx1, sly1, slx2, sly2
-				lx1 = math.min(tileselectionclick1x, tileselectionclick2x)
-				ly1 = math.min(tileselectionclick1y, tileselectionclick2y)
-				lx2 = math.max(tileselectionclick1x, tileselectionclick2x)
-				ly2 = math.max(tileselectionclick1y, tileselectionclick2y)
-				
-				slx1 = math.floor((lx1-xscroll-1)*16*scale)
-				sly1 = ((ly1-yscroll-1)*16+8)*scale
-				slx2 = slx1 + ((lx2-lx1)*16*scale+16*scale)
-				sly2 = sly1 + (ly2-ly1)*16*scale+16*scale
-				
-				savemtobject(getTiles({slx1+8*scale, sly1+8*scale},{slx2+8*scale, sly2+8*scale}))
+				savemtobject(getSelectedTiles())
 				loadmtobjects()
 				notice.new("Saved as object!", notice.white, 2)
 			end
-		elseif key == "c" or key == "x" then
-			local lx1, ly1, lx2, ly2, slx1, sly1, slx2, sly2
-			
-			if tileselectionclick1 == true and tileselectionclick2 == true then
-				lx1 = math.min(tileselectionclick1x, tileselectionclick2x)
-				ly1 = math.min(tileselectionclick1y, tileselectionclick2y)
-				lx2 = math.max(tileselectionclick1x, tileselectionclick2x)
-				ly2 = math.max(tileselectionclick1y, tileselectionclick2y)
+		elseif key == "g" then --Completely stolen from HEC
+			if tileselectionclick1 and tileselectionclick2 then
+				local group = getSelectedTiles()
+				local name = group[1][1]
 				
-				slx1 = math.floor((lx1-xscroll-1)*16*scale)
-				sly1 = ((ly1-yscroll-1)*16+8)*scale
-				slx2 = slx1 + ((lx2-lx1)*16*scale+16*scale)
-				sly2 = sly1 + (ly2-ly1)*16*scale+16*scale
-				mtclipboard = getTiles({slx1+8*scale, sly1+8*scale},{slx2+8*scale, sly2+8*scale})
+				--Deletes any group corresponding to the tile
+				if love.filesystem.getInfo("mappacks/" .. mappack .. "/groups.txt") then
+					local txt = love.filesystem.read("mappacks/" .. mappack .. "/groups.txt")
+					local s = txt:split("\n")
+					for i = 1, #s do
+						local s2 = s[i]:split("=")
+						if s2[1] == name then
+							deleteline("mappacks/" .. mappack .. "/groups.txt", i) --Just to guarantee
+							break
+						end
+					end
+				end
+				
+				savemtobject(group, tostring(name), "groups")
+				loadmtgroups()
+			end
+		elseif key == "c" or key == "x" then
+			if tileselectionclick1 == true and tileselectionclick2 == true then
+				
+				mtclipboard = getSelectedTiles()
 				if clipboardenabled then
-					objectclipboardcopy(getTiles({slx1+8*scale, sly1+8*scale},{slx2+8*scale, sly2+8*scale}))
+					objectclipboardcopy(getSelectedTiles())
 				end
 				
 				if key == "x" then
@@ -3378,6 +3434,56 @@ function editor_keypressed(key)
 			tileselectionclick2 = true
 			tileselectionclick2x = mapwidth
 			tileselectionclick2y = 14
+		end
+	else
+		if key == "u" then
+			if editorstate == "tiles" then
+				local x, y = love.mouse.getPosition()
+				local tile = gettilelistpos(x, y)
+				if editentities then
+					-- nothing
+				elseif editmtobjects then
+					-- nothing
+				else
+					if tile and tile <= tilelistcount+1 then
+						local name = tostring(tile)
+						if love.filesystem.getInfo("mappacks/" .. mappack .. "/groups.txt") then
+							local txt = love.filesystem.read("mappacks/" .. mappack .. "/groups.txt")
+							local s = txt:split("\n")
+							for i = 1, #s do
+								local s2 = s[i]:split("=")
+								if s2[1] == name then
+									deleteline("mappacks/" .. mappack .. "/groups.txt", i)
+									break
+								end
+							end
+						end
+						loadmtgroups()
+					end
+				end
+			end
+		else
+			for i = 0, 9 do
+				if key == tostring(i) then
+					if editorstate == "tiles" then
+						local x, y = love.mouse.getPosition()
+						local tile = gettilelistpos(x, y)
+						if editentities then
+							if tile and tile <= entitiescount then
+								changeHotKey(i,2,tile)
+								saveHotKeys()
+							end
+						elseif editmtobjects then
+							-- nothing
+						else
+							if tile and tile <= tilelistcount+1 then
+								changeHotKey(i,1,tile + tileliststart-1)
+								saveHotKeys()
+							end
+						end
+					end
+				end
+			end
 		end
 	end
 	
@@ -3775,6 +3881,21 @@ function emptySelection()
 	generatespritebatch()
 end
 
+function getSelectedTiles()
+	local lx1, ly1, lx2, ly2, slx1, sly1, slx2, sly2
+	lx1 = math.min(tileselectionclick1x, tileselectionclick2x)
+	ly1 = math.min(tileselectionclick1y, tileselectionclick2y)
+	lx2 = math.max(tileselectionclick1x, tileselectionclick2x)
+	ly2 = math.max(tileselectionclick1y, tileselectionclick2y)
+	
+	slx1 = math.floor((lx1-xscroll-1)*16*scale)
+	sly1 = ((ly1-yscroll-1)*16+8)*scale
+	slx2 = slx1 + ((lx2-lx1)*16*scale+16*scale)
+	sly2 = sly1 + (ly2-ly1)*16*scale+16*scale
+	
+	return getTiles({slx1+8*scale, sly1+8*scale},{slx2+8*scale, sly2+8*scale})
+end
+
 function getTiles(pos1, pos2)
 	local objecttable = {}
 	local tx = {}
@@ -3791,6 +3912,82 @@ function getTiles(pos1, pos2)
 		table.insert(objecttable, tx)
 	end
 	return objecttable
+end
+
+function loadHotKeys()
+	hotkeys = {}
+	hotkeyset = {}
+	local hktmp = {}
+	local nohotkeys = false
+	local fileexists = false
+
+	-- override with file data
+	if love.filesystem.getInfo("mappacks/" .. mappack .. "/hotkeys.txt") then
+		fileexists = true
+		local data = love.filesystem.read("mappacks/" .. mappack .. "/hotkeys.txt")
+		if #data > 0 then
+			--data = string.sub(data, 1, -2)
+			--print(data)
+			local split1 = data:split("\n")
+			local split2
+			for i = 1, #split1 do
+				split2 = split1[i]:split(",")
+				table.insert(hotkeys, {tonumber(split2[1]), tonumber(split2[2])})
+				table.insert(hktmp, tostring(split2[1]) .. "," .. tostring(split2[2]))
+			end
+			hotkeyset = Set(hktmp)
+		else
+			nohotkeys = true
+		end
+	else
+		nohotkeys = true
+	end
+
+	if nohotkeys then
+		local hktmp = {}
+		for i = 1, 9 do
+			table.insert(hotkeys, {1, i})
+			table.insert(hktmp, tostring(1) .. "," .. tostring(i))
+		end
+		hotkeyset = Set(hktmp)
+	end
+	return fileexists
+end
+
+function saveHotKeys()
+	local data = ""
+	for i = 1, 9 do
+		data = data .. tostring(hotkeys[i][1]) .. "," .. tostring(hotkeys[i][2]) .. "\n"
+	end
+	data = string.sub(data, 0, -2)
+	love.filesystem.write("mappacks/" .. mappack .. "/hotkeys.txt", data)
+	hotkeyfileexists = true
+end
+
+function changeHotKey(key, tiletype, id)
+	if key == 0 then
+		for i = 1, 9 do
+			if hotkeys[i][1] == tiletype and hotkeys[i][2] == id then
+				hotkeys[i] = {false, false}
+				break
+			end
+		end
+	end
+	local hktmp = {}
+	if key ~= 0 then
+		hotkeys[key][1] = tiletype
+		hotkeys[key][2] = id
+	end
+	for i = 1, 9 do
+		table.insert(hktmp, tostring(hotkeys[i][1]) .. "," .. tostring(hotkeys[i][2]))
+	end
+	hotkeyset = Set(hktmp)
+end
+
+function Set(list)
+	local set = {}
+	for _, l in ipairs(list) do set[l] = true end
+	return set
 end
 
 function savesettings()
@@ -3817,11 +4014,13 @@ end
 --CATEGORYDELIMITER = "¸"
 --MULTIPLYDELIMITER = "·"
 --EQUALSIGN = "¨"
-function savemtobject(objecttable, name)
+function savemtobject(objecttable, name, file)
 	-- 1 read objects file
+	file = file or "objects"
+	
 	local data, data2, datalines, objectname
-	if love.filesystem.getInfo("mappacks/" .. mappack .. "/objects.txt") then
-		data = love.filesystem.read("mappacks/" .. mappack .. "/objects.txt")
+	if love.filesystem.getInfo("mappacks/" .. mappack .. "/" .. file .. ".txt") then
+		data = love.filesystem.read("mappacks/" .. mappack .. "/" .. file .. ".txt")
 	else
 		data = ""
 	end
@@ -3846,7 +4045,7 @@ function savemtobject(objecttable, name)
 	data = string.sub(data, 1, -2)
 	data = string.gsub(data, "mtobjsize", m .. " * " .. n)
 	data = data .. "\n"
-	love.filesystem.write("mappacks/" .. mappack .. "/objects.txt", data)
+	love.filesystem.write("mappacks/" .. mappack .. "/" .. file .. ".txt", data)
 	mtjustsaved = true
 end
 
