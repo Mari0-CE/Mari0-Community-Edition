@@ -18,7 +18,7 @@ function textentity:init(x, y, r)
 	--TEXT
 	if #self.r > 0 and self.r[1] ~= "link" then
 		self.text = self.r[1]
-		self.textsplit = self.text:split(" ")
+		self.textsplit = self.text:split(" ") or 0
 		table.remove(self.r, 1)
 		--prefixes!!
 		self.hasaprefix = false

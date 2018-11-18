@@ -972,15 +972,18 @@ function love.load(arg)
 	--sounds
 	soundstoload = {"jump", "jumpbig", "stomp", "shot", "blockhit", "blockbreak", "coin", "pipe", "boom", "mushroomappear", "mushroomeat", "shrink", "death", "gameover", "fireball",
 					"oneup", "levelend", "castleend", "scorering", "intermission", "fire", "bridgebreak", "bowserfall", "vine", "swim", "rainboom", "konami", "pause", "bulletbill",
-					"lowtime", "tailwag", "planemode", "stab", "portal1open", "portal2open", "portalenter", "portalfizzle",
-					"match", "nomatch", "getitem", "zelda", "unlock", "spawnkey", "kingcannon", "checkpoint", "bomb", "no"}
-				
+					"lowtime", "tailwag", "planemode", "stab", "portal1open", "portal2open", "portalenter", "portalfizzle", "pushbutton"}
+
+	defaultsoundslist = {}
+	overwrittensounds = {}	
 	soundlist = {}
 	
 	for i, v in pairs(soundstoload) do
+		local src = love.audio.newSource("sounds/" .. v .. ".ogg", MUSICFIX)
 		soundlist[v] = {}
-		soundlist[v].source = love.audio.newSource("sounds/" .. v .. ".ogg", MUSICFIX)
+		soundlist[v].source = src
 		soundlist[v].lastplayed = 0
+		defaultsoundslist[v] = src
 	end
 	
 	soundlist["scorering"].source:setLooping(true)
@@ -1538,6 +1541,29 @@ function loadcustomimages(path)
 		end
 	end
 	portaltilecount = width*height
+end
+
+function loadcustomsounds(path)
+	for _, v in pairs(overwrittensounds) do
+		soundlist[v].source = defaultsoundslist[v]
+	end
+	overwrittensounds = {}
+	
+	local fl = love.filesystem.getDirectoryItems(path)
+	for i = 1, #fl do
+		local v = fl[i]
+		if love.filesystem.getInfo(path .. "/" .. v, "file") then
+			local s = string.sub(v, 1, -5)
+			if soundlist[s] then
+				soundlist[s].source = love.audio.newSource(path .. "/" .. v, MUSICFIX)
+				table.insert(overwrittensounds, s)
+			else
+				soundlist[s] = {}
+				soundlist[s].source = love.audio.newSource(path .. "/" .. v, MUSICFIX)
+				soundlist[s].lastplayed = 0
+			end
+		end
+	end
 end
 
 function suspendgame()
@@ -2245,7 +2271,7 @@ function loadcustommusics()
 	
 	for i = 1, #fl do
 		local v = fl[i]
-		if (v:match(".ogg") or v:match(".mp3")) and v:sub(-9, -5) ~= "-fast" then
+		if (v:match(".ogg") or v:match(".mp3") or v:match(".mod")) and v:sub(-9, -5) ~= "-fast" then
 			table.insert(musiclist, v)
 			--music:load(v) --Sometimes I come back to code and wonder why things are commented out. This is one of those cases. But it works so eh.
 		end

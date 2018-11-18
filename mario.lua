@@ -572,7 +572,7 @@ function mario:update(dt)
 				end
 			end
 			
-			if timedelta > fireworkcount*fireworkdelay+endtime then
+			if timedelta > math.max(fireworkcount*fireworkdelay, soundlist["levelend"].source:getDuration()-castleflagtime)+endtime then
 				nextlevel()
 				return
 			end
@@ -664,7 +664,9 @@ function mario:update(dt)
 				levelfinishedmisc = 2
 			end
 		
-			if self.animationtimer - dt < castleanimationnextlevel and self.animationtimer >= castleanimationnextlevel then
+			local nextlvltime = math.max(castleanimationnextlevel, soundlist["castleend"].source:getDuration()+castleendmusicstopdelay)
+		
+			if self.animationtimer - dt < nextlvltime and self.animationtimer >= nextlvltime then
 				nextlevel()
 			end
 		else
@@ -672,25 +674,27 @@ function mario:update(dt)
 				levelfinishedmisc = 1
 			end
 			
-			if self.animationtimer - dt < endanimationtextsecondline and self.animationtimer >= endanimationtextsecondline then
+			local castlemusicwait = math.max(soundlist["castleend"].source:getDuration()+endmusicstopdelay-endanimationtextsecondline, 0)
+			
+			if self.animationtimer - dt < endanimationtextsecondline+castlemusicwait and self.animationtimer >= endanimationtextsecondline+castlemusicwait then
 				levelfinishedmisc = 2
 				love.audio.stop()
 				music:play("princessmusic.ogg")
 			end
 		
-			if self.animationtimer - dt < endanimationtextthirdline and self.animationtimer >= endanimationtextthirdline then
+			if self.animationtimer - dt < endanimationtextthirdline+castlemusicwait and self.animationtimer >= endanimationtextthirdline+castlemusicwait then
 				levelfinishedmisc = 3
 			end
 			
-			if self.animationtimer - dt < endanimationtextfourthline and self.animationtimer >= endanimationtextfourthline then
+			if self.animationtimer - dt < endanimationtextfourthline+castlemusicwait and self.animationtimer >= endanimationtextfourthline+castlemusicwait then
 				levelfinishedmisc = 4
 			end
 			
-			if self.animationtimer - dt < endanimationtextfifthline and self.animationtimer >= endanimationtextfifthline then
+			if self.animationtimer - dt < endanimationtextfifthline+castlemusicwait and self.animationtimer >= endanimationtextfifthline+castlemusicwait then
 				levelfinishedmisc = 5
 			end
 		
-			if self.animationtimer - dt < endanimationend and self.animationtimer >= endanimationend then
+			if self.animationtimer - dt < endanimationend+castlemusicwait and self.animationtimer >= endanimationend+castlemusicwait then
 				endpressbutton = true
 			end
 		end
@@ -2681,11 +2685,12 @@ function mario:globalcollide(a, b, c, d, dir)
 				return true
 		else 
 		mariocoincount = mariocoincount + GCA
-		playsound("coin")
+		playsound(b.collectsound or "coin")
 		return true
 		end
 	elseif b.givestime then
 		mariotime = mariotime + (b.givestimeamount or 20)
+		playsound(b.collectsound or "tailwag")
 		return true
 	elseif b.givesalife then
 		givelive(self.playernumber, b)

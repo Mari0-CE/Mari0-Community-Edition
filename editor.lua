@@ -100,6 +100,7 @@ function editor_load()
 	splitxscroll = {0, 0}
 	
 	animationguiarea =  {12, 33, 399, 212}
+	objectsguiarea = {5, 21, 378, 203}
 	mapbuttonarea =  {4, 21, 381, 220}
 	animationlineinset = 14
 	
@@ -316,7 +317,9 @@ function editor_load()
 	guielements["animationsavebutton"] = guielement:new("button", 150, 19, "save", saveanimation, 1)
 		
 	--OBJECTS fun fact: objects were originally in the tiles tab
-	guielements["objectscrollbar"] = guielement:new("scrollbar", 381, 21, 199, 15, 40, 0, "ver", nil, nil, nil, nil, true)
+	guielements["objectscrollbar"] = guielement:new("scrollbar", 381, 21, objectsguiarea[4]-objectsguiarea[2], 15, 40, 0, "ver", nil, nil, nil, nil, true)
+	guielements["renamebar"] = guielement:new("input", 7, 0, 20, nil, nil, 20, 1, false, 0)
+	guielements["renamebar"].active = false
 	
 	--POWERLINE "SUBTAB"
 	drawtools = 2
@@ -330,6 +333,12 @@ function editor_load()
 	multitileobjects = {}
 	multitileobjectnames = {}
 	loadmtobjects()
+	loadmtgroups()
+	
+	helpui = {4, 4, width*16-4, height*16-4}
+
+	hotkeys = {}
+	loadHotKeys()
 	
 	tilesall()
 	if editorloadopen then
@@ -759,6 +768,10 @@ function editor_update(dt)
 		end
 	elseif editorstate == "objects" then
 		multitilesoffset = guielements["objectscrollbar"].value * objectscrollbarheight * scale
+		if guielements["renamebar"].active then
+			guielements["renamebar"].y = objectsguiarea[2]+1-multitilesoffset/scale + (guielements["renamebar"].tile*17)
+			-- guielements["renamebar"]:update(dt)
+		end
 	end
 	
 	
@@ -1211,6 +1224,52 @@ function editor_draw()
 		if rightclickm then
 			rightclickm:draw()
 		end
+		
+		if love.keyboard.isDown("f1") and not rightclickm then
+			love.graphics.setColor(0, 0, 0, .85)
+			love.graphics.rectangle("fill", helpui[1]*scale, helpui[2]*scale, (helpui[3]-helpui[1])*scale, (helpui[4]-helpui[2])*scale)
+			love.graphics.setColor(1, 1, 1, 1)
+			drawrectangle(helpui[1] + 1, helpui[2] + 1, helpui[3]-helpui[1]-2, helpui[4]-helpui[2]-2)
+			properprint("better editor shortcuts:", helpui[1]*scale+4*scale, helpui[2]*scale+5*scale)
+			
+			local keys = {
+				--Shortcut, description, line breaks             | <-Width limit
+				{"ctrl+click","selects region of tiles in-editor.", 0},
+				{"q","switch between tiles, entities and enemies.", 0},
+				{"0-9","on the tile/entity/enemy screen, 1-9 sets|" ..
+					   "the tile's hotkey bind, 0 resets it.|" ..
+					   "in-editor, switches to the bound tile.", 2},
+				{"ctrl+s","saves the selected tiles as an object,|" ..
+						  "found in the objects tab.", 1},--     |
+				{"ctrl+g","transforms the selected tiles into a|" ..
+						  "group bound to the top-left-most tile.", 1},
+				{"u","on the tile screen, removes the tile group|" ..
+					 "bound to the tile.", 1},--                 |
+				{"ctrl+z/ctrl+y","undo/redo the last changes.", 0},
+				{"ctrl+c/ctrl+x/ctrl+v","copy/cut/paste region.", 0},
+				{"ctrl+a","select the entire level.", 0},--      |
+				{"middle click drag","navigates in-editor between|" ..
+									 "tiles/entities/enemies.", 1},
+			}
+			
+			local offset = 0
+			for i, v in ipairs(keys) do
+				love.graphics.setColor(0, 0, 0, 1)
+				properprint(v[1], helpui[1]*scale+8*scale-scale, helpui[2]*scale+23*scale + (i-1)*13*scale + offset*10*scale)
+				properprint(v[1], helpui[1]*scale+8*scale+scale, helpui[2]*scale+23*scale + (i-1)*13*scale + offset*10*scale)
+				properprint(v[1], helpui[1]*scale+8*scale, helpui[2]*scale+23*scale-scale + (i-1)*13*scale + offset*10*scale)
+				properprint(v[1], helpui[1]*scale+8*scale, helpui[2]*scale+23*scale+scale + (i-1)*13*scale + offset*10*scale)
+				love.graphics.setColor(1, 1, .8, 1)
+				properprint(v[1], helpui[1]*scale+8*scale, helpui[2]*scale+23*scale + (i-1)*13*scale + offset*10*scale)
+				
+				love.graphics.setColor(1, 1, 1, 1)
+				properprint(" : ", helpui[1]*scale+8*scale + string.len(v[1])*8*scale, helpui[2]*scale+23*scale + (i-1)*13*scale + offset*10*scale)
+				properprint(v[2], helpui[1]*scale+8*scale + (string.len(v[1])+3)*8*scale, helpui[2]*scale+23*scale + (i-1)*13*scale + offset*10*scale)
+				
+				offset = offset + v[3]
+			end
+			love.graphics.setColor(1, 1, 1, 1)
+		end
 	else
 		if changemapwidthmenu then
 			local w = width*16-52
@@ -1309,17 +1368,36 @@ function editor_draw()
 							else
 								love.graphics.setStencil()
 							end
+							local hotkey = hasHotkey(3, i)
+							if hotkey then
+								love.graphics.setColor(1, 0, 0, .5)
+								drawrectangle(math.mod((i-1), 22)*17+5, math.floor((i-1)/22)*17+38-tilesoffset/scale, 16, 16)
+								love.graphics.setColor(1, 1, 1)
+							end
 						end
 					else
 						--ENTITIES
 						for i, v in ipairs(entitylistitems) do
 							properprint(v.t, (5)*scale, (v.entries[1].y+30)*scale-tilesoffset)
 							for j, k in ipairs(v.entries) do
+								local hotkey = hasHotkey(2, k.i)
 								love.graphics.draw(entityquads[k.i].image, entityquads[k.i].quad, (k.x+5)*scale, (k.y+38)*scale-tilesoffset, 0, scale, scale)
+								if hotkey then
+									love.graphics.setColor(1, 0, 0, .5)
+									drawrectangle(k.x+5, k.y+38-tilesoffset/scale, 16, 16)
+									love.graphics.setColor(1, 1, 1, 1)
+								end
 								if k:gethighlight(mouse.getX(), mouse.getY()) then
-									love.graphics.setColor(1, 1, 1, 0.5)
+									if hotkey then
+										love.graphics.setColor(1, 0, 0, .5)
+									else
+										love.graphics.setColor(1, 1, 1, 0.5)
+									end
 									love.graphics.rectangle("fill", (k.x+5)*scale, (k.y+38)*scale-tilesoffset, 16*scale, 16*scale)
 									love.graphics.setColor(1, 1, 1, 1)
+									if hotkey then
+										properprint(hotkey, (k.x+5)*scale+7*scale, (k.y+38)*scale-tilesoffset+8*scale)
+									end
 								end
 							end
 						end
@@ -1328,10 +1406,32 @@ function editor_draw()
 					if animatedtilelist then
 						for i = 1, tilelistcount+1 do
 							love.graphics.draw(tilequads[i+tileliststart-1+10000].image, tilequads[i+tileliststart-1+10000]:quad(), math.mod((i-1), 22)*17*scale+5*scale, math.floor((i-1)/22)*17*scale+38*scale-tilesoffset, 0, scale, scale)
+							if multitilegroups[tostring(i+tileliststart-1+10000)] then
+								love.graphics.setColor(0, .5, 0)
+								drawrectangle(math.mod((i-1), 22)*17+5, math.floor((i-1)/22)*17+38-tilesoffset/scale, 16, 16)
+								love.graphics.setColor(1, 1, 1)
+							end
+							local hotkey = hasHotkey(1, i+tileliststart-1+10000)
+							if hotkey then
+								love.graphics.setColor(1, 0, 0, .5)
+								drawrectangle(math.mod((i-1), 22)*17+5, math.floor((i-1)/22)*17+38-tilesoffset/scale, 16, 16)
+								love.graphics.setColor(1, 1, 1)
+							end
 						end
 					else
 						for i = 1, tilelistcount+1 do
 							love.graphics.draw(tilequads[i+tileliststart-1].image, tilequads[i+tileliststart-1]:quad(), math.mod((i-1), 22)*17*scale+5*scale, math.floor((i-1)/22)*17*scale+38*scale-tilesoffset, 0, scale, scale)
+							if multitilegroups[tostring(i+tileliststart-1)] then
+								love.graphics.setColor(0, .5, 0)
+								drawrectangle(math.mod((i-1), 22)*17+5, math.floor((i-1)/22)*17+38-tilesoffset/scale, 16, 16)
+								love.graphics.setColor(1, 1, 1)
+							end
+							local hotkey = hasHotkey(1, i+tileliststart-1)
+							if hotkey then
+								love.graphics.setColor(1, 0, 0, .5)
+								drawrectangle(math.mod((i-1), 22)*17+5, math.floor((i-1)/22)*17+38-tilesoffset/scale, 16, 16)
+								love.graphics.setColor(1, 1, 1)
+							end
 						end
 					end
 				end
@@ -1339,15 +1439,31 @@ function editor_draw()
 				local tile = gettilelistpos(mouse.getX(), mouse.getY())
 				if editentities == false then
 					if tile and tile <= tilelistcount+1 then
-						love.graphics.setColor(1, 1, 1, 0.5)
+						local hotkey = hasHotkey(1, tile+tileliststart-1+(animatedtilelist and 10000 or 0))
+						if hotkey then
+							love.graphics.setColor(1, 0, 0, .5)
+						else
+							love.graphics.setColor(1, 1, 1, 0.5)
+						end
 						love.graphics.rectangle("fill", (5+math.mod((tile-1), 22)*17)*scale, (38+math.floor((tile-1)/22)*17)*scale-tilesoffset, 16*scale, 16*scale)
+						if hotkey then
+							love.graphics.setColor(1, 1, 1, 1)
+							properprint(hotkey, (5+math.mod((tile-1), 22)*17)*scale+7*scale, (38+math.floor((tile-1)/22)*17)*scale-tilesoffset+8*scale)
+						end
 					end
-				elseif editenemies == false then
-					
-				else
+				elseif editenemies then
 					if tile and tile <= #enemies then
-						love.graphics.setColor(1, 1, 1, 0.5)
+						local hotkey = hasHotkey(3, tile)
+						if hotkey then
+							love.graphics.setColor(1, 0, 0, .5)
+						else
+							love.graphics.setColor(1, 1, 1, 0.5)
+						end
 						love.graphics.rectangle("fill", (5+math.mod((tile-1), 22)*17)*scale, (38+math.floor((tile-1)/22)*17)*scale-tilesoffset, 16*scale, 16*scale)
+						if hotkey then
+							love.graphics.setColor(1, 1, 1, 1)
+							properprint(hotkey, (5+math.mod((tile-1), 22)*17)*scale+7*scale, (38+math.floor((tile-1)/22)*17)*scale-tilesoffset+8*scale)
+						end
 					end
 				end
 				
@@ -1614,21 +1730,33 @@ function editor_draw()
 					drawrectangle(animationguiarea[1]-10, animationguiarea[4], 10, 10)
 				end
 			elseif editorstate == "objects" then
+				love.graphics.setScissor(objectsguiarea[1]*scale, objectsguiarea[2]*scale, (objectsguiarea[3]-objectsguiarea[1])*scale, (objectsguiarea[4]-objectsguiarea[2])*scale)
+				
 				local mtbutton = getmtbutton(love.mouse.getX())
 				for i = 1, #multitileobjects do
 					love.graphics.setColor(1, 1, 1, 1)
-					if math.floor(i-1)*17*scale+42*scale-multitilesoffset < 200*scale then
-						properprint(multitileobjectnames[i], 8*scale, math.floor(i-1)*17*scale+42*scale-multitilesoffset)
-					end
-					properprint("_dir4", 333*scale, math.floor(i-1)*17*scale+42*scale-multitilesoffset)
-					properprint("_dir6", 348*scale, math.floor(i-1)*17*scale+42*scale-multitilesoffset)
-					properprint("x", 363*scale, math.floor(i-1)*17*scale+42*scale-multitilesoffset)
+					properprint(multitileobjectnames[i], (objectsguiarea[1]+3)*scale, math.floor(i-1)*17*scale+(objectsguiarea[2]+3)*scale-multitilesoffset)
+					properprint("r", (objectsguiarea[3]-15*4)*scale, math.floor(i-1)*17*scale+(objectsguiarea[2]+3)*scale-multitilesoffset)
+					properprint("_dir4", (objectsguiarea[3]-15*3)*scale, math.floor(i-1)*17*scale+(objectsguiarea[2]+3)*scale-multitilesoffset)
+					properprint("_dir6", (objectsguiarea[3]-15*2)*scale, math.floor(i-1)*17*scale+(objectsguiarea[2]+3)*scale-multitilesoffset)
+					properprint("x", (objectsguiarea[3]-15*1)*scale, math.floor(i-1)*17*scale+(objectsguiarea[2]+3)*scale-multitilesoffset)
 				end
+				if guielements["renamebar"].active then
+					guielements["renamebar"]:draw()
+				end
+				
+				love.graphics.setScissor()
+				
+				love.graphics.setColor(0.35, 0.35, 0.35)
+				drawrectangle(objectsguiarea[1], objectsguiarea[2], objectsguiarea[3]-objectsguiarea[1], objectsguiarea[4]-objectsguiarea[2])
+				
 				if mtbutton == 1 then
-					properprint("move up", 10*scale, 210*scale)
+					properprint("rename", 10*scale, 210*scale)
 				elseif mtbutton == 2 then
-					properprint("move down", 10*scale, 210*scale)
+					properprint("move up", 10*scale, 210*scale)
 				elseif mtbutton == 3 then
+					properprint("move down", 10*scale, 210*scale)
+				elseif mtbutton == 4 then
 					properprint("delete", 10*scale, 210*scale)
 				end	
 			elseif editorstate == "lightdrawcustomize" then
@@ -1644,7 +1772,7 @@ function editor_draw()
 	if minimapdragging == false then
 		--GUI not priority
 		for i, v in pairs(guielements) do
-			if not v.priority and v.active then
+			if not v.priority and v.active and i ~= "renamebar" then
 				v:draw()
 			end
 		end
@@ -1680,6 +1808,15 @@ function editor_draw()
 	if editentities and not editenemies and editorstate == "tiles" and editormenuopen and entitytooltipobject then
 		entitytooltipobject:draw(math.max(0, tooltipa))
 	end
+end
+
+function hasHotkey(tiletype, id)
+	for i = 1, 9 do
+		if hotkeys[tostring(i)] and hotkeys[tostring(i)][1] == tiletype and hotkeys[tostring(i)][2] == id then
+			return i
+		end
+	end
+	return false
 end
 
 function maintab()
@@ -1918,7 +2055,7 @@ function objectstab()
 	guielements["tabobjects"].active = true
 	
 	guielements["objectscrollbar"].active = true	
-	objectscrollbarheight = math.max(0, math.ceil((#multitileobjects))*17 - 1 - (17*9) - 12)
+	objectscrollbarheight = math.max(0, math.ceil((#multitileobjects-1))*17 - 1 - (17*9) - 12)
 	
 	for i, v in pairs(mapbuttons) do
 		v.active = false
@@ -2198,6 +2335,40 @@ function loadmtobjects()
 					--print(":")
 				end
 				table.insert(multitileobjects, oo)
+			end
+		end
+	end
+end
+
+function loadmtgroups()
+	multitilegroups = nil
+	multitilegroups = {}
+	if love.filesystem.getInfo("mappacks/" .. mappack .. "/groups.txt") then
+		local data = love.filesystem.read("mappacks/" .. mappack .. "/groups.txt")
+		if #data > 0 then
+			data = string.sub(data, 1, -2)
+			local split1 = data:split("\n")
+			local split2, split3
+			for i = 1, #split1 do
+				-- groups
+				split2 = split1[i]:split("=")
+				-- rows
+				if string.find(split1[i],":") then
+					split3 = split2[2]:split(":")
+				else
+					split3 = {split2[2]}
+				end
+				local ox = {}
+				local oo = {}
+				for j = 1, #split3 do
+					ox = {}
+					local split4 = split3[j]:split(",")
+					for u = 1, #split4 do
+						table.insert(ox, tonumber(split4[u]))
+					end
+					table.insert(oo, ox)
+				end
+				multitilegroups[split2[1]] = oo
 			end
 		end
 	end
@@ -2495,7 +2666,7 @@ function tilesenemies()
 	currenttile = enemies[1]
 end
 
-function placetile(x, y, t, ent)
+function placetile(x, y, t, ent, preventMultiTile)
 	local editentities = ent or editentities
 	local currenttile = t or currenttile
 	local cox, coy = getMouseTile(x, y+8*scale)
@@ -2521,10 +2692,16 @@ function placetile(x, y, t, ent)
 			generatespritebatch()
 		end
 		
-		if tilequads[currenttile]:getproperty("big") then
-			placetile(x+16*scale, y, currenttile+1)
-			placetile(x, y+16*scale, currenttile+2)
-			placetile(x+16*scale, y+16*scale, currenttile+3)
+		--Tile grouping
+		--Decided to remove the tile 136 as default. Figured if people cared, they could just set it up themselves
+		if multitilegroups[tostring(currenttile)] and not preventMultiTile then
+			for tx, v in ipairs(multitilegroups[tostring(currenttile)]) do
+				for ty, w in ipairs(v) do
+					if tx ~= 1 or ty ~= 1 then
+						placetile(x + (tx-1)*16*scale, y + (ty-1)*16*scale, w, ent, true)
+					end
+				end
+			end
 		end
 		
 	else
@@ -3000,29 +3177,47 @@ function editor_mousepressed(x, y, button)
 				local mtbutton = getmtbutton(x)
 				--editmtobjects = false
 				--editentities = false
-				print(tile)
 				if tile then
 					if mtbutton == 0 then
-						allowdrag = false
-						editorclose()
-						mtclipboard = multitileobjects[tile+1]
-						--for i, v in pairs(mtclipboard) do
-							--for j, w in pairs(v) do
-								--print(w)
+						if not guielements["renamebar"].active then
+							allowdrag = false
+							editorclose()
+							mtclipboard = multitileobjects[tile+1]
+							--for i, v in pairs(mtclipboard) do
+								--for j, w in pairs(v) do
+									--print(w)
+								--end
 							--end
-						--end
-						pastecenter = {0, 0}
-						pastingtiles = true
-						editentities = false
-						editenemies = false
+							pastecenter = {0, 0}
+							pastingtiles = true
+							editentities = false
+							editenemies = false
+						elseif guielements["renamebar"].tile ~= tile then
+							guielements["renamebar"].active = false
+						else
+							guielements["renamebar"]:click(x, y, button)
+						end
 					else
 						if mtbutton == 1 then
+							guielements["renamebar"].active = true
+							guielements["renamebar"].value = multitileobjectnames[tile+1]
+							guielements["renamebar"].tile = tile
+							guielements["renamebar"].y = objectsguiarea[2]+1-multitilesoffset/scale + (tile*17)
+							guielements["renamebar"].func = function()
+								if guielements["renamebar"].value ~= "" then
+									guielements["renamebar"].value = string.gsub(guielements["renamebar"].value, "=", " ")
+									renameline("mappacks/" .. mappack .. "/objects.txt",tile+1,guielements["renamebar"].value)
+								end
+								guielements["renamebar"].active = false
+								loadmtobjects()
+							end
+						elseif mtbutton == 2 then
 							moveline("mappacks/" .. mappack .. "/objects.txt",tile+1,"up")
 							loadmtobjects()
-						elseif mtbutton == 2 then
+						elseif mtbutton == 3 then
 							moveline("mappacks/" .. mappack .. "/objects.txt",tile+1,"down")
 							loadmtobjects()
-						elseif mtbutton == 3 then
+						elseif mtbutton == 4 then
 							deleteline("mappacks/" .. mappack .. "/objects.txt", tile+1)
 							loadmtobjects()
 						end
@@ -3274,40 +3469,44 @@ function editor_keypressed(key)
 		rightclickm:keypressed(key)
 	end
 	
+	-- if guielements["renamebar"].active then
+		-- guielements["renamebar"]:keypress(key)
+	-- end
+	
 	if ctrlpressed then
 		if key == "s" then
 			if tileselectionclick1 and tileselectionclick2 then
-				local lx1, ly1, lx2, ly2, slx1, sly1, slx2, sly2
-				lx1 = math.min(tileselectionclick1x, tileselectionclick2x)
-				ly1 = math.min(tileselectionclick1y, tileselectionclick2y)
-				lx2 = math.max(tileselectionclick1x, tileselectionclick2x)
-				ly2 = math.max(tileselectionclick1y, tileselectionclick2y)
-				
-				slx1 = math.floor((lx1-xscroll-1)*16*scale)
-				sly1 = ((ly1-yscroll-1)*16+8)*scale
-				slx2 = slx1 + ((lx2-lx1)*16*scale+16*scale)
-				sly2 = sly1 + (ly2-ly1)*16*scale+16*scale
-				
-				savemtobject(getTiles({slx1+8*scale, sly1+8*scale},{slx2+8*scale, sly2+8*scale}))
+				savemtobject(getSelectedTiles())
 				loadmtobjects()
 				notice.new("Saved as object!", notice.white, 2)
 			end
-		elseif key == "c" or key == "x" then
-			local lx1, ly1, lx2, ly2, slx1, sly1, slx2, sly2
-			
-			if tileselectionclick1 == true and tileselectionclick2 == true then
-				lx1 = math.min(tileselectionclick1x, tileselectionclick2x)
-				ly1 = math.min(tileselectionclick1y, tileselectionclick2y)
-				lx2 = math.max(tileselectionclick1x, tileselectionclick2x)
-				ly2 = math.max(tileselectionclick1y, tileselectionclick2y)
+		elseif key == "g" then --Completely stolen from HEC
+			if tileselectionclick1 and tileselectionclick2 then
+				local group = getSelectedTiles()
+				local name = group[1][1]
 				
-				slx1 = math.floor((lx1-xscroll-1)*16*scale)
-				sly1 = ((ly1-yscroll-1)*16+8)*scale
-				slx2 = slx1 + ((lx2-lx1)*16*scale+16*scale)
-				sly2 = sly1 + (ly2-ly1)*16*scale+16*scale
-				mtclipboard = getTiles({slx1+8*scale, sly1+8*scale},{slx2+8*scale, sly2+8*scale})
+				--Deletes any group corresponding to the tile
+				if love.filesystem.getInfo("mappacks/" .. mappack .. "/groups.txt") then
+					local txt = love.filesystem.read("mappacks/" .. mappack .. "/groups.txt")
+					local s = txt:split("\n")
+					for i = 1, #s do
+						local s2 = s[i]:split("=")
+						if s2[1] == name then
+							deleteline("mappacks/" .. mappack .. "/groups.txt", i) --Just to guarantee
+							break
+						end
+					end
+				end
+				
+				savemtobject(group, tostring(name), "groups")
+				loadmtgroups()
+			end
+		elseif key == "c" or key == "x" then
+			if tileselectionclick1 == true and tileselectionclick2 == true then
+				
+				mtclipboard = getSelectedTiles()
 				if clipboardenabled then
-					objectclipboardcopy(getTiles({slx1+8*scale, sly1+8*scale},{slx2+8*scale, sly2+8*scale}))
+					objectclipboardcopy(getSelectedTiles())
 				end
 				
 				if key == "x" then
@@ -3338,6 +3537,68 @@ function editor_keypressed(key)
 			tileselectionclick2x = mapwidth
 			tileselectionclick2y = 14
 		end
+	elseif editormenuopen then
+		if key == "u" then
+			if editorstate == "tiles" then
+				local x, y = love.mouse.getPosition()
+				local tile = gettilelistpos(x, y)
+				if editentities then
+					-- nothing
+				elseif editmtobjects then
+					-- nothing
+				else
+					if tile and tile <= tilelistcount+1 then
+						local name = tostring(tile)
+						if love.filesystem.getInfo("mappacks/" .. mappack .. "/groups.txt") then
+							local txt = love.filesystem.read("mappacks/" .. mappack .. "/groups.txt")
+							local s = txt:split("\n")
+							for i = 1, #s do
+								local s2 = s[i]:split("=")
+								if s2[1] == name then
+									deleteline("mappacks/" .. mappack .. "/groups.txt", i)
+									break
+								end
+							end
+						end
+						loadmtgroups()
+					end
+				end
+			end
+		else
+			for i = 0, 9 do
+				if key == tostring(i) then
+					if editorstate == "tiles" then
+						local x, y = love.mouse.getPosition()
+						local tile = gettilelistpos(x, y)
+						if editentities and editenemies then
+							if tile and tile <= #enemies then
+								changeHotKey(i,3,tile)
+								saveHotKeys()
+							end
+						elseif editentities then
+							tile = getentityhighlight(x, y)
+							
+							if tile and tile.i and tile.i <= entitiescount then
+								changeHotKey(i,2,tile.i)
+								saveHotKeys()
+							end
+						elseif not editmtobjects then
+							if animatedtilelist then
+								if tile and tile <= tilelistcount+1 then
+									changeHotKey(i,1,tile + tileliststart-1+10000)
+									saveHotKeys()
+								end
+							else
+								if tile and tile <= tilelistcount+1 then
+									changeHotKey(i,1,tile + tileliststart-1)
+									saveHotKeys()
+								end
+							end
+						end
+					end
+				end
+			end
+		end
 	end
 	
 	if animationguilines then
@@ -3362,6 +3623,8 @@ function editor_keypressed(key)
 			closerightclickmenu()
 		elseif changemapwidthmenu then
 			mapwidthcancel()
+		elseif guielements["renamebar"].active then
+			guielements["renamebar"].active = false
 		else
 			if editormenuopen then
 				editorclose()
@@ -3406,6 +3669,31 @@ function editor_keypressed(key)
 			if ok then
 				notice.new("Changes redone!", notice.white, 1)
 			end
+		else
+			for i = 1, 9 do
+				if key == tostring(i) then --HOTKEY
+					if hotkeys[key] then
+						if hotkeys[key][1] == 1 then --TILES
+							editorstate = "tiles"
+							tilesall()
+							currenttile = hotkeys[key][2]
+							if currenttile >= 10000 then
+								animatedtilelist = true
+								tilesanimated()
+							end
+						elseif hotkeys[key][1] == 2 then --ENTITIES
+							editorstate = "tiles"
+							generateentitylist()
+							tilesentities()
+							currenttile = hotkeys[key][2]
+						elseif hotkeys[key][1] == 3 then --ENEMIES
+							editorstate = "tiles"
+							tilesenemies()
+							currenttile = enemies[hotkeys[key][2]]
+						end
+					end
+				end
+			end
 		end
 	end
 end
@@ -3414,6 +3702,10 @@ function editor_textinput(text)
 	if rightclickm then
 		rightclickm:textinput(text)
 	end
+	
+	-- if guielements["renamebar"].active then
+		-- guielements["renamebar"]:textinput(text)
+	-- end
 
 	if animationguilines then
 		for i, v in pairs(animationguilines) do
@@ -3668,10 +3960,10 @@ function gettilelistpos(x, y)
 end
 
 function getlistpos(x, y)
-	if x >= 5*scale and y >= 38*scale and x < 378*scale and y < 203*scale then
-		x = (x - 5*scale)/scale
+	if x >= objectsguiarea[1]*scale and y >= objectsguiarea[2]*scale and x < objectsguiarea[3]*scale and y < objectsguiarea[4]*scale then
+		x = (x - objectsguiarea[1]*scale)/scale
 		y = y + multitilesoffset
-		y = (y - 38*scale)/scale
+		y = (y - objectsguiarea[2]*scale)/scale
 		
 		
 		--out = math.floor(x/17)+1
@@ -3688,12 +3980,14 @@ end
 
 function getmtbutton(x)
 	local button = 0
-	if x >= 333*scale and x < 347*scale then
+		if x >= (objectsguiarea[3]-15*4)*scale and x < (objectsguiarea[3]-1-15*3)*scale then
 		button = 1
-	elseif x >= 348*scale and x < 362*scale then
+	elseif x >= (objectsguiarea[3]-15*3)*scale and x < (objectsguiarea[3]-1-15*2)*scale then
 		button = 2
-	elseif x >= 363*scale and x < 377*scale then
+	elseif x >= (objectsguiarea[3]-15*2)*scale and x < (objectsguiarea[3]-1-15*1)*scale then
 		button = 3
+	elseif x >= (objectsguiarea[3]-15*1)*scale and x < (objectsguiarea[3]-1-15*0)*scale then
+		button = 4
 	end
 	
 	return button
@@ -3726,6 +4020,21 @@ function emptySelection()
 	generatespritebatch()
 end
 
+function getSelectedTiles()
+	local lx1, ly1, lx2, ly2, slx1, sly1, slx2, sly2
+	lx1 = math.min(tileselectionclick1x, tileselectionclick2x)
+	ly1 = math.min(tileselectionclick1y, tileselectionclick2y)
+	lx2 = math.max(tileselectionclick1x, tileselectionclick2x)
+	ly2 = math.max(tileselectionclick1y, tileselectionclick2y)
+	
+	slx1 = math.floor((lx1-xscroll-1)*16*scale)
+	sly1 = ((ly1-yscroll-1)*16+8)*scale
+	slx2 = slx1 + ((lx2-lx1)*16*scale+16*scale)
+	sly2 = sly1 + (ly2-ly1)*16*scale+16*scale
+	
+	return getTiles({slx1+8*scale, sly1+8*scale},{slx2+8*scale, sly2+8*scale})
+end
+
 function getTiles(pos1, pos2)
 	local objecttable = {}
 	local tx = {}
@@ -3742,6 +4051,48 @@ function getTiles(pos1, pos2)
 		table.insert(objecttable, tx)
 	end
 	return objecttable
+end
+
+function loadHotKeys()
+	hotkeys = {}
+
+	-- override with file data
+	if love.filesystem.getInfo("mappacks/" .. mappack .. "/hotkeys.txt") then
+		local data = love.filesystem.read("mappacks/" .. mappack .. "/hotkeys.txt")
+		if #data > 0 then
+			local split1 = data:split("\n")
+			local split2, split3
+			for i = 1, #split1 do
+				split2 = split1[i]:split("=")
+				split3 = split2[2]:split(",")
+				hotkeys[tostring(split2[1])] = {tonumber(split3[1]), tonumber(split3[2])}
+			end
+		end
+	end
+end
+
+function saveHotKeys()
+	local data = ""
+	for i = 1, 9 do
+		if hotkeys[tostring(i)] then
+			data = data .. i .. "=" .. tostring(hotkeys[tostring(i)][1]) .. "," .. tostring(hotkeys[tostring(i)][2]) .. "\n"
+		end
+	end
+	data = string.sub(data, 0, -2)
+	love.filesystem.write("mappacks/" .. mappack .. "/hotkeys.txt", data)
+end
+
+function changeHotKey(key, tiletype, id)
+	if key == 0 then
+		for i = 1, 9 do
+			if hotkeys[tostring(i)] and hotkeys[tostring(i)][1] == tiletype and hotkeys[tostring(i)][2] == id then
+				hotkeys[tostring(i)] = nil
+				break
+			end
+		end
+	else
+		hotkeys[tostring(key)] = {tiletype, id}
+	end
 end
 
 function savesettings()
@@ -3768,11 +4119,13 @@ end
 --CATEGORYDELIMITER = "¸"
 --MULTIPLYDELIMITER = "·"
 --EQUALSIGN = "¨"
-function savemtobject(objecttable, name)
+function savemtobject(objecttable, name, file)
 	-- 1 read objects file
+	file = file or "objects"
+	
 	local data, data2, datalines, objectname
-	if love.filesystem.getInfo("mappacks/" .. mappack .. "/objects.txt") then
-		data = love.filesystem.read("mappacks/" .. mappack .. "/objects.txt")
+	if love.filesystem.getInfo("mappacks/" .. mappack .. "/" .. file .. ".txt") then
+		data = love.filesystem.read("mappacks/" .. mappack .. "/" .. file .. ".txt")
 	else
 		data = ""
 	end
@@ -3797,7 +4150,7 @@ function savemtobject(objecttable, name)
 	data = string.sub(data, 1, -2)
 	data = string.gsub(data, "mtobjsize", m .. " * " .. n)
 	data = data .. "\n"
-	love.filesystem.write("mappacks/" .. mappack .. "/objects.txt", data)
+	love.filesystem.write("mappacks/" .. mappack .. "/" .. file .. ".txt", data)
 	mtjustsaved = true
 end
 
@@ -3880,6 +4233,27 @@ function deleteline(file, line)
 	split1 = data:split("\n")
 	for i, v in ipairs(split1) do
 		if i ~= line then
+			newdata = newdata .. split1[i] .. "\n"
+		end
+	end
+	love.filesystem.write(file, newdata)
+end
+
+function renameline(file, line, newName)
+	if not love.filesystem.getInfo(file) then
+		return false
+	end
+	line = tonumber(line)
+	local data, newdata, split1
+	data = love.filesystem.read(file)
+	data = string.sub(data, 1, -2)
+	newdata = ""
+	split1 = data:split("\n")
+	for i, v in ipairs(split1) do
+		if i == line then
+			local split2 = split1[i]:split("=")
+			newdata = newdata .. newName .. "=" .. split2[#split2] .. "\n"
+		else
 			newdata = newdata .. split1[i] .. "\n"
 		end
 	end
