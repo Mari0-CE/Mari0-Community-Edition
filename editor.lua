@@ -1473,7 +1473,15 @@ function editor_draw()
 				if editentities then
 					if editenemies then
 						if enemies[tile] then
-							properprint(enemies[tile], 3*scale, 205*scale)
+							if enemiesdata[enemies[tile]].description then
+								local newstring = enemies[tile] .. " - " .. enemiesdata[enemies[tile]].description
+								if string.len(newstring) > 49 then
+									newstring = string.sub(newstring, 1, 49) .. "|" .. string.sub(newstring, 50, 98)
+								end
+								properprint(newstring, 3*scale, 205*scale)
+							else
+								properprint(enemies[tile], 3*scale, 205*scale)
+							end
 						end
 					else
 						local ent = getentityhighlight(mouse.getX(), mouse.getY())
