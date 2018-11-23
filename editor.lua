@@ -334,6 +334,8 @@ function editor_load()
 	multitileobjectnames = {}
 	loadmtobjects()
 	loadmtgroups()
+	
+	helpui = {4, 4, width*16-4, height*16-4}
 
 	hotkeys = {}
 	loadHotKeys()
@@ -1221,6 +1223,52 @@ function editor_draw()
 		end
 		if rightclickm then
 			rightclickm:draw()
+		end
+		
+		if love.keyboard.isDown("f1") and not rightclickm then
+			love.graphics.setColor(0, 0, 0, .85)
+			love.graphics.rectangle("fill", helpui[1]*scale, helpui[2]*scale, (helpui[3]-helpui[1])*scale, (helpui[4]-helpui[2])*scale)
+			love.graphics.setColor(1, 1, 1, 1)
+			drawrectangle(helpui[1] + 1, helpui[2] + 1, helpui[3]-helpui[1]-2, helpui[4]-helpui[2]-2)
+			properprint("better editor shortcuts:", helpui[1]*scale+4*scale, helpui[2]*scale+5*scale)
+			
+			local keys = {
+				--Shortcut, description, line breaks             | <-Width limit
+				{"ctrl+click","selects region of tiles in-editor.", 0},
+				{"q","switch between tiles, entities and enemies.", 0},
+				{"0-9","on the tile/entity/enemy screen, 1-9 sets|" ..
+					   "the tile's hotkey bind, 0 resets it.|" ..
+					   "in-editor, switches to the bound tile.", 2},
+				{"ctrl+s","saves the selected tiles as an object,|" ..
+						  "found in the objects tab.", 1},--     |
+				{"ctrl+g","transforms the selected tiles into a|" ..
+						  "group bound to the top-left-most tile.", 1},
+				{"u","on the tile screen, removes the tile group|" ..
+					 "bound to the tile.", 1},--                 |
+				{"ctrl+z/ctrl+y","undo/redo the last changes.", 0},
+				{"ctrl+c/ctrl+x/ctrl+v","copy/cut/paste region.", 0},
+				{"ctrl+a","select the entire level.", 0},--      |
+				{"middle click drag","navigates in-editor between|" ..
+									 "tiles/entities/enemies.", 1},
+			}
+			
+			local offset = 0
+			for i, v in ipairs(keys) do
+				love.graphics.setColor(0, 0, 0, 1)
+				properprint(v[1], helpui[1]*scale+8*scale-scale, helpui[2]*scale+23*scale + (i-1)*13*scale + offset*10*scale)
+				properprint(v[1], helpui[1]*scale+8*scale+scale, helpui[2]*scale+23*scale + (i-1)*13*scale + offset*10*scale)
+				properprint(v[1], helpui[1]*scale+8*scale, helpui[2]*scale+23*scale-scale + (i-1)*13*scale + offset*10*scale)
+				properprint(v[1], helpui[1]*scale+8*scale, helpui[2]*scale+23*scale+scale + (i-1)*13*scale + offset*10*scale)
+				love.graphics.setColor(1, 1, .8, 1)
+				properprint(v[1], helpui[1]*scale+8*scale, helpui[2]*scale+23*scale + (i-1)*13*scale + offset*10*scale)
+				
+				love.graphics.setColor(1, 1, 1, 1)
+				properprint(" : ", helpui[1]*scale+8*scale + string.len(v[1])*8*scale, helpui[2]*scale+23*scale + (i-1)*13*scale + offset*10*scale)
+				properprint(v[2], helpui[1]*scale+8*scale + (string.len(v[1])+3)*8*scale, helpui[2]*scale+23*scale + (i-1)*13*scale + offset*10*scale)
+				
+				offset = offset + v[3]
+			end
+			love.graphics.setColor(1, 1, 1, 1)
 		end
 	else
 		if changemapwidthmenu then
