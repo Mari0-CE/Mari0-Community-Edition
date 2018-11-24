@@ -1,4 +1,6 @@
 base=koopa
 {
+	"description": "more to the right",
+	
 	"spawnoffsetx": 0.5
 }
