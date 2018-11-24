@@ -1,4 +1,6 @@
 {
+	"description": "will jump up and down on this line",
+	
 	"quadcount": 1,
 
 	"movement": "rocket",
