@@ -1,6 +1,8 @@
 function enemies_load()
 	defaultvalues = {quadcount=1, quadno=1}
-
+	
+	nobasevalues = {"description"} --values that aren't loaded from base
+	
 	enemiesdata = {}
 	enemies = {}
 	
@@ -169,7 +171,18 @@ function usebase(t)
 	local r = {}
 	
 	for i, v in pairs(t) do
-		r[i] = v
+		check = true
+		for j in pairs(nobasevalues) do
+			if i == v then
+				check = false
+				break
+			end
+		end
+		if check then
+			if i ~= "description" then
+				r[i] = v
+			end
+		end
 	end
 	
 	return r

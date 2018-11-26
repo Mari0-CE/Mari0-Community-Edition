@@ -1,4 +1,6 @@
 {
+	"description": "runs fast and resists fireballs",
+	
 	"quadcount": 3,
 
 	"animationtype": "frames",

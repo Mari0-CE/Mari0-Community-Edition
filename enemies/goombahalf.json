@@ -1,4 +1,6 @@
 base=goomba
 {
+	"description": "more to the right",
+	
 	"spawnoffsetx": 0.5
 }
