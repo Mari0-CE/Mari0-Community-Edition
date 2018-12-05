@@ -906,35 +906,79 @@ function enemy:shotted(dir, below, high, fireball, star)
 	return true
 end
 
-function enemy:customtimeraction(action, arg)
-	if action == "bounce" then
-		if self.speedy == 0 then
-			self.speedy = -(arg or 10)
+function enemy:decodearg(arg)
+	if type(arg) == "table" then
+		if not (arg[1] and arg[2]) then return end
+		
+		if arg[1] == "global" then
+			return _G[arg[2]] or false
+		elseif arg[1] == "self" then
+			return self[arg[2]]
+		elseif arg[1] == "concat" then
+			if not arg[3] then return end
+			return (self:decodearg(arg[2]) .. self:decodearg(arg[3]))
 		end
-	elseif action == "playsound" then
-		playsound(arg)
-	elseif string.sub(action, 0, 7) == "reverse" then
-		local parameter = string.sub(action, 8, string.len(action))
-		if not self[parameter] then return end
-		if type(self[parameter]) ~= "number" then return end
-		self[parameter] = -self[parameter]
-	elseif string.sub(action, 0, 3) == "add" then
-		local parameter = string.sub(action, 4, string.len(action))
-		if not self[parameter] or not arg or tonumber(arg) == nil then return end
-		if type(self[parameter]) ~= "number" then return end
-		self[parameter] = self[parameter] + arg
-	elseif string.sub(action, 0, 8) == "multiply" then
-		local parameter = string.sub(action, 9, string.len(action))
-		if not self[parameter] or not arg or tonumber(arg) == nil then return end
-		if type(self[parameter]) ~= "number" then return end
-		self[parameter] = self[parameter] * arg
-	elseif action == "setframe" then
-		self.quad = self.quadgroup[arg]
-	elseif string.sub(action, 0, 3) == "set" then
-		if not arg then --if arg is nil set it to false
-			self[string.sub(action, 4, string.len(action))] = false
-		else
-			self[string.sub(action, 4, string.len(action))] = arg
+	else
+		return arg
+	end
+end
+
+function enemy:customtimeraction(action, arg)
+			arg = self:decodearg(arg) --decode argument
+	if type(action) == "table" then
+		realaction = action[1] or false
+			--not done yet
+		if string.sub(realaction, -4, -1) == "than" then
+			if not (action[2] and action[3]) then return end
+			if globintCH(action[2],  string.sub(realaction, 1, -5), action[3]) then --coding practice, using string.sub the same way Maurice did
+				self:customtimeraction(arg[1])
+			else
+				self:customtimeraction(arg[2])
+			end
+		elseif realaction == "istrue" then
+			if globools[action[2]] then
+				self:customtimeraction(arg[1])
+			else
+				self:customtimeraction(arg[2])
+			end
+		elseif realaction == "simultaneous" then
+			table.remove(action, 1)
+			for i, v in pairs(action) do
+				self:customtimeraction(v[1],v[2])
+			end
+		end
+	else
+		if action == "bounce" then
+			if self.speedy == 0 then
+				self.speedy = -(arg or 10)
+			end
+		elseif action == "playsound" then
+			playsound(arg)
+		elseif string.sub(action, 0, 7) == "reverse" then
+			local parameter = string.sub(action, 8, string.len(action))
+			if not self[parameter] then return end
+			if type(self[parameter]) ~= "number" then return end
+			self[parameter] = -self[parameter]
+		elseif string.sub(action, 0, 3) == "add" then
+			local parameter = string.sub(action, 4, string.len(action))
+			if not self[parameter] or not arg or tonumber(arg) == nil then return end
+			if type(self[parameter]) ~= "number" then return end
+			self[parameter] = self[parameter] + arg
+		elseif string.sub(action, 0, 8) == "multiply" then
+			local parameter = string.sub(action, 9, string.len(action))
+			if not self[parameter] or not arg or tonumber(arg) == nil then return end
+			if type(self[parameter]) ~= "number" then return end
+			self[parameter] = self[parameter] * arg
+		elseif action == "setframe" then
+			self.quad = self.quadgroup[arg]
+		elseif string.sub(action, 0, 3) == "set" then
+			if not arg then --if arg is nil set it to false
+				self[string.sub(action, 4, string.len(action))] = false
+			else
+				self[string.sub(action, 4, string.len(action))] = arg
+			end
+		elseif action == "print" then
+			print(arg)
 		end
 	end
 end
