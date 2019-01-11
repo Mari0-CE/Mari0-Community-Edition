@@ -1,6 +1,6 @@
 --[[
 	PHYSICS LIBRARY THING
-	WRITTEN BY MAURICE GUÉGAN FOR MARI0
+	WRITTEN BY MAURICE GUÃ‰GAN FOR MARI0
 	DON'T STEAL MY SHIT
 	Licensed under WTFPL
 ]]--
@@ -129,7 +129,7 @@ function physicsupdate(dt)
 					local ystart = math.floor(v.y+v.speedy*dt-2/16)+1
 					
 					local xfrom = xstart
-					local xto = xstart+math.ceil(v.width)
+					local xto = xstart+math.ceil(v.width+0.0001)
 					local dir = 1
 					
 					if v.speedx < 0 then
@@ -138,7 +138,7 @@ function physicsupdate(dt)
 					end
 					
 					for x = xfrom, xto, dir do
-						for y = ystart, ystart+math.ceil(v.height) do
+						for y = ystart, ystart+math.ceil(v.height+0.0001) do
 							--check if invisible block
 							if inmap(x, y) and (not tilequads[map[x][y][1]]:getproperty("invisible", x, y) or j == "player") then
 								local t = lobjects["tile"][x .. "-" .. y]
