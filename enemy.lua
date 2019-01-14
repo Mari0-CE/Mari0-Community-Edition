@@ -1446,33 +1446,34 @@ function enemy:transform(t)
 		end
 	end
 
-if not self.dontactuallytransform then
-	local xoffset = self.transformsoffsetx or 0
-	local yoffset = self.transformsoffsety or 0
-	if self.transformsintorandoms then
-		self.transformsinto = self.transformsintorandoms[math.random(#self.transformsintorandoms)]
-	end
+	if not self.dontactuallytransform then
+		local xoffset = self.transformsoffsetx or 0
+		local yoffset = self.transformsoffsety or 0
+		if self.transformsintorandoms then
+			self.transformsinto = self.transformsintorandoms[math.random(#self.transformsintorandoms)]
+			t = self.transformsinto
+		end
 
-	local temp = enemy:new(self.x+self.width/2+.5+xoffset, self.y+self.height+yoffset, t, {})
-	
-	if self.transformpassedparameters then
-		for i = 1, #self.transformpassedparameters do
-			if self.transformpassedparameters[i] ~= nil then
-				temp[self.transformpassedparameters[i]] = self[self.transformpassedparameters[i]]
+		local temp = enemy:new(self.x+self.width/2+.5+xoffset, self.y+self.height+yoffset, t, {})
+
+		if self.transformpassedparameters then
+			for i = 1, #self.transformpassedparameters do
+				if self.transformpassedparameters[i] ~= nil then
+					temp[self.transformpassedparameters[i]] = self[self.transformpassedparameters[i]]
+				end
 			end
 		end
+
+		table.insert(objects["enemy"], temp)
+
+		if self.spawner then
+			table.insert(self.spawner.spawnedenemies, temp)
+		end
+
+		self.kill = true
+		self.active = false
+		self.drawable = false
 	end
-	
-	table.insert(objects["enemy"], temp)
-	
-	if self.spawner then
-		table.insert(self.spawner.spawnedenemies, temp)
-	end
-	
-	self.kill = true
-	self.active = false
-	self.drawable = false
-end
 end
 
 function enemy:emancipate()
