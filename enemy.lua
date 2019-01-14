@@ -924,22 +924,25 @@ function enemy:decodearg(arg)
 end
 
 function enemy:customtimeraction(action, arg)
-			arg = self:decodearg(arg) --decode argument
-	if type(action) == "table" then
+	if type(action) == "table" then --compound action
+	
 		realaction = action[1] or false
-			--not done yet
+		action[2] = self:decodearg(action[2]) --decode argument
+		action[3] = self:decodearg(action[3])
+		
 		if string.sub(realaction, -4, -1) == "than" then
 			if not (action[2] and action[3]) then return end
 			if globintCH(action[2],  string.sub(realaction, 1, -5), action[3]) then --coding practice, using string.sub the same way Maurice did
-				self:customtimeraction(arg[1])
+				self:customtimeraction(arg[1][1], arg[1][2])
 			else
-				self:customtimeraction(arg[2])
+				self:customtimeraction(arg[2][1], arg[2][2])
 			end
 		elseif realaction == "istrue" then
+			print(globools[action[2]])
 			if globools[action[2]] then
-				self:customtimeraction(arg[1])
+				self:customtimeraction(arg[1][1], arg[1][2])
 			else
-				self:customtimeraction(arg[2])
+				self:customtimeraction(arg[2][1], arg[2][2])
 			end
 		elseif realaction == "simultaneous" then
 			table.remove(action, 1)
@@ -948,6 +951,8 @@ function enemy:customtimeraction(action, arg)
 			end
 		end
 	else
+		arg = self:decodearg(arg) --decode argument
+		
 		if action == "bounce" then
 			if self.speedy == 0 then
 				self.speedy = -(arg or 10)

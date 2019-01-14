@@ -65,9 +65,12 @@ disableportalgun:player				disable portal gun of player
 TRIGGER	whenboolis			whenever a boolean is true						#def		#imp
 TRIGGER	whenintis			whenever an integer is {>,<,=} a value
 CONDITION 	ifbool			only if a boolean is true (can be inverted)			#def		#imp
-CONDITION	ifint				if an integer is {>,<,+} a value
+CONDITION	ifint			if an integer is {>,<,+} a value
 ACTION	dotobool			set and/or flip a boolean (three modes of one action)	#def		#imp
 ACTION	dotoint			add, subtact, or set a boolean 
+
+ACTION	dotoallbool		do to ALL booleans with prefix ___
+ACTION	dotoallint			do to ALL integers with prefix ___
 ]]--
 
 function animation:init(path, name)
@@ -454,6 +457,18 @@ function animation:update(dt)
 				globoolSH(v[2],v[3])
 			elseif v[1] == "dotoint" then
 				globintSH(v[2],v[3],self:decodenuminput(v[4]))
+			elseif v[1] == "dotoallbool" then
+				for i, n in pairs(globools) do
+					if string.sub(i, 1, string.len(v[2])) == v[2] then 
+						globoolSH(i,v[3])
+					end
+				end
+			elseif v[1] == "dotoallint" then
+				for i, n in pairs(globints) do
+					if string.sub(i, 1, string.len(v[2])) == v[2] then 
+						globintSH(i,v[3],self:decodenuminput(v[4]))
+					end
+				end
 			end
 			
 			self.currentaction = self.currentaction + 1
