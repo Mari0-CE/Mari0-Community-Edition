@@ -4840,7 +4840,7 @@ function warpzone(w, l)
 	prevsublevel = false
 	
 	-- minus 1 world glitch just because I can.
-	if not displaywarpzonetext and w == 4 and l == 1 and mappack == "smb" then
+	if not displaywarpzonetext and w == 4 and l == 1 then
 		marioworld = "M"
 	end
 	
