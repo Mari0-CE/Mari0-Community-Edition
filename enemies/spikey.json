@@ -8,8 +8,6 @@
 	
 	"nospritesets": true,
 	
-	"resistsfire": true,
-	
 	"kills": true,
 	
 	"movement": "truffleshuffle",
