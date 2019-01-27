@@ -42,7 +42,6 @@
 	"spawnsenemy": "spikeyegg",
 	"spawnenemydelays": [4],
 	"spawnenemyspeedy": -10,
-	"spawnmax": 1,
 	
 	"throwquadoffset": 1,
 	"throwpreparetime": 0.5,
