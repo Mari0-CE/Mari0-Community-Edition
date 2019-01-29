@@ -4190,7 +4190,7 @@ function shootportal(plnumber, i, sourcex, sourcey, direction, mirrored, bounces
 	local cox, coy, side, tendency, x, y = traceline(sourcex, sourcey, direction)
 	
 	local mirror = false
-	if cox and tilequads[map[cox][coy][1]]:getproperty("mirror", cox, coy) then
+	if cox and tilequads[map[cox][coy]] and tilequads[map[cox][coy][1]]:getproperty("mirror", cox, coy) then
 		mirror = true
 	end
 	
