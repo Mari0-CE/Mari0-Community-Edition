@@ -911,7 +911,7 @@ table.insert(toenter, {name = "enableportalgun",
 table.insert(toenter, {name = "dotobool", 
 	t = {
 		t="action",
-		nicename="set global boolean",
+		nicename="change global boolean",
 		entries={
 			{
 				t="input"
@@ -928,6 +928,7 @@ table.insert(toenter, {name = "dotobool",
 		}
 	}
 })
+
 table.insert(toenter, {name = "dotoint", 
 	t = {
 		t="action",
@@ -952,6 +953,63 @@ table.insert(toenter, {name = "dotoint",
 		}
 	}
 })
+
+table.insert(toenter, {name = "dotoallbool", 
+	t = {
+		t="action",
+		nicename="change all global booleans",
+		entries={
+			{
+				t="text",
+				value="with prefix",
+			},
+			
+			{
+				t="input"
+			},
+			
+			{
+				t="text",
+				value="to",
+			},
+			
+			{
+				t="booleanselection"
+			}
+		}
+	}
+})
+
+table.insert(toenter, {name = "dotoallint", 
+	t = {
+		t="action",
+		nicename="change all global integers",
+		entries={
+			{
+				t="text",
+				value="with prefix",
+			},
+			
+			{
+				t="input"
+			},
+			
+			{
+				t="text",
+				value="by",
+			},
+			
+			{
+				t="intmodselection"
+			},
+			
+			{
+				t="numinput"
+			}
+		}
+	}
+})
+
 --SORT ALPHABETICALLY (I didn't even know you could greater/less compare strings.)
 table.sort(toenter, function(a, b) return a.t.nicename < b.t.nicename end)
 
