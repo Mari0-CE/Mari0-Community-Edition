@@ -1,0 +1,104 @@
+%YAML 1.1
+---
+# Snapcraft Recipe for Mari0: Community Edition
+# ------------------------------
+# This file is in the YAML data serialization format:
+# http://yaml.org
+# For the spec. of writing this file refer the following documentation:
+# * The snapcraft format
+#   https://docs.snapcraft.io/the-snapcraft-format/8337
+# * Snap Documentation
+#   https://docs.snapcraft.io
+# * Topics under the doc category in the Snapcraft Forum
+#   https://forum.snapcraft.io/c/doc
+# For support refer to the snapcraft section in the Snapcraft Forum:
+# https://forum.snapcraft.io/c/snapcraft
+name: mari0-ce
+title: 'Mari0: Community Edition'
+summary: A community-driven effort to fix and polish the latest version of Mari0:SE
+description: |
+  _**The open-source, community-driven counterpart to Alesan's Entities**_
+
+  (If you don't know what this game is, it's classic Mario Bros. but with a portal gun. It's fun. Play it.)
+
+  If you're looking for help or mappacks, or you made a mappack of your own, [the game's forum is here.](http://forum.stabyourself.net/viewforum.php?f=8&sid=22f68690172a445d290d953b52074c83)
+
+  If you think you'd prefer Alesan's Entities, you can find it [Here.](http://forum.stabyourself.net/viewtopic.php?f=13&t=3636) (please don't leave us)
+
+icon: snap/gui/icon.256px.scaled.png
+license: WTFPL
+adopt-info: mari0-ce
+
+base: core18
+confinement: strict
+grade: stable
+
+# Currently the love snap doesn't build in s390x architecture
+# https://bugs.launchpad.net/love-snap/+bug/1818424
+architectures:
+- build-on: i386
+- build-on: amd64
+- build-on: armhf
+- build-on: arm64
+- build-on: ppc64el
+
+parts:
+  # Launcher programs to fix problems at runtime
+  launchers:
+    source: snap/local/launchers
+    plugin: dump
+    organize:
+      '*-launch': bin/
+
+  mari0-ce:
+    source: .
+    override-pull: |
+      snapcraftctl pull
+      snapcraftctl set-version \
+        "$(git describe --always --dirty --tags)"
+
+    plugin: dump
+    organize:
+      '*': mari0-ce/
+
+  love:
+    plugin: nil
+    stage-snaps:
+    - love-brlin
+
+apps:
+  mari0-ce:
+    adapter: full
+    command: bin/love $SNAP/mari0-ce
+    command-chain:
+    - bin/workaround-snap-arch-triplet-launch
+    - bin/locales-launch
+    - bin/love-launch
+    - bin/mari0-ce-launch
+
+plugs:
+  # For snaps with a graphical user interface:
+  desktop:
+  desktop-legacy:
+  x11:
+  unity7:
+  wayland:
+
+  # Storage access
+  home:
+  removable-media: # Non-A/C
+
+  # Joystick access
+  joystick:
+
+  # Graphics rendering
+  opengl:
+
+  # Audio
+  pulseaudio:
+
+  # For inhibiting screensavor
+  screen-inhibit-control:
+
+  # For DLC download feature
+  network:
