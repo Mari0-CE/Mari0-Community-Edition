@@ -1,1 +1,8 @@
+# Snap packaging specific rules
+/snap/.snapcraft/
+/parts/
+/stage/
+/prime/
 
+/*.snap
+/*_source.tar.bz2
