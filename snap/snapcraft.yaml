@@ -54,10 +54,13 @@ parts:
     source: .
     override-pull: |
       snapcraftctl pull
-      snapcraftctl set-version \
-        "$(git describe --always --dirty --tags)"
+
+      snap_version="$(git describe --always --dirty --tags)"
+      snapcraftctl set-version "${snap_version}"
 
     plugin: dump
+    build-packages:
+    - git
     organize:
       '*': mari0-ce/
 
