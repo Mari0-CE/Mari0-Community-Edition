@@ -54,27 +54,33 @@ parts:
     source: .
     override-pull: |
       snapcraftctl pull
-      snapcraftctl set-version \
-        "$(git describe --always --dirty --tags)"
+
+      snap_version="$(git describe --always --dirty --tags)"
+      printf 'override-pull: Snap version set to "%s".\n' "${snap_version}" 1>&2
+      snapcraftctl set-version "${snap_version}"
 
     plugin: dump
+    build-packages:
+    - git
     organize:
       '*': mari0-ce/
 
   love:
     plugin: nil
     stage-snaps:
-    - love-brlin
+    - love
 
 apps:
   mari0-ce:
     adapter: full
     command: bin/love $SNAP/mari0-ce
     command-chain:
-    - bin/workaround-snap-arch-triplet-launch
     - bin/locales-launch
     - bin/love-launch
     - bin/mari0-ce-launch
+    environment:
+      # Workaround libpulsecommon library runtime dependency
+      LD_LIBRARY_PATH: $LD_LIBRARY_PATH:$SNAP/usr/lib/$SNAPCRAFT_ARCH_TRIPLET/pulseaudio
 
 plugs:
   # For snaps with a graphical user interface:
@@ -102,3 +108,9 @@ plugs:
 
   # For DLC download feature
   network:
+
+layout:
+  # Fix characters not in non-ASCII range not displayed in the window's
+  # title bar
+  /usr/share/X11/locale:
+    bind: $SNAP/usr/share/X11/locale
