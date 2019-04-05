@@ -836,19 +836,19 @@ function menu_draw()
 			properprint("}", 110*scale, 54*scale)
 			properprint(characters[mariocharacter[skinningplayer]].name, (118-#characters[mariocharacter[skinningplayer]].name*4)*scale, 80*scale)
 			
-			--HAT
-			if optionsselection == 4 then
-				love.graphics.setColor(1, 1, 1, 1)
-			else
-				love.graphics.setColor(0.4, 0.4, 0.4, 1)
-			end
-			if mariohats[skinningplayer][1] == 0 then
-				properprint("hat: none", (83)*scale, 90*scale)
-			else
-				properprint("hat: " .. mariohats[skinningplayer][1], (99-string.len(mariohats[skinningplayer][1])*4)*scale, 90*scale)
-			end
-			
 			if v.colorables then
+				--HAT
+				if optionsselection == 4 then
+					love.graphics.setColor(1, 1, 1, 1)
+				else
+					love.graphics.setColor(0.4, 0.4, 0.4, 1)
+				end
+				if mariohats[skinningplayer][1] == 0 then
+					properprint("hat: none", (83)*scale, 90*scale)
+				else
+					properprint("hat: " .. mariohats[skinningplayer][1], (99-string.len(mariohats[skinningplayer][1])*4)*scale, 90*scale)
+				end
+
 				if optionsselection == 5 then
 					love.graphics.setColor(1, 1, 1, 1)
 				else
@@ -916,7 +916,7 @@ function menu_draw()
 					alpha = 1
 				end
 			else
-				if optionsselection == 5 then
+				if optionsselection == 4 then
 					alpha = 1
 				end
 			end
@@ -939,7 +939,7 @@ function menu_draw()
 					alpha = 1
 				end
 			else
-				if optionsselection == 6 then
+				if optionsselection == 5 then
 					alpha = 1
 				end
 			end
