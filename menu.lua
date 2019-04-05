@@ -179,7 +179,7 @@ function menu_update(dt)
 				end
 			end
 			
-		elseif (characters[mariocharacter[skinningplayer]].colorables and optionsselection == 9) or (not characters[mariocharacter[skinningplayer]].colorables and optionsselection == 5) then
+		elseif (characters[mariocharacter[skinningplayer]].colorables and optionsselection == 9) or (not characters[mariocharacter[skinningplayer]].colorables and optionsselection == 4) then
 			if (love.keyboard.isDown("right") or love.keyboard.isDown("d")) and portalhues[skinningplayer][1] < 1 then
 				portalhues[skinningplayer][1] = portalhues[skinningplayer][1] + huechangespeed*dt
 				if portalhues[skinningplayer][1] > 1 then
@@ -195,7 +195,7 @@ function menu_update(dt)
 				portalcolor[skinningplayer][1] = getrainbowcolor(portalhues[skinningplayer][1])
 			end
 			
-		elseif (characters[mariocharacter[skinningplayer]].colorables and optionsselection == 10) or (not characters[mariocharacter[skinningplayer]].colorables and optionsselection == 6) then
+		elseif (characters[mariocharacter[skinningplayer]].colorables and optionsselection == 10) or (not characters[mariocharacter[skinningplayer]].colorables and optionsselection == 5) then
 			if (love.keyboard.isDown("right") or love.keyboard.isDown("d")) and portalhues[skinningplayer][2] < 1 then
 				portalhues[skinningplayer][2] = portalhues[skinningplayer][2] + huechangespeed*dt
 				if portalhues[skinningplayer][2] > 1 then
@@ -1890,7 +1890,7 @@ function menu_keypressed(key)
 					end
 				end
 			elseif optionstab == 2 then
-				local limit = 6
+				local limit = 5
 				if characters[mariocharacter[skinningplayer]].colorables then
 					limit = 10
 				end
@@ -1924,7 +1924,7 @@ function menu_keypressed(key)
 						optionsselection = 11
 					end
 				elseif optionstab == 2 then
-					local limit = 6
+					local limit = 5
 					if characters[mariocharacter[skinningplayer]].colorables then
 						limit = 10
 					end
@@ -1939,7 +1939,7 @@ function menu_keypressed(key)
 			if optionstab == 2 then
 				if optionsselection == 3 then
 					nextcharacter()
-				elseif optionsselection == 4 then
+				elseif characters[mariocharacter[skinningplayer]].colorables and optionsselection == 4 then
 					if mariohats[skinningplayer][1] < #hat then
 						mariohats[skinningplayer][1] = mariohats[skinningplayer][1] + 1
 					end
@@ -2025,7 +2025,7 @@ function menu_keypressed(key)
 			if optionstab == 2 then
 				if optionsselection == 3 then
 					previouscharacter()
-				elseif optionsselection == 4 then
+				elseif characters[mariocharacter[skinningplayer]].colorables and optionsselection == 4 then
 					if mariohats[skinningplayer][1] > 0 then
 						mariohats[skinningplayer][1] = mariohats[skinningplayer][1] - 1
 					end
