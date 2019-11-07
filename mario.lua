@@ -2572,7 +2572,7 @@ function mario:ceilcollide(a, b, c, d)
 			if self.gravitydirection == math.pi/2 then
 				if self.x < x-22/16 then
 					--check if block left of it is a better fit
-					if x > 1 and tilequads[map[x-1][y][1]]:getproperty("collision", x-1, y) == true then
+					if x > 1 and tilequads[map[x-1][y][1]]:getproperty("collision", x-1, y) == true and tilequads[map[x-1][y][1]]:getproperty("platform", x-1, y) == false then
 						x = x - 1
 					else
 						local col = checkrect(x-28/16, self.y, self.width, self.height, {"exclude", self}, true)
@@ -2586,7 +2586,7 @@ function mario:ceilcollide(a, b, c, d)
 					end
 				elseif self.x > x-6/16 then
 					--check if block right of it is a better fit
-					if x < mapwidth and tilequads[map[x+1][y][1]]:getproperty("collision", x+1, y) == true then
+					if x < mapwidth and tilequads[map[x+1][y][1]]:getproperty("collision", x+1, y) == true and tilequads[map[x+1][y][1]]:getproperty("platform", x+1, y) == false then
 						x = x + 1
 					else
 						local col = checkrect(x, self.y, self.width, self.height, {"exclude", self}, true)
