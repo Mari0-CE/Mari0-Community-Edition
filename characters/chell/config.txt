@@ -1,0 +1,108 @@
+{
+	"colorables": [
+		"jumpsuit",
+		"hair",
+		"skin",
+		"shoes"
+	],
+	
+	"defaulthat": 0,
+
+	"defaultcolors": [
+		[
+			[217,17,0],
+			[0, 0, 0],
+			[250, 161, 38],
+			[251, 251, 251]
+		],
+		
+		[
+			[0,217,17],
+			[0, 0, 0],
+			[250, 161, 38],
+			[251, 251, 251]
+		],
+		
+		[
+			[17,0,217],
+			[0, 0, 0],
+			[250, 161, 38],
+			[251, 251, 251]
+		],
+		
+		[
+			[217,217,17],
+			[0, 0, 0],
+			[250, 161, 38],
+			[251, 251, 251]
+		]
+	],
+	
+	
+	
+	"flowercolor": [
+		[252, 216, 168],
+		[216,  40,   0], 
+		[252, 152,  56],
+		[255, 255, 255]
+	],
+
+	"smalloffsetX": 6,
+	"smalloffsetY": 3,
+	"smallquadcenterX": 11,
+	"smallquadcenterY": 10,
+
+	"shrinkquadcenterX": 9,
+	"shrinkquadcenterY": 32,
+	"shrinkoffsetY": -3,
+	"shrinkquadcenterY2": 16,
+
+	"growquadcenterY": 4,
+	"growquadcenterY2": -2,
+
+	"duckquadcenterY": 22,
+	"duckoffsetY": 7,
+
+	"runframes": 3,
+	"jumpframes": 1,
+	"customframes": 3,
+
+	"smallquadwidth": 20,
+	"smallquadheight": 20,
+	"smallimgwidth": 240,
+	"smallimgheight": 80,
+
+	"bigquadcenterY": 20,
+	"bigquadcenterX": 9,
+	"bigoffsetY": -3,
+	"bigoffsetX": 6,
+
+	"bigquadwidth": 20,
+	"bigquadheight": 36,
+	"bigimgwidth": 240,
+	"bigimgheight": 144,
+
+	"hatoffsets": {
+		"idle": [-2,0],
+		"running": [[-2,1],[-2,0],[-2,-1]],
+		"sliding": [-2,0],
+		"jumping": [[-2,-1]],
+		"falling": [1,0],
+		"climbing": [[1,0],[0,-1]],
+		"swimming": [[-1,-1],[-1,-1]],
+		"grow": [-7,1]
+	},
+	
+	"bighatoffsets": {
+		"idle": [-6,-1],
+		"fire": [-5,-1],
+		"running": [[-7,-3],[-6,-2],[-5,-1]],
+		"sliding": [-8,-1],
+		"jumping": [[-6,0]],
+		"falling": [-4,-2],
+		"climbing": [[-5,-3],[-5,-4]],
+		"swimming": [[-6,-3],[-6,-3]],
+		"ducking": [-8,-11],
+		"grow": [-7,1]
+	}
+}
