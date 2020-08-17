@@ -2910,8 +2910,10 @@ function newlevel()
 		mapnumberclick(marioworld, j)
 	elseif i ~= nil and j == nil then
 		mapnumberclick(i, (existingmaps[i] or 0)+1)
-	else
+	elseif marioworld ~= nil and existingmaps[marioworld] ~= nil then
 		mapnumberclick(marioworld, existingmaps[marioworld]+1)
+	else
+		mapnumberclick(1, 1)
 	end
 end
 
