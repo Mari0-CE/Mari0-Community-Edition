@@ -5,9 +5,9 @@
 	Please keep in mind that for obvious reasons, I do not hold the rights to artwork, audio or trademarked elements of the game.
 	This license only applies to the code and original other assets. Obviously. Duh.
 	Anyway, enjoy.
-
-
-
+	
+	
+	
 	DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
               Version 2, December 2004
 
@@ -46,10 +46,10 @@ function love.run()
 	MUSICFIX = loveVersion < 11 and "static" or "stream"
 
 	love.math.setRandomSeed(os.time())
-	for i=1, 2 do
-		love.math.random()
+	for i=1, 2 do 
+		love.math.random() 
 	end
-
+	
 	love.load(arg)
 
 	-- Main loop time.
@@ -105,7 +105,7 @@ function love.run()
 			love.graphics.setScissor()
 			love.draw()
 		end
-
+		
 		love.graphics.present()
 		love.timer.sleep(0.001)
 	end
@@ -113,7 +113,7 @@ end
 
 function love.errhand(msg)
 	msg = tostring(msg)
-
+	
 	local trace = debug.traceback()
 
 	local err = {}
@@ -197,7 +197,7 @@ function love.errhand(msg)
 		love.graphics.printf(p, 35*scale, 15*scale, love.graphics.getWidth() - 35*scale)
 		love.graphics.present()
 	end
-
+	
 	draw()
 
 	while true do
@@ -233,7 +233,7 @@ function love.load(arg)
 
 	math.mod = math.fmod
 	math.random = love.math.random
-
+	
 	print("Loading Mari0 SE!")
 	print("=======================")
 	lastline = debug.getinfo(1).currentline
@@ -242,20 +242,20 @@ function love.load(arg)
 	JSON = require "JSON"
 	require "notice"
 	--Get biggest screen size
-
+	
 	local sizes = love.window.getFullscreenModes()
 	desktopsize = sizes[1]
-
+	
 	for i = 2, #sizes do
 		if sizes[i].width > desktopsize.width or sizes[i].height > desktopsize.height then
 			desktopsize = sizes[i]
 		end
 	end
-
+	
 	recordtarget = 1/40
 	recordskip = 1
 	recordframe = 1
-
+	
 	magicdns_session_chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 	magicdns_session = ""
 	for i = 1, 8 do
@@ -266,7 +266,7 @@ function love.load(arg)
 	magicdns_identity = love.filesystem.getSaveDirectory():split("/")
 	magicdns_identity = string.upper(magicdns_identity[#magicdns_identity])
 
-
+	
 	shaderlist = love.filesystem.getDirectoryItems( "shaders/" )
 	local rem
 	for i, v in pairs(shaderlist) do
@@ -276,14 +276,14 @@ function love.load(arg)
 			shaderlist[i] = string.sub(v, 1, string.len(v)-5)
 		end
 	end
-
+	
 	table.remove(shaderlist, rem)
 	table.insert(shaderlist, 1, "none")
-
+	
 	--=================--
 	-- VERSION CONTROL --
 	--=================--
-
+	
 	if loveVersion > 9 then
 		lkisDown = love.keyboard.isDown
 		lmisDown = love.mouse.isDown
@@ -341,10 +341,10 @@ function love.load(arg)
 			end
 		end
 	end
-
+	
 	iconimg = love.image.newImageData("graphics/icon.png")
 	love.window.setIcon(iconimg)
-
+	
 	love.graphics.setDefaultFilter("nearest", "nearest")
 
 	axisDeadZones = {}
@@ -366,7 +366,7 @@ function love.load(arg)
 	end
 
 	add("Variables, shaderlist")
-
+	
 	local suc, err = pcall(loadconfig)
 	if not suc then
 		players = 1
@@ -374,51 +374,51 @@ function love.load(arg)
 		print("== FAILED TO LOAD CONFIG ==")
 		print(err)
 	end
-
+	
 	physicsdebug = false
 	incognito = false
 	portalwalldebug = false
 	userectdebug = false
 	speeddebug = false
-
+	
 	DEBUG = false
-
+	
 	editordebug = DEBUG
 	skipintro = DEBUG
 	skiplevelscreen = DEBUG
 	debugbinds = DEBUG
 	frameskip = false -- false/0     true is not valid, so stop accidentally writing that.
-
+	
 	replaysystem = false
 	drawreplays = false
 	drawalllinks = false
 	bdrawui = true
 	skippedframes = 0
-
+	
 	width = 25	--! default 25
 	height = 14
 	fsaa = 0
-
+	
 	steptimer = 0
 	targetdt = 1/60
-
+	
 	--Calculate relative scaling factor
 	touchfrominsidescaling = math.min(desktopsize.width/(width*16), desktopsize.height/(height*16))
 	touchfrominsidemissing = desktopsize.height-height*16*touchfrominsidescaling
-
+	
 	add("Variables")
 	changescale(scale, true)
 	add("Resolution change")
 	require "characterloader"
 	add("Characterloader")
-
+	
 	dlclist = {}
 	hatcount = #love.filesystem.getDirectoryItems("graphics/standardhats")
 	saveconfig()
 	love.window.setTitle( "Mari0: Community Edition" )
-
+	
 	love.graphics.setBackgroundColor(0, 0, 0)
-
+	
 	fontimage = love.graphics.newImage("graphics/font.png")
 	fontimageback = love.graphics.newImage("graphics/fontback.png")
 	fontglyphs = "0123456789abcdefghijklmnopqrstuvwxyz.:/,\"C-_A* !{}?'()+=><#%"
@@ -430,19 +430,19 @@ function love.load(arg)
 	for i = 1, string.len(fontglyphs) do
 		fontquadsback[string.sub(fontglyphs, i, i)] = love.graphics.newQuad((i-1)*10, 0, 10, 10, fontimageback:getWidth(), fontimageback:getHeight())
 	end
-
+	
 	love.graphics.clear()
 	love.graphics.setColor(0.4, 0.4, 0.4)
 	loadingtexts = {"reticulating splines", "rendering important stuff", "01110000011011110110111001111001", "sometimes, i dream about cheese",
 					"baking cake", "happy explosion day", "raising coolness by a fifth", "yay facepunch", "stabbing myself", "sharpening knives",
-					"tanaka, thai kick", "slime will find you", "becoming self-aware", "it's a secret to everybody", "there is no minus world",
+					"tanaka, thai kick", "slime will find you", "becoming self-aware", "it's a secret to everybody", "there is no minus world", 
 					"oh my god, jc, a bomb", "silly loading message here", "motivational art by jorichi", "love.graphics.print(\"loading..\", 200, 120)",
 					"you're my favorite deputy", "licensed under wtfpl", "banned in australia", "loading anti-piracy module", "watch out there's a sni",
 					"attack while its tail's up!", "what a horrible night to have a curse", "han shot first", "establishing connection to nsa servers..",
 					"how do i programm", "making palette inaccurate..", "y cant mario crawl?"}
-
+	
 	loadingtext = loadingtexts[math.random(#loadingtexts)]
-
+	
 	if mariocharacter[1] == "rainbow dash-unfinished" then -- /)^3^(\
 		logo = love.graphics.newImage("graphics/stabyourselfdash.png")
 		logoblood = love.graphics.newImage("graphics/stabyourselfblooddash.png")
@@ -450,38 +450,38 @@ function love.load(arg)
 		logo = love.graphics.newImage("graphics/stabyourself.png")
 		logoblood = love.graphics.newImage("graphics/stabyourselfblood.png")
 	end
-
+	
 	local logoscale = scale
 	if logoscale <= 1 then
 		logoscale = 0.5
 	else
 		logoscale = 1
 	end
-
+	
 	love.graphics.setColor(1, 1, 1)
-
+	
 	love.graphics.draw(logo, love.graphics.getWidth()/2, love.graphics.getHeight()/2, 0, logoscale, logoscale, 142, 150)
 	love.graphics.setColor(0.6, 0.6, 0.6)
 	properprint("loading mari0 ce..", love.graphics.getWidth()/2-string.len("loading mari0 ce..")*4*scale, love.graphics.getHeight()/2-170*logoscale-7*scale)
 	love.graphics.setColor(0.2, 0.2, 0.2)
 	properprint(loadingtext, love.graphics.getWidth()/2-string.len(loadingtext)*4*scale, love.graphics.getHeight()/2+165*logoscale)
 	love.graphics.present()
-
+	
 	add("Variables")
-
+	
 	--require ALL the files!
 	--require "netplay"
 	--require "client"
 	--require "server"
 	--require "lobby"
 	--require "onlinemenu"
-
+	
 	require "shaders"
 	require "variables"
 	require "sha1"
 	class = require "middleclass"
 	require "camera"
-
+	
 	require "animatedquad"
 	require "intro"
 	require "menu"
@@ -573,24 +573,24 @@ function love.load(arg)
 	require "delayer"
 	require "entitylistitem"
 	require "entitytooltip"
-
+	
 	require "enemy"
 	require "enemies"
 	add("Requires")
-
+	
 	http = require("socket.http")
 	http.PORT = 55555
 	http.TIMEOUT = 1
-
+	
 	updatenotification = false
 	if getupdate() then
 		updatenotification = true
 	end
 	http.TIMEOUT = 4
-
+	
 	playertypei = 1
 	playertype = playertypelist[playertypei] --portal, gelcannon
-
+	
 	if volumesfx == 0 then
 		soundenabled = false
 	else
@@ -602,10 +602,10 @@ function love.load(arg)
 	yoffset = 0
 	love.graphics.setPointSize(3*scale)
 	love.graphics.setLineWidth(2*scale)
-
+	
 	uispace = math.floor(width*16*scale/4)
 	guielements = {}
-
+	
 	--limit hats
 	for playerno = 1, players do
 		for i = 1, #mariohats[playerno] do
@@ -614,7 +614,7 @@ function love.load(arg)
 			end
 		end
 	end
-
+	
 	--Backgroundcolors
 	backgroundcolor = {
 						{92 / 255,	148 / 255,	252 / 255},
@@ -628,38 +628,38 @@ function love.load(arg)
 						{249 / 255,	183 / 255,	206 / 255},
 					}
 	add("Update Check, variables")
-
+	
 	--IMAGES--
 	overwrittenimages = {}
-	imagelist = {"blockdebris", "coinblockanimation", "coinanimation", "coinblock", "coin", "axe", "spring", "toad", "peach", "platform",
-	"platformbonus", "scaffold", "seesaw", "vine", "bowser", "decoys", "box", "flag", "castleflag", "bubble", "fizzle", "emanceparticle", "emanceside", "doorpiece", "doorcenter",
-	"button", "pushbutton", "wallindicator", "walltimer", "lightbridge", "lightbridgeglow", "lightbridgeside", "laser", "laserside", "excursionbase", "excursionfunnel", "excursionfunnel2", "excursionfunnelend",
+	imagelist = {"blockdebris", "coinblockanimation", "coinanimation", "coinblock", "coin", "axe", "spring", "toad", "peach", "platform", 
+	"platformbonus", "scaffold", "seesaw", "vine", "bowser", "decoys", "box", "flag", "castleflag", "bubble", "fizzle", "emanceparticle", "emanceside", "doorpiece", "doorcenter", 
+	"button", "pushbutton", "wallindicator", "walltimer", "lightbridge", "lightbridgeglow", "lightbridgeside", "laser", "laserside", "excursionbase", "excursionfunnel", "excursionfunnel2", "excursionfunnelend", 
 	"excursionfunnelend2", "faithplateplate", "laserdetector", "gel1", "gel2", "gel3", "gel4", "gel5", "gel1ground", "gel2ground", "gel3ground", "gel4ground", "geldispenser", "cubedispenser", "panel", "pedestalbase",
 	"pedestalgun", "actionblock", "portal", "markbase", "markoverlay", "andgate", "notgate", "orgate", "squarewave", "rsflipflop", "portalglow", "fireball", "musicentity", "smbtiles", "portaltiles",
 	"animatedtiletrigger", "delayer", "title", "menuselect"}
-
+	
 	for i, v in pairs(imagelist) do
 		_G["default" .. v .. "img"] = love.graphics.newImage("graphics/DEFAULT/" .. v .. ".png")
 		_G[v .. "img"] = _G["default" .. v .. "img"]
 	end
-
+	
 	mappackback = love.graphics.newImage("graphics/mappackback.png")
 	mappacknoicon = love.graphics.newImage("graphics/mappacknoicon.png")
 	mappackoverlay = love.graphics.newImage("graphics/mappackoverlay.png")
 	mappackhighlight = love.graphics.newImage("graphics/mappackhighlight.png")
-
+	
 	mappackscrollbar = love.graphics.newImage("graphics/mappackscrollbar.png")
-
+	
 	--tiles
 	tilequads = {}
 	rgblist = {}
-
+	
 	--add smb tiles
 	local imgwidth, imgheight = smbtilesimg:getWidth(), smbtilesimg:getHeight()
 	local width = math.floor(imgwidth/17)
 	local height = math.floor(imgheight/17)
 	local imgdata = love.image.newImageData("graphics/DEFAULT/smbtiles.png")
-
+	
 	for y = 1, height do
 		for x = 1, width do
 			table.insert(tilequads, quad:new(smbtilesimg, imgdata, x, y, imgwidth, imgheight))
@@ -668,13 +668,13 @@ function love.load(arg)
 		end
 	end
 	smbtilecount = width*height
-
+	
 	--add portal tiles
 	local imgwidth, imgheight = portaltilesimg:getWidth(), portaltilesimg:getHeight()
 	local width = math.floor(imgwidth/17)
 	local height = math.floor(imgheight/17)
 	local imgdata = love.image.newImageData("graphics/DEFAULT/portaltiles.png")
-
+	
 	for y = 1, height do
 		for x = 1, width do
 			table.insert(tilequads, quad:new(portaltilesimg, imgdata, x, y, imgwidth, imgheight))
@@ -683,7 +683,7 @@ function love.load(arg)
 		end
 	end
 	portaltilecount = width*height
-
+	
 	--add entities
 	entitiesimg = love.graphics.newImage("graphics/entities.png")
 	entityquads = {}
@@ -691,7 +691,7 @@ function love.load(arg)
 	local width = math.floor(imgwidth/17)
 	local height = math.floor(imgheight/17)
 	local imgdata = love.image.newImageData("graphics/entities.png")
-
+	
 	for y = 1, height do
 		for x = 1, width do
 			table.insert(entityquads, entity:new(entitiesimg, x, y, imgwidth, imgheight))
@@ -699,18 +699,18 @@ function love.load(arg)
 		end
 	end
 	entitiescount = width*height
-
+	
 	fontimage2 = love.graphics.newImage("graphics/smallfont.png")
 	numberglyphs = "012458"
 	font2quads = {}
 	for i = 1, 6 do
 		font2quads[string.sub(numberglyphs, i, i)] = love.graphics.newQuad((i-1)*4, 0, 4, 8, 24, 8)
 	end
-
+	
 	oneuptextimage = love.graphics.newImage("graphics/oneuptext.png")
-
+	
 	linktoolpointerimg = love.graphics.newImage("graphics/linktoolpointer.png")
-
+	
 	blockdebrisquads = {}
 	for y = 1, 4 do
 		blockdebrisquads[y] = {}
@@ -718,12 +718,12 @@ function love.load(arg)
 			blockdebrisquads[y][x] = love.graphics.newQuad((x-1)*8, (y-1)*8, 8, 8, 16, 32)
 		end
 	end
-
+	
 	coinblockanimationquads = {}
 	for i = 1, 30 do
 		coinblockanimationquads[i] = love.graphics.newQuad((i-1)*8, 0, 8, 52, 256, 64)
 	end
-
+	
 	coinanimationquads = {}
 	for j = 1, 4 do
 		coinanimationquads[j] = {}
@@ -731,7 +731,7 @@ function love.load(arg)
 			coinanimationquads[j][i] = love.graphics.newQuad((i-1)*5, (j-1)*8, 5, 8, 25, 32)
 		end
 	end
-
+	
 	--coinblock
 	coinblockquads = {}
 	for j = 1, 4 do
@@ -740,7 +740,7 @@ function love.load(arg)
 			coinblockquads[j][i] = love.graphics.newQuad((i-1)*16, (j-1)*16, 16, 16, 80, 64)
 		end
 	end
-
+	
 	--coin
 	coinquads = {}
 	for j = 1, 4 do
@@ -749,13 +749,13 @@ function love.load(arg)
 			coinquads[j][i] = love.graphics.newQuad((i-1)*16, (j-1)*16, 16, 16, 80, 64)
 		end
 	end
-
+	
 	--axe
 	axequads = {}
 	for i = 1, 5 do
 		axequads[i] = love.graphics.newQuad((i-1)*16, 0, 16, 16, 80, 16)
 	end
-
+	
 	--spring
 	springquads = {}
 	for i = 1, 4 do
@@ -764,51 +764,51 @@ function love.load(arg)
 			springquads[i][j] = love.graphics.newQuad((j-1)*16, (i-1)*31, 16, 31, 48, 124)
 		end
 	end
-
+	
 	seesawquad = {}
 	for i = 1, 4 do
 		seesawquad[i] = love.graphics.newQuad((i-1)*16, 0, 16, 16, 64, 16)
 	end
-
+	
 	playerselectimg = love.graphics.newImage("graphics/playerselectarrow.png")
-
+	
 	starquad = {}
 	for i = 1, 4 do
 		starquad[i] = love.graphics.newQuad((i-1)*16, 0, 16, 16, 64, 16)
 	end
-
+	
 	flowerquad = {}
 	for i = 1, 4 do
 		flowerquad[i] = love.graphics.newQuad((i-1)*16, 0, 16, 16, 64, 16)
 	end
-
+	
 	fireballquad = {}
 	for i = 1, 4 do
 		fireballquad[i] = love.graphics.newQuad((i-1)*8, 0, 8, 8, 80, 16)
 	end
-
+	
 	for i = 5, 7 do
 		fireballquad[i] = love.graphics.newQuad((i-5)*16+32, 0, 16, 16, 80, 16)
 	end
-
+	
 	vinequad = {}
 	for i = 1, 4 do
 		vinequad[i] = {}
 		for j = 1, 2 do
-			vinequad[i][j] = love.graphics.newQuad((j-1)*16, (i-1)*16, 16, 16, 32, 64)
+			vinequad[i][j] = love.graphics.newQuad((j-1)*16, (i-1)*16, 16, 16, 32, 64) 
 		end
 	end
-
+	
 	--enemies
 	goombaquad = {}
-
+	
 	for y = 1, 4 do
 		goombaquad[y] = {}
 		for x = 1, 2 do
 			goombaquad[y][x] = love.graphics.newQuad((x-1)*16, (y-1)*16, 16, 16, 32, 64)
 		end
 	end
-
+		
 	spikeyquad = {}
 	for y = 1, 4 do
 		spikeyquad[y] = {}
@@ -816,7 +816,7 @@ function love.load(arg)
 			spikeyquad[y][x] = love.graphics.newQuad((x-1)*16, (y-1)*16, 16, 16, 64, 64)
 		end
 	end
-
+	
 	lakitoquad = {}
 	for y = 1, 4 do
 		lakitoquad[y] = {}
@@ -824,9 +824,9 @@ function love.load(arg)
 			lakitoquad[y][x] = love.graphics.newQuad((x-1)*16, (y-1)*24, 16, 24, 32, 96)
 		end
 	end
-
+	
 	koopaquad = {}
-
+	
 	for y = 1, 4 do
 		koopaquad[y] = {}
 		for x = 1, 5 do
@@ -834,34 +834,34 @@ function love.load(arg)
 		end
 	end
 	cheepcheepquad = {}
-
+	
 	cheepcheepquad[1] = {}
 	cheepcheepquad[1][1] = love.graphics.newQuad(0, 0, 16, 16, 32, 32)
 	cheepcheepquad[1][2] = love.graphics.newQuad(16, 0, 16, 16, 32, 32)
-
+	
 	cheepcheepquad[2] = {}
 	cheepcheepquad[2][1] = love.graphics.newQuad(0, 16, 16, 16, 32, 32)
 	cheepcheepquad[2][2] = love.graphics.newQuad(16, 16, 16, 16, 32, 32)
-
+	
 	squidquad = {}
 	for x = 1, 2 do
 		squidquad[x] = love.graphics.newQuad((x-1)*16, 0, 16, 24, 32, 24)
 	end
-
+	
 	bulletbillquad = {}
-
+	
 	for y = 1, 4 do
 		bulletbillquad[y] = love.graphics.newQuad(0, (y-1)*16, 16, 16, 16, 64)
 	end
-
+	
 	hammerbrosquad = {}
 	for y = 1, 4 do
 		hammerbrosquad[y] = {}
 		for x = 1, 4 do
 			hammerbrosquad[y][x] = love.graphics.newQuad((x-1)*16, (y-1)*34, 16, 34, 64, 136)
 		end
-	end
-
+	end	
+	
 	hammerquad = {}
 	for j = 1, 4 do
 		hammerquad[j] = {}
@@ -869,7 +869,7 @@ function love.load(arg)
 			hammerquad[j][i] = love.graphics.newQuad((i-1)*16, (j-1)*16, 16, 16, 64, 64)
 		end
 	end
-
+	
 	plantquads = {}
 	for j = 1, 4 do
 		plantquads[j] = {}
@@ -877,21 +877,21 @@ function love.load(arg)
 			plantquads[j][i] = love.graphics.newQuad((i-1)*16, (j-1)*23, 16, 23, 32, 92)
 		end
 	end
-
+	
 	firequad = {love.graphics.newQuad(0, 0, 24, 8, 48, 8), love.graphics.newQuad(24, 0, 24, 8, 48, 8)}
-
-
+	
+	
 	bowserquad = {}
 	bowserquad[1] = {love.graphics.newQuad(0, 0, 32, 32, 64, 64), love.graphics.newQuad(32, 0, 32, 32, 64, 64)}
 	bowserquad[2] = {love.graphics.newQuad(0, 32, 32, 32, 64, 64), love.graphics.newQuad(32, 32, 32, 32, 64, 64)}
-
+	
 	decoysquad = {}
 	for y = 1, 7 do
 		decoysquad[y] = love.graphics.newQuad(0, (y-1)*32, 32, 32, 64, 256)
 	end
-
+	
 	boxquad = {love.graphics.newQuad(0, 0, 12, 12, 32, 16), love.graphics.newQuad(16, 0, 12, 12, 32, 16)}
-
+	
 	--eh
 	rainboomimg = love.graphics.newImage("graphics/rainboom.png")
 	rainboomquad = {}
@@ -900,74 +900,74 @@ function love.load(arg)
 			rainboomquad[x+(y-1)*7] = love.graphics.newQuad((x-1)*204, (y-1)*182, 204, 182, 1428, 1274)
 		end
 	end
-
+	
 	--magic!
 	magicimg = love.graphics.newImage("graphics/magic.png")
 	magicquad = {}
 	for x = 1, 6 do
 		magicquad[x] = love.graphics.newQuad((x-1)*9, 0, 9, 9, 54, 9)
 	end
-
+	
 	--GUI
 	checkboximg = love.graphics.newImage("graphics/checkbox.png")
 	checkboxquad = {{love.graphics.newQuad(0, 0, 9, 9, 18, 18), love.graphics.newQuad(9, 0, 9, 9, 18, 18)}, {love.graphics.newQuad(0, 9, 9, 9, 18, 18), love.graphics.newQuad(9, 9, 9, 9, 18, 18)}}
-
+	
 	dropdownarrowimg = love.graphics.newImage("graphics/dropdownarrow.png")
-
+	
 	--portals
 	portalquad = {}
 	for i = 0, 7 do
 		portalquad[i] = love.graphics.newQuad(0, i*4, 32, 4, 32, 28)
 	end
-
+	
 	portalparticleimg = love.graphics.newImage("graphics/portalparticle.png")
 	portalcrosshairimg = love.graphics.newImage("graphics/portalcrosshair.png")
 	portaldotimg = love.graphics.newImage("graphics/portaldot.png")
 	portalprojectileimg = love.graphics.newImage("graphics/portalprojectile.png")
 	portalprojectileparticleimg = love.graphics.newImage("graphics/portalprojectileparticle.png")
 	portalbackgroundimg = love.graphics.newImage("graphics/portalbackground.png")
-
+	
 	--Menu shit
 	huebarimg = love.graphics.newImage("graphics/huehuehuebar.png")
 	huebarmarkerimg = love.graphics.newImage("graphics/huebarmarker.png")
 	volumesliderimg = love.graphics.newImage("graphics/volumeslider.png")
-
-	--Portal props
+	
+	--Portal props	
 	buttonquad = {love.graphics.newQuad(0, 0, 32, 5, 64, 5), love.graphics.newQuad(32, 0, 32, 5, 64, 5)}
-
+	
 	pushbuttonquad = {love.graphics.newQuad(0, 0, 16, 16, 32, 16), love.graphics.newQuad(16, 0, 16, 16, 32, 16)}
-
+	
 	wallindicatorquad = {love.graphics.newQuad(0, 0, 16, 16, 32, 16), love.graphics.newQuad(16, 0, 16, 16, 32, 16)}
-
+	
 	walltimerquad = {}
 	for i = 1, 10 do
 		walltimerquad[i] = love.graphics.newQuad((i-1)*16, 0, 16, 16, 160, 16)
 	end
-
+	
 	directionsimg = love.graphics.newImage("graphics/directions.png")
 	directionsquad = {}
 	for x = 1, 6 do
 		directionsquad[x] = love.graphics.newQuad((x-1)*7, 0, 7, 7, 42, 7)
 	end
-
+	
 	excursionquad = {}
 	for x = 1, 8 do
 		excursionquad[x] = love.graphics.newQuad((x-1)*8, 0, 8, 32, 64, 32)
 	end
-
+	
 	faithplatequad = {love.graphics.newQuad(0, 0, 32, 16, 32, 32), love.graphics.newQuad(0, 16, 32, 16, 32, 32)}
-
+	
 	gelquad = {love.graphics.newQuad(0, 0, 12, 12, 36, 12), love.graphics.newQuad(12, 0, 12, 12, 36, 12), love.graphics.newQuad(24, 0, 12, 12, 36, 12)}
-
+	
 	gradientimg = love.graphics.newImage("graphics/gradient.png");gradientimg:setFilter("linear", "linear")
-
+	
 	panelquad = {}
 	for x = 1, 2 do
 		panelquad[x] = love.graphics.newQuad((x-1)*16, 0, 16, 16, 32, 16)
 	end
-
+	
 	add("Images, quads")
-
+	
 	--AUDIO--
 	--sounds
 	soundstoload = {"jump", "jumpbig", "stomp", "shot", "blockhit", "blockbreak", "coin", "pipe", "boom", "mushroomappear", "mushroomeat", "shrink", "death", "gameover", "fireball",
@@ -975,9 +975,9 @@ function love.load(arg)
 					"lowtime", "tailwag", "planemode", "stab", "portal1open", "portal2open", "portalenter", "portalfizzle", "pushbutton"}
 
 	defaultsoundslist = {}
-	overwrittensounds = {}
+	overwrittensounds = {}	
 	soundlist = {}
-
+	
 	for i, v in pairs(soundstoload) do
 		local src = love.audio.newSource("sounds/" .. v .. ".ogg", MUSICFIX)
 		soundlist[v] = {}
@@ -985,23 +985,23 @@ function love.load(arg)
 		soundlist[v].lastplayed = 0
 		defaultsoundslist[v] = src
 	end
-
+	
 	soundlist["scorering"].source:setLooping(true)
 	soundlist["planemode"].source:setLooping(true)
 	soundlist["portal1open"].source:setVolume(0.3)
 	soundlist["portal2open"].source:setVolume(0.3)
 	soundlist["portalenter"].source:setVolume(0.3)
 	soundlist["portalfizzle"].source:setVolume(0.3)
-
+	
 	delaylist = {}
 	delaylist["blockhit"] = 0.2
-
+	
 	musicname = "overworld.ogg"
-
+	
 	add("Sounds")
 	shaders:init()
 	add("Shaders init")
-
+	
 	for i, v in pairs(dlclist) do
 		delete_mappack(v)
 	end
@@ -1009,7 +1009,7 @@ function love.load(arg)
 	app_state_functions = {}
 
 	firstload = true
-
+	
 	if skipintro then
 		menu_load()
 	else
@@ -1023,7 +1023,7 @@ function love.load(arg)
 	add("Intro Load")
 	print("=======================\nDONE!")
 	print("TOTAL: " .. totaltime .. "ms")
-
+	
 	mycamera = camera:new()
 	mycamera:zoomTo(0.4)
 end
@@ -1034,20 +1034,20 @@ function love.update(dt)
 	end
 	realdt = dt
 	dt = math.min(0.5, dt) --ignore any dt higher than half a second
-
+	
 	if recording then
 		dt = recordtarget
 	end
-
+	
 	steptimer = steptimer + dt
 	dt = targetdt
-
+	
 	if skipupdate then
 		steptimer = 0
 		skipupdate = false
 		return
 	end
-
+	
 	--speed
 	if bullettime and speed ~= speedtarget then
 		if speed > speedtarget then
@@ -1055,11 +1055,11 @@ function love.update(dt)
 		elseif speed < speedtarget then
 			speed = math.min(speedtarget, speed+(speedtarget-speed)*dt*5)
 		end
-
+		
 		if math.abs(speed-speedtarget) < 0.02 then
 			speed = speedtarget
 		end
-
+		
 		if speed > 0 then
 			for i, v in pairs(soundlist) do
 				v.source:setPitch( speed )
@@ -1067,15 +1067,15 @@ function love.update(dt)
 			music.pitch = speed
 			love.audio.setVolume(volumesfx)
 			music:setVolume(volumemusic)
-		else
+		else	
 			love.audio.setVolume(0)
 			music:setVolume(0)
 		end
 	end
-
+	
 	while steptimer >= targetdt do
 		steptimer = steptimer - targetdt
-
+		
 		if frameskip then
 			if frameskip > skippedframes then
 				skippedframes = skippedframes + 1
@@ -1084,9 +1084,9 @@ function love.update(dt)
 				skippedframes = 0
 			end
 		end
-
+		
 		keyprompt_update()
-
+		
 		if gamestate == "menu" or gamestate == "mappackmenu" or gamestate == "onlinemenu" or gamestate == "options" or gamestate == "lobby" then
 			menu_update(dt)
 		elseif gamestate == "levelscreen" or gamestate == "gameover" or gamestate == "sublevelscreen" or gamestate == "mappackfinished" then
@@ -1094,17 +1094,17 @@ function love.update(dt)
 		elseif gamestate == "game" then
 			game_update(dt)
 		end
-        for k,v in ipairs(app_state_functions) do
-          v:update(dt)
-        end
+		for k,v in ipairs(app_state_functions) do
+			v:update(dt)
+		end
 		for i, v in pairs(guielements) do
 			v:update(dt)
 		end
-
+		
 		--netplay_update(dt)
-
+		
 		notice.update(dt)
-
+		
 		--No longer needed
 		--love.window.setTitle("FPS:" .. love.timer.getFPS() .. " - Send feedback/issues to crash@stabyourself.net")
 	end
@@ -1112,7 +1112,7 @@ end
 
 function love.draw()
 	shaders:predraw()
-
+	
 	--mycamera:attach()
 	if gamestate == "menu" or gamestate == "mappackmenu" or gamestate == "onlinemenu" or gamestate == "options" or gamestate == "lobby" then
 		menu_draw()
@@ -1122,23 +1122,23 @@ function love.draw()
 		game_draw()
 	end
 	for k,v in ipairs(app_state_functions) do
-	  v:draw()
+		v:draw()
 	end
 
 	notice.draw()
-
+	
 	--mycamera:detach()
-
+	
 	shaders:postdraw()
-
+		
 	love.graphics.setColor(1, 1, 1)
-
+	
 	if recording then
 		screenshotimagedata = love.graphics.newScreenshot( )
 		screenshotimagedata:encode("recording/" .. recordframe .. ".png")
 		recordframe = recordframe + 1
 		screenshotimagedata = nil
-
+		
 		if recordframe%100 == 0 then
 			collectgarbage("collect")
 		end
@@ -1149,7 +1149,7 @@ function saveconfig()
 	if CLIENT or SERVER then
 		return
 	end
-
+	
 	local s = ""
 	for i = 1, #controls do
 		s = s .. "playercontrols:" .. i .. ":"
@@ -1170,8 +1170,8 @@ function saveconfig()
 				s = s .. ","
 			end
 		end
-	end
-
+	end	
+	
 	for i = 1, #mariocolors do --players
 		s = s .. "playercolors:" .. i .. ":"
 		if #mariocolors[i] > 0 then
@@ -1189,18 +1189,18 @@ function saveconfig()
 			s = s .. ";"
 		end
 	end
-
+	
 	for i = 1, #mariocharacter do
 		s = s .. "mariocharacter:" .. i .. ":"
 		s = s .. mariocharacter[i]
 		s = s .. ";"
 	end
-
+	
 	for i = 1, #portalhues do
 		s = s .. "portalhues:" .. i .. ":"
 		s = s .. round(portalhues[i][1], 4) .. "," .. round(portalhues[i][2], 4) .. ";"
 	end
-
+	
 	for i = 1, #mariohats do
 		s = s .. "mariohats:" .. i
 		if #mariohats[i] > 0 then
@@ -1214,34 +1214,34 @@ function saveconfig()
 				s = s .. ","
 			end
 		end
-
+		
 		if #mariohats[i] == 0 then
 			s = s .. ";"
 		end
 	end
-
+	
 	s = s .. "scale:" .. scale .. ";"
-
+	
 	s = s .. "shader1:" .. shaderlist[currentshaderi1] .. ";"
 	s = s .. "shader2:" .. shaderlist[currentshaderi2] .. ";"
-
+	
 	s = s .. "volume:" .. volumesfx .. ";"
 	s = s .. "musicvolume:" .. volumemusic .. ";"
 	s = s .. "mouseowner:" .. mouseowner .. ";"
-
+	
 	s = s .. "mappack:" .. mappack .. ";"
-
+	
 	if vsync then
 		s = s .. "vsync;"
 	end
-
+	
 	if gamefinished then
 		s = s .. "gamefinished;"
 	end
-
+	
 	s = s .. "fullscreen:" .. tostring(fullscreen) .. ";"
 	s = s .. "fullscreenmode:" .. fullscreenmode .. ";"
-
+	
 	--reached worlds
 	for i, v in pairs(reachedworlds) do
 		s = s .. "reachedworlds:" .. i .. ":"
@@ -1251,7 +1251,7 @@ function saveconfig()
 			else
 				s = s .. 0
 			end
-
+			
 			if j == 8 then
 				s = s .. ";"
 			else
@@ -1259,28 +1259,28 @@ function saveconfig()
 			end
 		end
 	end
-
+	
 	love.filesystem.write("options.txt", s)
 end
 
 function loadconfig()
 	players = 1
 	defaultconfig()
-
+	
 	if not love.filesystem.getInfo("options.txt") then
 		return
 	end
-
+	
 	local s = love.filesystem.read("options.txt")
 	s1 = s:split(";")
-
+	
 	for i = 1, #s1-1 do
 		s2 = s1[i]:split(":")
 		if s2[1] == "playercontrols" then
 			if controls[tonumber(s2[2])] == nil then
 				controls[tonumber(s2[2])] = {}
 			end
-
+			
 			s3 = s2[3]:split(",")
 			for j = 1, #s3 do
 				s4 = s3[j]:split("-")
@@ -1294,7 +1294,7 @@ function loadconfig()
 				end
 			end
 			players = math.max(players, tonumber(s2[2]))
-
+			
 		elseif s2[1] == "playercolors" then
 			if mariocolors[tonumber(s2[2])] == nil then
 				mariocolors[tonumber(s2[2])] = {}
@@ -1310,13 +1310,13 @@ function loadconfig()
 			end
 			s3 = s2[3]:split(",")
 			portalhues[tonumber(s2[2])] = {tonumber(s3[1]), tonumber(s3[2])}
-
+		
 		elseif s2[1] == "mariohats" then
 			local playerno = tonumber(s2[2])
 			mariohats[playerno] = {}
-
+			
 			if s2[3] == "mariohats" then --SAVING WENT WRONG OMG
-
+			
 			elseif s2[3] then
 				s3 = s2[3]:split(",")
 				for i = 1, #s3 do
@@ -1324,10 +1324,10 @@ function loadconfig()
 					mariohats[playerno][i] = hatno
 				end
 			end
-
+			
 		elseif s2[1] == "scale" then
 			scale = tonumber(s2[2])
-
+			
 		elseif s2[1] == "shader1" then
 			for i = 1, #shaderlist do
 				if shaderlist[i] == s2[2] then
@@ -1371,11 +1371,11 @@ function loadconfig()
 			fullscreenmode = s2[2]
 		end
 	end
-
+	
 	for i = 1, math.max(4, players) do
 		portalcolor[i] = {getrainbowcolor(portalhues[i][1]), getrainbowcolor(portalhues[i][2])}
 	end
-
+	
 	players = 1
 end
 
@@ -1383,17 +1383,17 @@ function defaultconfig()
 	--------------
 	-- CONTORLS --
 	--------------
-
+	
 	-- Joystick stuff:
 	-- joy, #, hat, #, direction (r, u, ru, etc)
 	-- joy, #, axe, #, pos/neg
 	-- joy, #, but, #
 	-- You cannot set Hats and Axes as the jump button. Bummer.
-
+	
 	mouseowner = 1
-
+	
 	controls = {}
-
+	
 	local i = 1
 	controls[i] = {}
 	controls[i]["right"] = {"d"}
@@ -1408,9 +1408,9 @@ function defaultconfig()
 	controls[i]["portal2"] = {""}
 	controls[i]["reload"] = {"r"}
 	controls[i]["use"] = {"e"}
-
+	
 	for i = 2, 4 do
-		controls[i] = {}
+		controls[i] = {}		
 		controls[i]["right"] = {"joy", i-1, "hat", 1, "r"}
 		controls[i]["left"] = {"joy", i-1, "hat", 1, "l"}
 		controls[i]["down"] = {"joy", i-1, "hat", 1, "d"}
@@ -1427,7 +1427,7 @@ function defaultconfig()
 	-------------------
 	-- PORTAL COLORS --
 	-------------------
-
+	
 	portalhues = {}
 	portalcolor = {}
 	for i = 1, 4 do
@@ -1435,20 +1435,20 @@ function defaultconfig()
 		portalhues[i] = {(i-1)*(1/players), (i-1)*(1/players)+0.5/players}
 		portalcolor[i] = {getrainbowcolor(portalhues[i][1]), getrainbowcolor(portalhues[i][2])}
 	end
-
+	
 	--hats.
 	mariohats = {}
 	for i = 1, 4 do
 		mariohats[i] = {1}
 	end
-
+	
 	------------------
 	-- MARIO COLORS --
 	------------------
 	--1: hat, pants (red)
 	--2: shirt, shoes (brown-green)
 	--3: skin (yellow-orange)
-
+	
 	mariocolors = {}
 	mariocolors[1] = {{224 / 255,  32 / 255,   0 / 255}, {136 / 255, 112 / 255,   0 / 255}, {252 / 255, 152 / 255,  56 / 255}}
 	mariocolors[2] = {{255 / 255, 255 / 255, 255 / 255}, {  0 / 255, 160 / 255,   0 / 255}, {252 / 255, 152 / 255,  56 / 255}}
@@ -1457,19 +1457,19 @@ function defaultconfig()
 	for i = 5, players do
 		mariocolors[i] = mariocolors[math.random(4)]
 	end
-
+	
 	--STARCOLORS
 	starcolors = {}
 	starcolors[1] = {{  0 / 255,   0 / 255,   0 / 255}, {200 / 255,  76 / 255,  12 / 255}, {252 / 255, 188 / 255, 176 / 255}}
 	starcolors[2] = {{  0 / 255, 168 / 255,   0 / 255}, {252 / 255, 152 / 255,  56 / 255}, {252 / 255, 252 / 255, 252 / 255}}
 	starcolors[3] = {{252 / 255, 216 / 255, 168 / 255}, {216 / 255,  40 / 255,   0 / 255}, {252 / 255, 152 / 255,  56 / 255}}
 	starcolors[4] = {{216 / 255,  40 / 255,   0 / 255}, {252 / 255, 152 / 255,  56 / 255}, {252 / 255, 252 / 255, 252 / 255}}
-
+	
 	flowercolor = {{252 / 255, 216 / 255, 168 / 255}, {216 / 255,  40 / 255,   0 / 255}, {252 / 255, 152 / 255,  56 / 255}}
-
+	
 	--CHARACTERS
 	mariocharacter = {"mario", "mario", "mario", "mario"}
-
+	
 	--options
 	scale = 2
 	volumesfx = 1
@@ -1483,7 +1483,7 @@ function defaultconfig()
 	seethroughportals = false
 	fullscreen = false
 	fullscreenmode = "letterbox"
-
+	
 	reachedworlds = {}
 end
 
@@ -1505,11 +1505,11 @@ function loadcustomimages(path)
 			end
 		end
 	end
-
+	
 	--tiles
 	tilequads = {}
 	rgblist = {}
-
+	
 	--add smb tiles
 	local imgwidth, imgheight = smbtilesimg:getWidth(), smbtilesimg:getHeight()
 	local width = math.floor(imgwidth/17)
@@ -1520,7 +1520,7 @@ function loadcustomimages(path)
 	else
 		imgdata = love.image.newImageData("graphics/DEFAULT/smbtiles.png")
 	end
-
+	
 	for y = 1, height do
 		for x = 1, width do
 			table.insert(tilequads, quad:new(smbtilesimg, imgdata, x, y, imgwidth, imgheight))
@@ -1529,7 +1529,7 @@ function loadcustomimages(path)
 		end
 	end
 	smbtilecount = width*height
-
+	
 	--add portal tiles
 	local imgwidth, imgheight = portaltilesimg:getWidth(), portaltilesimg:getHeight()
 	local width = math.floor(imgwidth/17)
@@ -1540,7 +1540,7 @@ function loadcustomimages(path)
 	else
 		imgdata = love.image.newImageData("graphics/DEFAULT/portaltiles.png")
 	end
-
+	
 	for y = 1, height do
 		for x = 1, width do
 			table.insert(tilequads, quad:new(portaltilesimg, imgdata, x, y, imgwidth, imgheight))
@@ -1556,7 +1556,7 @@ function loadcustomsounds(path)
 		soundlist[v].source = defaultsoundslist[v]
 	end
 	overwrittensounds = {}
-
+	
 	local fl = love.filesystem.getDirectoryItems(path)
 	for i = 1, #fl do
 		local v = fl[i]
@@ -1596,9 +1596,9 @@ function suspendgame()
 		end
 	end
 	s = s .. "h/" .. mappack
-
+	
 	love.filesystem.write("suspend.txt", s)
-
+	
 	love.audio.stop()
 	menu_load()
 end
@@ -1607,12 +1607,12 @@ function continuegame()
 	if not love.filesystem.getInfo("suspend.txt") then
 		return
 	end
-
+	
 	local s = love.filesystem.read("suspend.txt")
-
+	
 	mariosizes = {}
 	mariolives = {}
-
+	
 	local split = s:split("|")
 	for i = 1, #split do
 		local split2 = split[i]:split("/")
@@ -1634,33 +1634,33 @@ function continuegame()
 			mappack = split2[2]
 		end
 	end
-
+	
 	love.filesystem.remove("suspend.txt")
 end
 
 function changescale(s, init)
 	scale = s
-
+	
 	if not init then
 		if width*16*scale > desktopsize.width then
 			if fullscreen and fullscreenmode == "full" then
 				scale = scale - 1
 				return
 			end
-
+			
 			if fullscreen and fullscreenmode == "touchfrominside" then
 				fullscreenmode = "full"
 				scale = scale - 1
 				return
 			end
-
+			
 			if loveVersion >= 10 or love.graphics.isSupported("canvas") then
 				fullscreen = true
 			end
-
+			
 			scale = scale - 1
 			fullscreenmode = "touchfrominside"
-
+			
 		elseif fullscreen then
 			if fullscreenmode == "full" then
 				fullscreenmode = "touchfrominside"
@@ -1671,10 +1671,10 @@ function changescale(s, init)
 			end
 			scale = scale + 1
 			fullscreenmode = "full"
-
+			
 		end
 	end
-
+	
 	if fullscreen then
 		love.window.setMode(desktopsize.width, desktopsize.height, {fullscreen=fullscreen, vsync=vsync--[[, fsaa=fsaa]]})
 	else
@@ -1686,12 +1686,12 @@ function changescale(s, init)
 		completecanvas = love.graphics.newCanvas()
 		completecanvas:setFilter("linear", "linear")
 	end
-
+	
 	gamewidth, gameheight = love.window.getMode()
 	if shaders then
 		shaders:refresh()
 	end
-
+	
 	if generatespritebatch then
 		generatespritebatch()
 	end
@@ -1708,18 +1708,18 @@ function love.keypressed(key, isrepeat)
 			recording = not recording
 		end
 	end
-
+	
 	if key == "lctrl" and debugbinds then
 		debug.debug()
 		return
 	end
-
+	
 	if replaysystem then
 		if key == "k" then
 			objects["player"][1]:savereplaydata()
 		end
 	end
-
+	
 	if keyprompt then
 		keypromptenter("key", key)
 		return
@@ -1730,18 +1730,18 @@ function love.keypressed(key, isrepeat)
 			return
 		end
 	end
-
+	
 	if key == "f12" then
 		love.mouse.setGrabbed(not love.mouse.isGrabbed())
 	end
-
+	
 	if gamestate == "lobby" or gamestate == "onlinemenu" then
 		if key == "escape" then
 			net_quit()
 			return
 		end
 	end
-
+	
 	if gamestate == "menu" or gamestate == "mappackmenu" or gamestate == "onlinemenu" or gamestate == "options" then
 		table.insert(konamitable, key)
 		table.remove(konamitable, 1)
@@ -1749,7 +1749,7 @@ function love.keypressed(key, isrepeat)
 		for i = 1, #konamitable do
 			s = s .. konamitable[i]
 		end
-
+		
 		if sha1(s) == konamihash then --Before you wonder how dumb this is; This used to be a different code than konami because I thought it'd be fun to make people figure it out before they can tell others how to easily unlock cheats (without editing files). It wasn't, really.
 			playsound("konami")
 			gamefinished = true
@@ -1761,7 +1761,7 @@ function love.keypressed(key, isrepeat)
 		game_keypressed(key)
 	end
 	for k,v in ipairs(app_state_functions) do
-	  v:keypressed()
+		v:keypressed()
 	end
 end
 
@@ -1779,7 +1779,7 @@ function love.textinput(text)
 		local success, err = pcall(function() _G[gamestate .. "_textinput"](text) end) -- I don't wanna cause a crash
 		if not success then print(err) end
 	end
-
+	
 	if guielements then
 		for _, v in pairs(guielements) do
 			v:textinput(text)
@@ -1815,7 +1815,7 @@ function love.mousepressed(x, y, button)
 		game_mousepressed(x, y, button)
 	end
 	for k,v in ipairs(app_state_functions) do
-	  v:mousepressed()
+		v:mousepressed()
 	end
 
 	if animationguilines and editormenuopen and not changemapwidthmenu and not guielements["animationselectdrop"].extended then
@@ -1828,14 +1828,14 @@ function love.mousepressed(x, y, button)
 				end
 			end
 		end
-
+		
 		if x >= animationguiarea[1]*scale and y >= animationguiarea[2]*scale and x < animationguiarea[3]*scale and y < animationguiarea[4]*scale then
 			addanimationtriggerbutton:click(x, y, button)
 			addanimationconditionbutton:click(x, y, button)
 			addanimationactionbutton:click(x, y, button)
-
+			
 			for i, v in pairs(animationguilines) do
-				for k, w in pairs(v) do
+				for k, w in pairs(v) do						
 					if w:click(x, y, button) then
 						return
 					end
@@ -1843,7 +1843,7 @@ function love.mousepressed(x, y, button)
 			end
 		end
 	end
-
+	
 	for i, v in pairs(guielements) do
 		if v.priority then
 			if v:click(x, y, button) then
@@ -1851,7 +1851,7 @@ function love.mousepressed(x, y, button)
 			end
 		end
 	end
-
+	
 	for i, v in pairs(guielements) do
 		if not v.priority then
 			if v:click(x, y, button) then
@@ -1874,7 +1874,7 @@ function love.mousereleased(x, y, button)
 	elseif gamestate == "game" then
 		game_mousereleased(x, y, button)
 	end
-
+	
 	for i, v in pairs(guielements) do
 		v:unclick(x, y, button)
 	end
@@ -1888,7 +1888,7 @@ function love.joystickpressed(joystick, button)
 			break
 		end
 	end
-
+	
 	if found then
 		if keyprompt then
 			keypromptenter("joybutton", joystick, button)
@@ -1908,7 +1908,7 @@ function love.joystickreleased(joystick, button)
 			break
 		end
 	end
-
+	
 	if found then
 		if gamestate == "menu" or gamestate == "options" then
 			menu_joystickreleased(joystick, button)
@@ -1926,11 +1926,11 @@ function love.joystickaxis(joystick, axis, value)
 			break
 		end
 	end
-
+	
 	if found then
 		local stickmoved = false
 		local shouldermoved = false
-
+		
 		--If this axis is a stick, get whether it just moved out of its deadzone
 		if math.abs(value) > joystickaimdeadzone and axisDeadZones[joystick][axis]["stick"] then
 			stickmoved = true
@@ -1963,7 +1963,7 @@ function love.joystickhat(joystick, hat, direction)
 			break
 		end
 	end
-
+	
 	if found then
 		if gamestate == "menu" or gamestate == "options" then
 			menu_joystickhat(joystick, hat, direction)
@@ -2009,18 +2009,18 @@ function getrainbowcolor(i)
 		g = 0
 		b = (1/6-(i-5/6))*6
 	end
-
+	
 	return {r, g, b, 1}
 end
 
 function newRecoloredImage(path, tablein, tableout)
 	local imagedata = love.image.newImageData( path )
 	local width, height = imagedata:getWidth(), imagedata:getHeight()
-
+	
 	for y = 0, height-1 do
 		for x = 0, width-1 do
 			local oldr, oldg, oldb, olda = imagedata:getPixel(x, y)
-
+			
 			if olda > 0.5*COLORSPACE then
 				for i = 1, #tablein do
 					if oldr == tablein[i][1] and oldg == tablein[i][2] and oldb == tablein[i][3] then
@@ -2031,7 +2031,7 @@ function newRecoloredImage(path, tablein, tableout)
 			end
 		end
 	end
-
+	
 	return love.graphics.newImage(imagedata)
 end
 
@@ -2057,14 +2057,14 @@ function tablecontains(t, entry)
 	return false
 end
 
-function getaveragecolor(imgdata, cox, coy)
+function getaveragecolor(imgdata, cox, coy)	
 	local xstart = (cox-1)*17
 	local ystart = (coy-1)*17
-
+	
 	local r, g, b = 0, 0, 0
-
+	
 	local count = 0
-
+	
 	for x = xstart, xstart+15 do
 		for y = ystart, ystart+15 do
 			local pr, pg, pb, a = imgdata:getPixel(x, y)
@@ -2074,9 +2074,9 @@ function getaveragecolor(imgdata, cox, coy)
 			end
 		end
 	end
-
+	
 	r, g, b = r/count, g/count, b/count
-
+	
 	return r, g, b
 end
 
@@ -2091,7 +2091,7 @@ function keyprompt_update()
 					return
 				end
 			end
-
+			
 			for j = 1, prompt.joystick[i].axes do
 				local value = js[i]:getAxis(j)
 				if value > prompt.joystick[i].axisposition[j] + joystickdeadzone then
@@ -2109,7 +2109,7 @@ end
 function print_r (t, indent) --Not by me
 	local indent=indent or ''
 	for key,value in pairs(t) do
-		io.write(indent,'[',tostring(key),']')
+		io.write(indent,'[',tostring(key),']') 
 		if type(value)=="table" then io.write(':\n') print_r(value,indent..'\t')
 		else io.write(' = ',tostring(value),'\n') end
 	end
@@ -2125,10 +2125,10 @@ end
 function openSaveFolder(subfolder) --By Slime
 	local path = love.filesystem.getSaveDirectory()
 	path = subfolder and path.."/"..subfolder or path
-
+	
 	local cmdstr
 	local successval = 0
-
+	
 	if os.getenv("WINDIR") then -- lolwindows
 		--cmdstr = "Explorer /root,%s"
 		if path:match("LOVE") then --hardcoded to fix ISO characters in usernames and made sure release mode doesn't mess anything up -saso
@@ -2145,7 +2145,7 @@ function openSaveFolder(subfolder) --By Slime
 			cmdstr = "xdg-open \"%s\""
 		end
 	end
-
+	
 	-- returns true if successfully opened folder
 	return cmdstr and os.execute(cmdstr:format(path)) == successval
 end
@@ -2157,9 +2157,9 @@ function getupdate()
 	elseif not onlinedata then
 		return false
 	end
-
+	
 	local latestversion
-
+	
 	local split1 = onlinedata:split("<")
 	for i = 2, #split1 do
 		local split2 = split1[i]:split(">")
@@ -2167,7 +2167,7 @@ function getupdate()
 			latestversion = tonumber(split2[2])
 		end
 	end
-
+	
 	if latestversion and latestversion > marioversion then
 		return true
 	end
@@ -2213,7 +2213,7 @@ function properprintbackground(s, x, y, include, color, sc)
 			end
 		end
 	end
-
+	
 	if include ~= false then
 		properprint(s, x, y, scale)
 	end
@@ -2226,20 +2226,20 @@ function loadcustombackgrounds()
 	custombackgroundwidth = {}
 	custombackgroundheight = {}
 	local fl = love.filesystem.getDirectoryItems("mappacks/" .. mappack .. "/backgrounds")
-
+	
 	for i = 1, #fl do
 		local v = "mappacks/" .. mappack .. "/backgrounds/" .. fl[i]
-
+		
 		if love.filesystem.getInfo(v, "file") and v ~= ".DS_STORE" and v ~= ".DS_S" then
 			if string.sub(v, -5, -5) == "1" then
 				local name = string.sub(fl[i], 1, -6)
 				local bg = string.sub(v, 1, -6)
 				local i = 1
-
+				
 				custombackgroundimg[name] = {}
 				custombackgroundwidth[name] = {}
 				custombackgroundheight[name] = {}
-
+					
 				while love.filesystem.getInfo(bg .. i .. ".png") do
 					custombackgroundimg[name][i] = love.graphics.newImage(bg .. i .. ".png")
 					custombackgroundwidth[name][i] = custombackgroundimg[name][i]:getWidth()/16
@@ -2250,11 +2250,11 @@ function loadcustombackgrounds()
 			else
 				local name = string.sub(fl[i], 1, -5)
 				local bg = string.sub(v, 1, -5)
-
+				
 				custombackgroundimg[name] = {love.graphics.newImage(bg .. ".png")}
 				custombackgroundwidth[name] = {custombackgroundimg[name][1]:getWidth()/16}
 				custombackgroundheight[name] = {custombackgroundimg[name][1]:getHeight()/16}
-
+				
 				table.insert(custombackgrounds, name)
 			end
 		end
@@ -2263,9 +2263,9 @@ end
 
 function loadlevelscreens()
 	levelscreens = {}
-
+	
 	local fl = love.filesystem.getDirectoryItems("mappacks/" .. mappack .. "/levelscreens")
-
+	
 	for i = 1, #fl do
 		local v = "mappacks/" .. mappack .. "/levelscreens/" .. fl[i]
 		if love.filesystem.getInfo(v, "file") then
@@ -2278,7 +2278,7 @@ function loadcustommusics()
 	musiclist = {"none.ogg", "overworld.ogg", "underground.ogg", "castle.ogg", "underwater.ogg", "starmusic.ogg"}
 	local fl = love.filesystem.getDirectoryItems("mappacks/" .. mappack .. "/music")
 	custommusics = {}
-
+	
 	for i = 1, #fl do
 		local v = fl[i]
 		if (v:match(".ogg") or v:match(".mp3") or v:match(".mod")) and v:sub(-9, -5) ~= "-fast" then
@@ -2294,7 +2294,7 @@ function loadanimatedtiles()
 			tilequads[i + 10000] = nil
 		end
 	end
-
+	
 	local function loadfolder(folder)
 		local i = 1
 		while love.filesystem.getInfo(folder .. "/" .. i .. ".png") do
@@ -2311,7 +2311,7 @@ function loadanimatedtiles()
 			i = i + 1
 		end
 	end
-
+	
 	animatedtilecount = 0
 	animatedtiles = {}
 	loadfolder("graphics/animated")
@@ -2326,7 +2326,7 @@ function loadcustomtiles()
 		local width = math.floor(imgwidth/17)
 		local height = math.floor(imgheight/17)
 		local imgdata = love.image.newImageData("mappacks/" .. mappack .. "/tiles.png")
-
+		
 		for y = 1, height do
 			for x = 1, width do
 				table.insert(tilequads, quad:new(customtilesimg, imgdata, x, y, imgwidth, imgheight))
@@ -2360,7 +2360,7 @@ function loadmodcustomtiles()
 			local width = math.floor(imgwidth/17)
 			local height = math.floor(imgheight/17)
 			local imgdata = love.image.newImageData("mappacks/" .. mappack .. "/tiles/" .. files[i])
-
+			
 			for y = 1, height do
 				for x = 1, width do
 					table.insert(tilequads, quad:new(modcustomtilesimg[i], imgdata, x, y, imgwidth, imgheight))
@@ -2377,7 +2377,7 @@ function loadmodcustomtiles()
 end
 
 function love.quit()
-
+	
 end
 
 function savestate(i)
@@ -2397,9 +2397,9 @@ function serializetable(t)
 						tableexists = true
 					end
 				end
-
+				
 				if tableexists then
-
+					
 				else
 					table.insert(nexttablestodo, v)
 					table.insert(tableindex, v)
@@ -2453,11 +2453,11 @@ function dbprint(x) --debugprint, can easily comment out the "print" thing
 end
 
 function tablefind(tab, el)
-    for index, value in pairs(tab) do
-        if value == el then
-            return index
-        end
-    end
+	for index, value in pairs(tab) do
+		if value == el then
+			return index
+		end
+	end
 end
 
 function tableremoveitem(tab, val)
