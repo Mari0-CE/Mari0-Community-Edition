@@ -1,69 +1,68 @@
-intro = {}
-
-function intro:init(app_loop_functions)
+function intro_load()
 	gamestate = "intro"
-	self.duration = 2.5
-	self.blackafterintro = 0.3
-	self.fadetime = 0.5
-	self.progress = 0
-	self.allowskip = false
-	self.finished = function() end
+
+	introduration = 2.5
+	blackafterintro = 0.3
+	introfadetime = 0.5
+	introprogress = 0
+
+	allowskip = false
 end
 
-function intro:update(dt)
-	self.allowskip = true
-	if self.progress < self.duration+self.blackafterintro then
-		self.progress = self.progress + dt
-		if self.progress > self.duration+self.blackafterintro then
-			self.progress = self.duration+self.blackafterintro
+function intro_update(dt)
+	allowskip = true
+	if introprogress < introduration+blackafterintro then
+		introprogress = introprogress + dt
+		if introprogress > introduration+blackafterintro then
+			introprogress = introduration+blackafterintro
 		end
-		
-		if self.progress > 0.5 and playedwilhelm == nil then
+
+		if introprogress > 0.5 and playedwilhelm == nil then
 			playsound("stab")
-			
+
 			playedwilhelm = true
 		end
-		
-		if self.progress == self.duration + self.blackafterintro then
-			self.finished()
+
+		if introprogress == introduration + blackafterintro then
+			menu_load()
 			shaders:set(1, shaderlist[currentshaderi1])
 			shaders:set(2, shaderlist[currentshaderi2])
 		end
 	end
 end
 
-function intro:draw()
+function intro_draw()
 	local logoscale = scale
 	if logoscale <= 1 then
 		logoscale = 0.5
 	else
 		logoscale = 1
 	end
-	
-	if self.progress >= 0 and self.progress < self.duration then
+
+	if introprogress >= 0 and introprogress < introduration then
 		local a = 1
-		if self.progress < self.fadetime then
-			a = self.progress/self.fadetime
-		elseif self.progress >= self.duration-self.fadetime then
-			a = (1-(self.progress-(self.duration-self.fadetime))/self.fadetime)
+		if introprogress < introfadetime then
+			a = introprogress/introfadetime
+		elseif introprogress >= introduration-introfadetime then
+			a = (1-(introprogress-(introduration-introfadetime))/introfadetime)
 		end
-		
+
 		love.graphics.setColor(1, 1, 1, a)
-		
-		if self.progress > self.fadetime+0.3 and self.progress < self.duration - self.fadetime then
-			local y = (self.progress-0.2-self.fadetime) / (self.duration-2*self.fadetime) * 206 * 5
+
+		if introprogress > introfadetime+0.3 and introprogress < introduration - introfadetime then
+			local y = (introprogress-0.2-introfadetime) / (introduration-2*introfadetime) * 206 * 5
 			love.graphics.draw(logo, love.graphics.getWidth()/2, love.graphics.getHeight()/2, 0, logoscale, logoscale, 142, 150)
 			love.graphics.setScissor(0, love.graphics.getHeight()/2+150*logoscale - y, love.graphics.getWidth(), y)
 			love.graphics.draw(logoblood, love.graphics.getWidth()/2, love.graphics.getHeight()/2, 0, logoscale, logoscale, 142, 150)
 			love.graphics.setScissor()
-			
-		elseif self.progress >= self.duration - self.fadetime then
+
+		elseif introprogress >= introduration - introfadetime then
 			love.graphics.draw(logoblood, love.graphics.getWidth()/2, love.graphics.getHeight()/2, 0, logoscale, logoscale, 142, 150)
 		else
 			love.graphics.draw(logo, love.graphics.getWidth()/2, love.graphics.getHeight()/2, 0, logoscale, logoscale, 142, 150)
 		end
-		
-		local a2 = math.max(0, (1-(self.progress-.5)/0.3))
+
+		local a2 = math.max(0, (1-(introprogress-.5)/0.3))
 		love.graphics.setColor(0.6, 0.6, 0.6, a2)
 		properprint("loading mari0 ce..", love.graphics.getWidth()/2-string.len("loading mari0 ce..")*4*scale, love.graphics.getHeight()/2-170*logoscale-7*scale)
 		love.graphics.setColor(0.2, 0.2, 0.2, a2)
@@ -71,24 +70,24 @@ function intro:draw()
 	end
 end
 
-function intro:mousepressed()
-	if not self.allowskip then
+function intro_mousepressed()
+	if not allowskip then
 		return
 	end
 	soundlist["stab"].source:stop()
 	soundlist["stab"].source:seek(0)
-	self.finished()
+	menu_load()
 	shaders:set(1, shaderlist[currentshaderi1])
 	shaders:set(2, shaderlist[currentshaderi2])
 end
 
-function intro:keypressed()
-	if not self.allowskip then
+function intro_keypressed()
+	if not allowskip then
 		return
 	end
 	soundlist["stab"].source:stop()
 	soundlist["stab"].source:seek(0)
-	self.finished()
+	menu_load()
 	shaders:set(1, shaderlist[currentshaderi1])
 	shaders:set(2, shaderlist[currentshaderi2])
 end
