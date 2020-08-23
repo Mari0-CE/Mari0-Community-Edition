@@ -5,23 +5,23 @@ function checkpoint:init(x, y, r)
 	self.y = y
 	self.cox = x
 	self.coy = y
-	
+
 	self.r = {unpack(r)}
-	
+
 	self.all = true
 	self.p = {false, false, false, false}
 	self.rest = false
 	self.visible = false
-	
+
 	table.remove(self.r, 1)
 	table.remove(self.r, 1)
-	
+
 	--Check all
 	if #self.r > 0 and self.r[1] ~= "link" then
 		self.all = self.r[1] == "true"
 		table.remove(self.r, 1)
 	end
-	
+
 	--p1-4
 	for i = 1, 4 do
 		if #self.r > 0 and self.r[1] ~= "link" then
@@ -29,19 +29,19 @@ function checkpoint:init(x, y, r)
 			table.remove(self.r, 1)
 		end
 	end
-	
+
 	--rest
 	if #self.r > 0 and self.r[1] ~= "link" then
 		self.rest = self.r[1] == "true"
 		table.remove(self.r, 1)
 	end
-	
+
 	--visible
 	if #self.r > 0 and self.r[1] ~= "link" then
 		self.visible = self.r[1] == "true"
 		table.remove(self.r, 1)
 	end
-	
+
 	--REGION
 	if #self.r > 0 then
 		local s = self.r[1]:split(":")
@@ -52,18 +52,18 @@ function checkpoint:init(x, y, r)
 		if string.sub(self.regionY, 1, 1) == "m" then
 			self.regionY = -tonumber(string.sub(self.regionY, 2))
 		end
-		
+
 		self.regionX = tonumber(self.regionX) + self.x - 1
 		self.regionY = tonumber(self.regionY) + self.y - 1
 		table.remove(self.r, 1)
 	end
-	
+
 	self.input1state = "off"
 end
 
 function checkpoint:update()
 	local col = checkrect(self.regionX, self.regionY, self.regionwidth, self.regionheight, {"player"})
-	
+
 	if #col > 0 then
 		self:trigger()
 	end
@@ -92,7 +92,7 @@ function checkpoint:input(t, input)
 		elseif t == "toggle" then
 			self:trigger()
 		end
-		
+
 		self.input1state = t
 	end
 end
@@ -111,16 +111,16 @@ function checkpoint:trigger()
 				table.insert(modtable, i)
 			end
 		end
-		
+
 		if self.rest then
 			table.insert(modtable, 5)
 		end
 	end
-	
+
 	for i, v in pairs(modtable) do
 		checkpointx[v] = self.x
 		checkpointy[v] = self.y
 	end
-	
+
 	checkpointsub = mariosublevel
 end

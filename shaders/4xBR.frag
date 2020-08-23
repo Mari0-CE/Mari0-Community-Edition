@@ -1,5 +1,5 @@
 /*
-     
+
      4xBR shader
 
      Copyright (C) 2011 Hyllian.
@@ -18,7 +18,7 @@
 
           http://board.byuu.org/viewtopic.php?p=32616#p32616
      )
-     
+
      modified by slime73 for use with love2d and mari0
 */
 
@@ -28,7 +28,7 @@ extern vec2 textureSize;
 const vec3 dtt = vec3(65536.0, 255.0, 1.0);
 
 float reduce(vec3 color)
-{ 
+{
    return dot(color, dtt);
 }
 
@@ -90,7 +90,7 @@ vec4 effect(vec4 vcolor, Image texture, vec2 texture_coords, vec2 pixel_coords)
 		((e == c) && ((i == h) || (e == b)))
 		)
 		{
-			E11 = mix(E11, F,  0.5);	
+			E11 = mix(E11, F,  0.5);
 			E14 = E11;
 			E15 = F;
 		}
@@ -104,7 +104,7 @@ vec4 effect(vec4 vcolor, Image texture, vec2 texture_coords, vec2 pixel_coords)
 		((e == a) && ((f == c) || (e == d)))
 		)
 		{
-			E2 = mix(E2, B,  0.5);	
+			E2 = mix(E2, B,  0.5);
 			E7 = E2;
 			E3 = B;
 		}
@@ -116,9 +116,9 @@ vec4 effect(vec4 vcolor, Image texture, vec2 texture_coords, vec2 pixel_coords)
 		((e == c) && ((b == a) || (e == f)))
 		||
 		((e == g) && ((b == a) || (e == h)))
-		)                        
+		)
 		{
-			E1 = mix(E1, D,  0.5);	
+			E1 = mix(E1, D,  0.5);
 			E4 = E1;
 			E0 = D;
 		}
@@ -132,7 +132,7 @@ vec4 effect(vec4 vcolor, Image texture, vec2 texture_coords, vec2 pixel_coords)
 		((e == i) && ((d == g) || (e == f)))
 		)
 		{
-			E8 = mix(E8, H,  0.5);	
+			E8 = mix(E8, H,  0.5);
 			E13 = E8;
 			E12 = H;
 		}
@@ -141,7 +141,7 @@ vec4 effect(vec4 vcolor, Image texture, vec2 texture_coords, vec2 pixel_coords)
 	vec3 res;
 
 	if (fp.x < 0.25)
-	{ 
+	{
 		if (fp.y < 0.25) res = E0;
 		else if ((fp.y > 0.25) && (fp.y < 0.50)) res = E4;
 		else if ((fp.y > 0.50) && (fp.y < 0.75)) res = E8;
@@ -169,5 +169,5 @@ vec4 effect(vec4 vcolor, Image texture, vec2 texture_coords, vec2 pixel_coords)
 		else res = E15;
 	}
 
-	return vec4(res, 1.0); 
+	return vec4(res, 1.0);
 }

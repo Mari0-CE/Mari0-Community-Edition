@@ -5,20 +5,20 @@ function loadhat(path)
 	if not s then
 		return
 	end
-	
+
 	local s1 = s:split("|")
-	
+
 	if #s1 ~= 8 then
 		return
 	end
-	
+
 	if not love.filesystem.getInfo("hats/" .. s1[7] .. ".png") or not love.filesystem.getInfo("hats/" .. s1[8] .. ".png") then
 		return
 	end
-	
+
 	table.insert(hat, {x = s1[1], y = s1[2], height = s1[3], graphic = love.graphics.newImage("hats/" .. s1[7] .. ".png")})
 	table.insert(bighat, {x = s1[4], y = s1[5], height = s1[6], graphic = love.graphics.newImage("hats/" .. s1[8] .. ".png")})
-	
+
 	hatcount = hatcount + 1
 end
 

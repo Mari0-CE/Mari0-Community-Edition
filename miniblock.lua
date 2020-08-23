@@ -5,7 +5,7 @@ function miniblock:init(x, y, i)
 	self.y = y
 	self.i = i
 	self.speedy = -10
-	
+
 	self.timer = math.pi*1.5
 end
 
@@ -14,19 +14,19 @@ function miniblock:update(dt)
 	--check for collision
 	local x = math.floor(self.x)+1
 	local y = math.floor(self.y+self.speedy*dt)+1
-	
+
 	if inmap(x, y) and self.speedy > 0 and tilequads[map[x][y][1]]:getproperty("collision", x, y) then
 		self.y = math.ceil(self.y)
 		self.speedy = 0
 		self.timer = self.timer + dt*3
 	end
-	
+
 	if self.timer > 5 then
 		--check for player pickup
 		for i = 1, players do
 			local x = objects["player"][i].x+objects["player"][i].width
 			local y = objects["player"][i].y+objects["player"][i].height
-			
+
 			if math.abs(self.x-x) + math.abs(self.y-y) < 1 then
 				if collectblock(self.i) then
 					return true
@@ -34,13 +34,13 @@ function miniblock:update(dt)
 			end
 		end
 	end
-	
+
 	self.y = self.y + self.speedy*dt
-	
+
 	if self.y > 16 then
 		return true
 	end
-	
+
 	return false
 end
 
@@ -51,7 +51,7 @@ function miniblock:draw()
 	elseif self.i <= smbtilecount+portaltilecount then
 		img = portaltilesimg
 	end
-	
+
 	local yadd = math.sin(self.timer)*0.1+0.15
 	love.graphics.draw(img, tilequads[self.i]:quad(), math.floor((self.x-xscroll)*16*scale), math.floor((self.y-yscroll-.5-yadd)*16*scale), 0, scale/2, scale/2, 8, 16)
 end

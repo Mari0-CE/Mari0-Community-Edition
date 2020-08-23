@@ -10,7 +10,7 @@ end
 function entitylistitem:gethighlight(x, y)
 	x = x/scale-5
 	y = y/scale-38+tilesoffset/scale
-	
+
 	return x >= self.x and x < self.x+16 and y >= self.y and y < self.y+16
 end
 

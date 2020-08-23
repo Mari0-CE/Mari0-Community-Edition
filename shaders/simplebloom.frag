@@ -29,7 +29,7 @@ extern vec2 textureSize;
 vec4 effect(vec4 vcolor, Image texture, vec2 texcoord, vec2 pixel_coords)
 {
 	vec4 texcolor = Texel(texture, texcoord);
-	
+
 	vec4 sum = vec4(0.0);
 	vec4 bum = vec4(0.0);
 
@@ -43,10 +43,10 @@ vec4 effect(vec4 vcolor, Image texture, vec2 texcoord, vec2 pixel_coords)
 		for (j = -1; j < 1; j++)
 		{
 			sum += Texel(texture, texcoord + vec2(-i, j)*glaresize) * power;
-			bum += Texel(texture, texcoord + vec2(j, i)*glaresize) * power;            
+			bum += Texel(texture, texcoord + vec2(j, i)*glaresize) * power;
 		}
 	}
-	
+
 	vec4 finalcolor;
 
 	if (texcolor.r < 2.0)
@@ -59,7 +59,7 @@ vec4 effect(vec4 vcolor, Image texture, vec2 texcoord, vec2 pixel_coords)
 	}
 
 	finalcolor.a = 1.0;
-	
+
 	return finalcolor;
 }
 

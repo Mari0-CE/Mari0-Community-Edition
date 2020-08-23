@@ -11,30 +11,30 @@ function funnel:init(x, y, r)
 	self.input1state = "off"
 	self.input2state = "off"
 	self.quad = 1
-	
+
 	self.timer = 0
 	self.timer2 = 0
-	
+
 	self.objtable = {"player", "enemy", "box", "gel"}
-	
+
 	table.remove(self.r, 1)
 	table.remove(self.r, 1)
-	
+
 	self.speed = funnelspeed
-	
+
 	--Input list
 	--DIRECTION
 	if #self.r > 0 and self.r[1] ~= "link" then
 		self.dir = self.r[1]
 		table.remove(self.r, 1)
 	end
-	
+
 	--SPEED
 	if #self.r > 0 and self.r[1] ~= "link" and tonumber(self.r[1]) then
 		self.speed = tonumber(self.r[1])
 		table.remove(self.r, 1)
 	end
-	
+
 	--DIRECTION
 	if #self.r > 0 and self.r[1] ~= "link" then
 		if self.r[1] == "true" then
@@ -42,7 +42,7 @@ function funnel:init(x, y, r)
 		end
 		table.remove(self.r, 1)
 	end
-	
+
 	--POWER
 	if #self.r > 0 and self.r[1] ~= "link" then
 		if self.r[1] == "true" then
@@ -51,7 +51,7 @@ function funnel:init(x, y, r)
 		table.remove(self.r, 1)
 	end
 	self:updaterange()
-	
+
 	self.animationtime = 3/self.speed-1/16
 end
 
@@ -71,13 +71,13 @@ function funnel:link()
 	end
 end
 
-function funnel:update(dt)	
+function funnel:update(dt)
 	if self.power then
 		self.timer = self.timer + dt
 		if self.timer > self.animationtime then
 			self.timer = math.mod(self.timer, self.animationtime)
 		end
-		
+
 		self.timer2 = self.timer2 + dt
 		while self.timer2 > excursionbaseanimationtime do
 			self.timer2 = self.timer2 - excursionbaseanimationtime
@@ -91,11 +91,11 @@ function funnel:update(dt)
 				if self.quad < 1 then
 					self.quad = 8
 				end
-			end		
+			end
 		end
 
 		local x, y, width, height
-		
+
 		for i, v in pairs(self.funneltable) do
 			if v.dir == "right" then
 				x = v.x-1
@@ -118,7 +118,7 @@ function funnel:update(dt)
 				width = 2
 				height = v.rangey
 			end
-			
+
 			if v.dir == "right" or v.dir == "left" then
 				if v.timer < math.abs(v.rangex) then
 					v.timer = v.timer + dt*funnelbuildupspeed
@@ -134,20 +134,20 @@ function funnel:update(dt)
 					end
 				end
 			end
-			
+
 			local rectcol = checkrect(x, y, width, height, self.objtable)
-			
+
 			for i = 1, #rectcol, 2 do
 				local w = objects[rectcol[i]][rectcol[i+1]]
 				w.speedx = 0
 				w.speedy = 0
-				
+
 				if v.dir == "right" then
 					w.speedx = self.speed*self.reverse
-					
+
 					local diff = (w.y+w.height/2)-y-1
 					w.speedy = -diff*funnelforce
-					
+
 					if rectcol[i] == "player" and w.controlsenabled then
 						if downkey(rectcol[i+1]) then
 							w.speedy = funnelmovespeed
@@ -155,13 +155,13 @@ function funnel:update(dt)
 							w.speedy = w.speedy-funnelmovespeed
 						end
 					end
-					
+
 				elseif v.dir == "left" then
 					w.speedx = -self.speed*self.reverse
-					
+
 					local diff = (w.y+w.height/2)-y-1
 					w.speedy = -diff*funnelforce
-					
+
 					if rectcol[i] == "player" and w.controlsenabled then
 						if downkey(rectcol[i+1]) then
 							w.speedy = funnelmovespeed
@@ -169,13 +169,13 @@ function funnel:update(dt)
 							w.speedy = w.speedy-funnelmovespeed
 						end
 					end
-					
+
 				elseif v.dir == "up" then
 					w.speedy = -self.speed*self.reverse
-					
+
 					local diff = (w.x+w.width/2)-x-1
 					w.speedx = -diff*funnelforce
-					
+
 					if rectcol[i] == "player" and w.controlsenabled then
 						if leftkey(rectcol[i+1]) then
 							w.speedx = -funnelmovespeed
@@ -183,13 +183,13 @@ function funnel:update(dt)
 							w.speedx = funnelmovespeed
 						end
 					end
-					
+
 				else
 					w.speedy = self.speed*self.reverse
-					
+
 					local diff = (w.x+w.width/2)-x-1
 					w.speedx = -diff*funnelforce
-					
+
 					if rectcol[i] == "player" and w.controlsenabled then
 						if leftkey(rectcol[i+1]) then
 							w.speedx = -funnelmovespeed
@@ -198,7 +198,7 @@ function funnel:update(dt)
 						end
 					end
 				end
-				
+
 				w.funnel = true
 				w.gravity = 0
 				w.gravitydirection = math.pi/2
@@ -209,7 +209,7 @@ end
 
 function funnel:draw()
 	love.graphics.setColor(1, 1, 1)
-	
+
 	if self.power then
 		local img
 		if self.reverse == 1 then
@@ -219,7 +219,7 @@ function funnel:draw()
 			img = excursionfunnel2img
 			endimg = excursionfunnelend2img
 		end
-		
+
 		for i, v in pairs(self.funneltable) do
 			if v.dir == "right" then
 				local progress = v.timer/v.rangex
@@ -228,16 +228,16 @@ function funnel:draw()
 				else
 					love.graphics.setScissor((v.x-xscroll-1+(v.rangex*(1-progress)))*16*scale, (v.y-yscroll-1.5)*16*scale, v.rangex*progress*16*scale, 2*16*scale)
 				end
-				
+
 				local x
 				for j = 0, math.ceil(v.rangex/3)+1 do
 					x = math.floor((v.x-xscroll-1+(j-1)*3+self.timer/self.animationtime*3*self.reverse)*16*scale)
-					
+
 					love.graphics.draw(img, x, math.floor((v.y-yscroll-1.5)*16*scale), 0, scale, scale)
 				end
-				
+
 				love.graphics.draw(endimg, math.floor((v.x-xscroll+v.rangex-1.5)*16*scale), math.floor((v.y-yscroll-1)*16*scale), 0, scale, scale, 8, 8)
-				
+
 				love.graphics.setScissor()
 			elseif v.dir == "left" then
 				local progress = v.timer/-v.rangex
@@ -246,15 +246,15 @@ function funnel:draw()
 				else
 					love.graphics.setScissor((v.x+v.rangex-xscroll)*16*scale, (v.y-yscroll-1.5)*16*scale, -v.rangex*progress*16*scale, 2*16*scale)
 				end
-				
+
 				for j = 0, math.ceil(-v.rangex/3)+1 do
 					local x = math.floor((v.x+v.rangex-xscroll+(j-1)*3-self.timer/self.animationtime*3*self.reverse)*16*scale)
-					
+
 					love.graphics.draw(img, x, math.floor((v.y-yscroll-1.5)*16*scale), 0, scale, scale)
 				end
-				
+
 				love.graphics.draw(endimg, math.floor((v.x-xscroll+v.rangex+.5)*16*scale), math.floor((v.y-yscroll)*16*scale), math.pi, scale, scale, 8, 8)
-				
+
 				love.graphics.setScissor()
 			elseif v.dir == "up" then
 				local progress = v.timer/-v.rangey
@@ -263,15 +263,15 @@ function funnel:draw()
 				else
 					love.graphics.setScissor((v.x-xscroll-1)*16*scale, (v.y+v.rangey-yscroll-.5)*16*scale, 2*16*scale, -v.rangey*progress*16*scale)
 				end
-				
+
 				for j = 0, math.ceil(-v.rangey/3)+1 do
 					local y = math.floor((v.y+v.rangey-yscroll-.5+(j-1)*3-self.timer/self.animationtime*3*self.reverse)*16*scale)
-					
+
 					love.graphics.draw(img, math.floor((v.x-xscroll+1)*16*scale), y, math.pi/2, scale, scale)
 				end
-				
+
 				love.graphics.draw(endimg, math.floor((v.x-xscroll-.5)*16*scale), math.floor((v.y-yscroll+v.rangey)*16*scale), -math.pi/2, scale, scale, 8, 8)
-				
+
 				love.graphics.setScissor()
 			else
 				local progress = v.timer/v.rangey
@@ -280,20 +280,20 @@ function funnel:draw()
 				else
 					love.graphics.setScissor((v.x-xscroll-1)*16*scale, (v.y-yscroll-1.5+v.rangey*(1-progress))*16*scale, 2*16*scale, v.rangey*progress*16*scale)
 				end
-				
+
 				for j = 0, math.ceil(v.rangey/3)+1 do
 					local y = math.floor((v.y-yscroll-1.5+(j-1)*3+self.timer/self.animationtime*3*self.reverse)*16*scale)
-					
+
 					love.graphics.draw(img, math.floor((v.x-xscroll+1)*16*scale), y, math.pi/2, scale, scale)
 				end
-				
+
 				love.graphics.draw(endimg, math.floor((v.x-xscroll+.5)*16*scale), math.floor((v.y-yscroll+v.rangey-2)*16*scale), math.pi/2, scale, scale, 8, 8)
-				
+
 				love.graphics.setScissor()
 			end
 		end
 	end
-	
+
 	love.graphics.setColor(1, 1, 1)
 	if self.dir == "right" then
 		love.graphics.draw(excursionbaseimg, excursionquad[self.quad], math.floor((self.cox-xscroll-1)*16*scale), math.floor((self.coy-yscroll-1.5)*16*scale), 0, scale, scale)
@@ -308,19 +308,19 @@ end
 
 function funnel:updaterange()
 	self.funneltable = {}
-	
+
 	local dir = self.dir
 	local startx, starty = self.cox, self.coy
 	local rangex, rangey = 0, 0
 	local x, y = self.cox, self.coy
-	
+
 	local firstcheck = true
 	local quit = false
 	local collision = false
-	
+
 	while x >= 1 and x <= mapwidth and y >= 1 and y <= mapheight and not collision and (x ~= startx or y ~= starty or dir ~= self.dir or firstcheck == true) and quit == false do
 		firstcheck = false
-		
+
 		if dir == "right" then
 			x = x + 1
 			rangex = rangex + 1
@@ -334,7 +334,7 @@ function funnel:updaterange()
 			y = y + 1
 			rangey = rangey + 1
 		end
-		
+
 		--check if current block is a portal
 		local opp = "left"
 		if dir == "left" then
@@ -344,9 +344,9 @@ function funnel:updaterange()
 		elseif dir == "down" then
 			opp = "up"
 		end
-		
+
 		local portalx, portaly, portalfacing, infacing, portalrealx, portalrealy, portal2realx, portal2realy = getPortal(x, y, opp)
-		
+
 		if portalx ~= false and ((dir == "left" and infacing == "right") or (dir == "right" and infacing == "left") or (dir == "up" and infacing == "down") or (dir == "down" and infacing == "up")) then
 			--check if complete entry
 			local pass = true
@@ -367,24 +367,24 @@ function funnel:updaterange()
 					pass = false
 				end
 			end
-			
+
 			if pass then
 				local dummy = {dir=dir, x=x-rangex, y=y-rangey, rangex=rangex, rangey=rangey, timer=0}
-				
+
 				table.insert(self.funneltable, dummy)
-				
+
 				x, y = portalrealx, portalrealy
-			
+
 				dir = portalfacing
-				
+
 				if dir == "down" then
 					x = x-1
 				elseif dir == "left" then
 					y = y-1
 				end
-				
+
 				rangex, rangey = 0, 0
-				
+
 				if dir == "right" then
 					x = portalx + 1
 				elseif dir == "left" then
@@ -397,7 +397,7 @@ function funnel:updaterange()
 				end
 			end
 		end
-		
+
 		--doors
 		for i, v in pairs(objects["door"]) do
 			if v.active then
@@ -422,7 +422,7 @@ function funnel:updaterange()
 				end
 			end
 		end
-		
+
 		--get collision for next while
 		if dir == "up" or dir == "down" then
 			if not inmap(x+1, y) or (tilequads[map[x][y][1]]:getproperty("collision", x, y) and tilequads[map[x][y][1]]:getproperty("grate", x, y) == false) or
@@ -436,18 +436,18 @@ function funnel:updaterange()
 			end
 		end
 	end
-	
+
 	if rangex ~= 0 or rangey ~= 0 then
 		local dummy = {dir=dir, x=x-rangex, y=y-rangey, rangex=rangex, rangey=rangey, timer=0}
-		
+
 		table.insert(self.funneltable, dummy)
-		
+
 		if not self.lastblock or (self.lastblock[1] == x+rangex and self.lastblock[2] == y+rangey) then
 			for i, v in pairs(self.funneltable) do
 				v.timer = math.abs(v.rangex)+math.abs(v.rangey)
 			end
-		end	
-		
+		end
+
 		self.lastblock = {x+rangex, y+rangey}
 	end
 end
@@ -461,9 +461,9 @@ function funnel:input(t, input)
 		elseif t == "toggle" then
 			self.reverse = -self.reverse
 		end
-		
+
 		self.input1state = t
-		
+
 		for i, v in pairs(self.funneltable) do
 			v.timer = 0
 		end
@@ -475,7 +475,7 @@ function funnel:input(t, input)
 		elseif t == "toggle" then
 			self.power = not self.power
 		end
-		
+
 		self.input2state = t
 	end
 end

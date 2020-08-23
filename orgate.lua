@@ -9,13 +9,13 @@ function orgate:init(x, y, r)
 	self.r = {unpack(r)}
 	table.remove(self.r, 1)
 	table.remove(self.r, 1)
-	
+
 	--VISIBLE
 	if #self.r > 0 and self.r[1] ~= "link" then
 		self.visible = (self.r[1] == "true")
 		table.remove(self.r, 1)
 	end
-	
+
 	self.outtable = {}
 	self.inputstate = {}
 	self.outputstate = "off"
@@ -74,14 +74,14 @@ function orgate:input(t, input)
 		else
 			self.inputstate[tonumber(input)] = t
 		end
-		
+
 		local pass = "off"
 		for i, v in ipairs(self.inputstate) do
 			if v == "on" then
 				pass = "on"
 			end
 		end
-		
+
 		if self.outputstate ~= pass then
 			self:out(pass)
 			self.outputstate = pass

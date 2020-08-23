@@ -5,43 +5,43 @@ function scaffold:init(x, y, r)
 	self.r = {unpack(r)}
 	table.remove(self.r, 1)
 	table.remove(self.r, 1)
-	
+
 	--DIRECTION
 	if #self.r > 0 then
 		self.dir = self.r[1]
 		table.remove(self.r, 1)
 	end
-	
+
 	--POWER
 	if #self.r > 0 then
 		self.power = self.r[1] == "false"
 		table.remove(self.r, 1)
 	end
-	
+
 	--SIZE
 	if #self.r > 0 then
 		self.size = tonumber(self.r[1])
 		table.remove(self.r, 1)
 	end
-	
+
 	--Distance
 	if #self.r > 0 then
 		self.distance = tonumber(self.r[1])
 		table.remove(self.r, 1)
 	end
-	
+
 	--SPEED
 	if #self.r > 0 then
 		self.speed = tonumber(self.r[1])
 		table.remove(self.r, 1)
 	end
-	
+
 	--Time1
 	if #self.r > 0 then
 		self.time1 = tonumber(self.r[1])
 		table.remove(self.r, 1)
 	end
-	
+
 	--Time2
 	if #self.r > 0 then
 		self.time2 = tonumber(self.r[1])
@@ -53,7 +53,7 @@ function scaffold:init(x, y, r)
 		self.x = x-0.25
 	else
 		self.x = x-1
-	end	
+	end
 	self.y = y-15/16
 	self.startx = self.x
 	self.starty = self.y+15/16
@@ -69,12 +69,12 @@ function scaffold:init(x, y, r)
 	if self.dir == "down" or self.dir == "up" then
 		self.starty = self.starty-1
 	end
-	
+
 	--IMAGE STUFF
 	self.drawable = false
-	
+
 	self.rotation = 0
-	
+
 	self.timer = 0
 	self.state = "start"
 	self.input1state = "off"
@@ -113,7 +113,7 @@ function scaffold:update(dt)
 	if not self.power then
 		return false
 	end
-	
+
 	if self.state == "start" then
 		self.timer = self.timer + dt
 		if self.timer > self.time1 then
@@ -157,16 +157,16 @@ function scaffold:update(dt)
 					if #checkrect(newx, newy, w.width, w.height, {"exclude", w, self}, true) == 0 then
 						w.x = newx
 						w.y = newy
-						
+
 						blay = newy+w.height
 					end
 				end
 			end
 		end
-		
+
 		self.x = nextx
 		self.y = nexty
-		
+
 		if self.dir == "right" or self.dir == "left" then
 			--check if end or start
 			if self.state == "movingforth" then
@@ -193,7 +193,7 @@ function scaffold:update(dt)
 						self.x = self.startx
 					end
 				end
-			end			
+			end
 		else
 			--check if end or start
 			if self.state == "movingforth" then
@@ -220,10 +220,10 @@ function scaffold:update(dt)
 						self.y = self.starty
 					end
 				end
-			end		
+			end
 		end
 	end
-	
+
 	return false
 end
 
@@ -235,7 +235,7 @@ function scaffold:draw()
 			love.graphics.draw(platformbonusimg, math.floor((self.x+i-1-xscroll)*16*scale), math.floor((self.y-yscroll-8/16)*16*scale), 0, scale, scale)
 		end
 	end
-	
+
 	if math.ceil(self.size) ~= self.size then --draw 1 more on the rightest
 		love.graphics.draw(scaffoldimg, math.floor((self.x+self.size-1-xscroll)*16*scale), math.floor((self.y-yscroll-8/16)*16*scale), 0, scale, scale)
 	end

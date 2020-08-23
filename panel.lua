@@ -3,11 +3,11 @@ panel = class("panel")
 function panel:init(x, y, t)
 	self.cox = x+1
 	self.coy = y+1
-	
+
 	self.dir = "right"
 	self.out = false
 	self.input1state = "off"
-	
+
 	--Input list
 	self.t = {unpack(t)}
 	table.remove(self.t, 1)
@@ -22,13 +22,13 @@ function panel:init(x, y, t)
 		self.out = self.t[1] == "true"
 		table.remove(self.t, 1)
 	end
-	
+
 	if self.dir == "up" then
 		self.dir = "top"
 	elseif self.dir == "down" then
 		self.dir = "bottom"
 	end
-	
+
 	if self.dir == "left" then
 		self.r = 0
 	elseif self.dir == "top" then
@@ -38,7 +38,7 @@ function panel:init(x, y, t)
 	elseif self.dir == "bottom" then
 		self.r = math.pi*1.5
 	end
-	
+
 	self:link()
 	self:updatestuff()
 end
@@ -64,7 +64,7 @@ function panel:draw()
 	if self.out then
 		quad = 1
 	end
-	
+
 	love.graphics.draw(panelimg, panelquad[quad], math.floor((self.cox-1-xscroll+.5)*16*scale), math.floor((self.coy-1-yscroll)*16*scale), self.r, scale, scale, 8, 8)
 end
 
@@ -77,16 +77,16 @@ function panel:input(t, input)
 		elseif t == "toggle" then
 			self.out = not self.out
 		end
-		
+
 		self.input1state = t
-		
+
 		self:updatestuff()
 	end
 end
-	
+
 function panel:updatestuff()
 	map[self.cox][self.coy]["portaloverride"][self.dir] = self.out
-	
+
 	if self.out == false and tilequads[map[self.cox][self.coy][1]]:getproperty("portalable", self.cox, self.coy) == false then
 		checkportalremove(self.cox, self.coy)
 	end

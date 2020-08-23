@@ -10,7 +10,7 @@ vec4 effect(vec4 vcolor, Image texture, vec2 texture_coords, vec2 pixel_coords)
 
 	vec4 redrecord = input0 * redfilter;
 	vec4 bluegreenrecord = input0 * bluegreenfilter;
-	
+
 	vec4 rednegative = vec4(redrecord.r);
 	vec4 bluegreennegative = vec4((bluegreenrecord.g + bluegreenrecord.b)/2.0);
 

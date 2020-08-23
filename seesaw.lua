@@ -16,16 +16,16 @@ seesawtype[9] = {3,4,7,1.5}
 function seesaw:init(x, y, r)
 	self.x = x
 	self.y = y
-	
+
 	if t == nil then
 		t = 1
 	end
-	
+
 	self.range = seesawtype[t][1]
 	self.dist1 = seesawtype[t][2]
 	self.dist2 = seesawtype[t][3]
 	self.width = seesawtype[t][4]
-	
+
 	--Input list
 	self.r = {unpack(r)}
 	table.remove(self.r, 1)
@@ -50,14 +50,14 @@ function seesaw:init(x, y, r)
 		self.width = tonumber(self.r[1])
 		table.remove(self.r, 1)
 	end
-	
+
 	self.lcount = 0
 	self.rcount = 0
 	self.falloff = false
-	
+
 	self.leftplatform = seesawplatform:new(self.x, self.y+self.dist1, self.width, self, "left")
 	self.rightplatform = seesawplatform:new(self.x+self.range, self.y+self.dist2, self.width, self, "right")
-	
+
 	table.insert(objects["seesawplatform"], self.leftplatform)
 	table.insert(objects["seesawplatform"], self.rightplatform)
 end
@@ -68,10 +68,10 @@ function seesaw:update(dt)
 		self.rightplatform.speedy = self.rightplatform.speedy + seesawgravity*dt
 	else
 		local speed = self.lcount - self.rcount
-		
+
 		self.leftplatform.speedy = self.leftplatform.speedy + speed*seesawspeed*dt
 		self.rightplatform.speedy = self.rightplatform.speedy - speed*seesawspeed*dt
-		
+
 		if self.leftplatform.speedy > 0 and speed <= 0 then
 			self.leftplatform.speedy = self.leftplatform.speedy - seesawfriction*dt
 			if speed == 0 and self.leftplatform.speedy < 0 then
@@ -80,7 +80,7 @@ function seesaw:update(dt)
 		elseif self.leftplatform.speedy < 0 and speed >= 0 then
 			self.leftplatform.speedy = self.leftplatform.speedy + seesawfriction*dt
 		end
-	
+
 		if self.rightplatform.speedy > 0 and speed >= 0 then
 			self.rightplatform.speedy = self.rightplatform.speedy - seesawfriction*dt
 			if speed == 0 and self.rightplatform.speedy < 0 then
@@ -89,7 +89,7 @@ function seesaw:update(dt)
 		elseif self.rightplatform.speedy < 0 and speed <= 0 then
 			self.rightplatform.speedy = self.rightplatform.speedy + seesawfriction*dt
 		end
-		
+
 		--check if falloff
 		if self.leftplatform.y-self.y <= 0 then
 			if self.rcount ~= 0 then
@@ -99,7 +99,7 @@ function seesaw:update(dt)
 				self.rightplatform.y = self.y+self.dist1+self.dist2-2-2/16
 			end
 		end
-		
+
 		if self.rightplatform.y-self.y <= 0 then
 			if self.lcount ~= 0 then
 				self:fallingoff("left")
@@ -114,7 +114,7 @@ end
 function seesaw:fallingoff(side)
 	self.leftplatform.speedy = 0
 	self.rightplatform.speedy = 0
-	
+
 	self.falloffside = side
 	self.falloff = true
 end
@@ -122,7 +122,7 @@ end
 function seesaw:draw()
 	--left
 	love.graphics.draw(seesawimg, seesawquad[1], math.floor((self.x-1-xscroll)*16*scale), (self.y-yscroll-1.5)*16*scale, 0, scale, scale)
-	
+
 	if self.falloff == false and self.leftplatform.y-self.y >= 0 then
 		love.graphics.setScissor((self.x-1-xscroll)*16*scale, (self.y-yscroll-0.5)*16*scale, 16*scale, math.floor((self.leftplatform.y-self.y)*16*scale))
 		for i = 1, math.ceil(self.leftplatform.y-self.y) do
@@ -136,16 +136,16 @@ function seesaw:draw()
 			end
 		end
 	end
-		
-	
+
+
 	--middle
 	for i = 1, self.range-1 do
 		love.graphics.draw(seesawimg, seesawquad[4], math.floor((self.x-1+i-xscroll)*16*scale), (self.y-yscroll-1.5)*16*scale, 0, scale, scale)
 	end
-		
+
 	--right
 	love.graphics.draw(seesawimg, seesawquad[2], math.floor((self.x-1+self.range-xscroll)*16*scale), (self.y-yscroll-1.5)*16*scale, 0, scale, scale)
-	
+
 	if self.falloff == false and self.rightplatform.y-self.y >= 0 then
 		love.graphics.setScissor((self.x-1+self.range-xscroll)*16*scale, (self.y-yscroll-0.5)*16*scale, 16*scale, math.floor((self.rightplatform.y-self.y)*16*scale))
 		for i = 1, math.ceil(self.rightplatform.y-self.y) do

@@ -49,29 +49,29 @@ function prerotatecall(a, b)
 	if tablecontains(prerotatecalls, a) then
 		return true
 	end
-	
+
 	return false
 end
 
 function physicsupdate(dt)
 	local lobjects = objects
-	
+
 	for j, w in pairs(lobjects) do
 		if j ~= "tile" then
 			for i, v in pairs(w) do
 				if v.static == false and v.active then
 					--GRAVITY
 					v.speedy = v.speedy + (v.gravity or yacceleration)*dt*0.5
-					
+
 					if v.speedy > maxyspeed then
 						v.speedy = maxyspeed
 					end
-					
+
 					--Standard conversion!
 					if v.gravitydirection and v.gravitydirection ~= math.pi/2 then
 						v.speedx, v.speedy = convertfromstandard(v, v.speedx, v.speedy)
 					end
-					
+
 					--PORTALS LOL
 					local passed = false
 					if v.portalable ~= false then
@@ -82,22 +82,22 @@ function physicsupdate(dt)
 						else
 							passed = true
 						end
-						
+
 						if passed and j == "player" then
 							playsound("portalenter")
 						end
 					end
-					
+
 					--COLLISIONS ROFL
 					local horcollision = false
 					local vercollision = false
-					
-					
-					
+
+
+
 					local latetable = {"portalwall", "castlefirefire", "platform"}
-					
-					
-					
+
+
+
 					--VS OTHER OBJECTS PRE TILE GROUP
 					for h, u in pairs(lobjects) do
 						if h ~= "tile" then
@@ -108,7 +108,7 @@ function physicsupdate(dt)
 									break
 								end
 							end
-							
+
 							if pass then
 								local hor, ver = handlegroup(i, h, u, v, j, dt, passed)
 								if hor then
@@ -117,26 +117,26 @@ function physicsupdate(dt)
 								if ver then
 									vercollision = true
 								end
-								
+
 								--Check for emancipation grill
 								checkforemances(dt, v)
 							end
 						end
 					end
-					
+
 					--VS TILES (Because I only wanna check close ones)
 					local xstart = math.floor(v.x+v.speedx*dt-2/16)+1
 					local ystart = math.floor(v.y+v.speedy*dt-2/16)+1
-					
+
 					local xfrom = xstart
 					local xto = xstart+math.ceil(v.width+0.0001)
 					local dir = 1
-					
+
 					if v.speedx < 0 then
 						xfrom, xto = xto, xfrom
 						dir = -1
 					end
-					
+
 					for x = xfrom, xto, dir do
 						for y = ystart, ystart+math.ceil(v.height+0.0001) do
 							--check if invisible block
@@ -156,7 +156,7 @@ function physicsupdate(dt)
 							end
 						end
 					end
-					
+
 					--VS: LATE OBJECTS
 					for g, h in pairs(latetable) do
 						local u = objects[h]
@@ -167,24 +167,24 @@ function physicsupdate(dt)
 						if ver then
 							vercollision = true
 						end
-						
+
 						--Check for emancipation grill
 						checkforemances(dt, v)
 					end
-					
+
 					--Move the object
 					if vercollision == false then
 						v.y = v.y + v.speedy*dt
 					end
-					
+
 					if horcollision == false then
 						v.x = v.x + v.speedx*dt
 					end
-					
+
 					if v.gravitydirection and v.gravitydirection ~= math.pi/2 then
 						v.speedx, v.speedy = converttostandard(v, v.speedx, v.speedy)
 					end
-					
+
 					if vercollision == false then
 						if v.previouslyonground and v.startfall and not v.jumping then
 							v.previouslyonground = false
@@ -195,12 +195,12 @@ function physicsupdate(dt)
 					elseif not v.previouslyonground and v.startfall then
 						v.previouslyonground = true
 					end
-					
+
 					--check if object is inside portal
 					if v.portalable ~= false then
 						inportal(v)
 					end
-					
+
 					--GRAVITY
 					v.speedy = v.speedy + (v.gravity or yacceleration)*dt*0.5
 				end
@@ -243,14 +243,14 @@ function handlegroup(i, h, u, v, j, dt, passed)
 			end
 		end
 	end
-	
+
 	return horcollision, vercollision
 end
 
 function checkcollision(v, t, h, g, j, i, dt, passed) --v: b1table | t: b2table | h: b2type | g: b2id | j: b1type | i: b1id
 	local hadhorcollision = false
 	local hadvercollision = false
-	
+
 	if h ~= "tile" or (not tilequads[map[t.cox][t.coy][1]]:getproperty("slantupleft", t.cox, t.coy) and not tilequads[map[t.cox][t.coy][1]]:getproperty("slantupright", t.cox, t.coy)) then
 		if math.abs(v.x+v.speedx*dt-t.x) < math.max(v.width, t.width)+1 and math.abs(v.y+v.speedy*dt-t.y) < math.max(v.height, t.height)+1 then
 			--check if it's a passive collision (Object is colliding anyway)
@@ -258,19 +258,19 @@ function checkcollision(v, t, h, g, j, i, dt, passed) --v: b1table | t: b2table 
 				if passivecollision(v, t, h, g, j, i, dt) then
 					hadvercollision = true
 				end
-				
+
 			elseif aabb(v.x + v.speedx*dt, v.y + v.speedy*dt, v.width, v.height, t.x, t.y, t.width, t.height) then
 				if aabb(v.x + v.speedx*dt, v.y, v.width, v.height, t.x, t.y, t.width, t.height) then --Collision is horizontal!
 					if horcollision(v, t, h, g, j, i, dt) then
 						hadhorcollision = true
 					end
-					
+
 				elseif aabb(v.x, v.y+v.speedy*dt, v.width, v.height, t.x, t.y, t.width, t.height) then --Collision is vertical!
 					if vercollision(v, t, h, g, j, i, dt) then
 						hadvercollision = true
 					end
-					
-				else 
+
+				else
 					--We're fucked, it's a diagonal collision! run!
 					--Okay actually let's take this slow okay. Let's just see if we're moving faster horizontally than vertically, aight?
 					local grav = yacceleration
@@ -282,7 +282,7 @@ function checkcollision(v, t, h, g, j, i, dt, passed) --v: b1table | t: b2table 
 						if vercollision(v, t, h, g, j, i, dt) then
 							hadvercollision = true
 						end
-					else 
+					else
 						--okay so we're moving mainly vertically, so let's just pretend it was a horizontal collision? aight cool.
 						if horcollision(v, t, h, g, j, i, dt) then
 							hadhorcollision = true
@@ -306,10 +306,10 @@ function checkcollision(v, t, h, g, j, i, dt, passed) --v: b1table | t: b2table 
 				if trianglevercollision(v, t, h, g, j, i, dt) then
 					hadvercollision = true
 				end
-			end	
+			end
 		end
 	end
-	
+
 	return hadhorcollision, hadvercollision
 end
 
@@ -366,14 +366,14 @@ function passivecollision(v, t, h, g, j, i, dt)
 			return true
 		end
 	end
-	
+
 	return false
 end
 
 function horcollision(v, t, h, g, j, i, dt)
 	if v.speedx < 0 then
 		--move object RIGHT (because it was moving left)
-		
+
 		if collisionexists("right", t) then
 			if callcollision("right", t, j, v, g, i) ~= false then
 				if t.speedx and t.speedx > 0 then
@@ -402,7 +402,7 @@ function horcollision(v, t, h, g, j, i, dt)
 		end
 	else
 		--move object LEFT (because it was moving right)
-		
+
 		if collisionexists("left", t) then
 			if callcollision("left", t, j, v, g, i) ~= false then
 				if t.speedx and t.speedx < 0 then
@@ -414,7 +414,7 @@ function horcollision(v, t, h, g, j, i, dt)
 				t.speedx = 0
 			end
 		end
-		
+
 		if collisionexists("right", v) then
 			if callcollision("right", v, h, t, i, g) ~= false then
 				if v.speedx > 0 then
@@ -431,7 +431,7 @@ function horcollision(v, t, h, g, j, i, dt)
 			return true
 		end
 	end
-	
+
 	return false
 end
 
@@ -449,7 +449,7 @@ function vercollision(v, t, h, g, j, i, dt)
 				t.speedy = 0
 			end
 		end
-		
+
 		if collisionexists("ceil", v) then
 			if callcollision("ceil", v, h, t, i, g) ~= false then
 				if v.speedy < 0 then
@@ -465,14 +465,14 @@ function vercollision(v, t, h, g, j, i, dt)
 			v.y = t.y  + t.height
 			return true
 		end
-	else					
+	else
 		if collisionexists("ceil", t) then
 			if callcollision("ceil", t, j, v, g, i) ~= false then
 				if t.speedy and t.speedy < 0 then
 					t.speedy = 0
 				end
 			end
-		else	
+		else
 			if t.speedy and t.speedy < 0 then
 				t.speedy = 0
 			end
@@ -498,7 +498,7 @@ end
 
 function collisionscalls(dir, obj, a, b, c, d)
 	local r
-	
+
 	if obj.gravitydirection > math.pi/4*1 and obj.gravitydirection <= math.pi/4*3 then
 		if dir == "floor" then
 			if obj.floorcollide then
@@ -572,7 +572,7 @@ function collisionscalls(dir, obj, a, b, c, d)
 			end
 		end
 	end
-	
+
 	return r
 end
 
@@ -588,21 +588,21 @@ function callcollision(dir, obj, a, b, c, d)
 			return obj:rightcollide(a, b, c, d)
 		end
 	end
-	
+
 	obj.speedx, obj.speedy = converttostandard(obj, obj.speedx, obj.speedy)
-	
+
 	local r
-	
+
 	--PRE ROTATION CALLS!!! WOAAAH
 	if prerotatecall(a, b) then
 		r = collisionscalls(dir, obj, a, b, c, d)
 	end
-	
+
 	if a == "tile" then
 		local purplegel = false
 		local x, y = b.cox, b.coy
-		
-		--Find a more suitable block if available	
+
+		--Find a more suitable block if available
 		if dir == "floor" or dir == "ceil" then
 			if inmap(x+1, y) and tilequads[map[x+1][y][1]]:getproperty("collision", x+1, y) and obj.x+obj.width/2+.5 > x + .5 then
 				x = x + 1
@@ -616,8 +616,8 @@ function callcollision(dir, obj, a, b, c, d)
 			elseif inmap(x, y-1) and tilequads[map[x][y-1][1]]:getproperty("collision", x, y-1) and obj.y+obj.height/2+.5 < y - .5 then
 				y = y - 1
 			end
-		end		
-		
+		end
+
 		if not obj.runanimationprogress or obj.size == 1 then --cheap check for player
 			if dir == "left" and map[x][y]["gels"]["right"] == 4 then
 				if obj.gravitydirection == 0 then
@@ -646,13 +646,13 @@ function callcollision(dir, obj, a, b, c, d)
 				purplegel = true
 			end
 		end
-		
+
 		if purplegel then
 			obj.speedy = 0
 		elseif obj.gravitydirection ~= math.pi/2 then
 			--check if wall is a side. and stuff.
 			local resetgravity = false
-			
+
 			if obj.gravitydirection > math.pi/4*1 and obj.gravitydirection <= math.pi/4*3 then --down
 				if dir == "ceil" or dir == "floor" then
 					resetgravity = true
@@ -670,7 +670,7 @@ function callcollision(dir, obj, a, b, c, d)
 					resetgravity = true
 				end
 			end
-			
+
 			if resetgravity then
 				obj.gravitydirection = math.pi/2
 				obj.speedy = 0
@@ -680,21 +680,21 @@ function callcollision(dir, obj, a, b, c, d)
 	elseif obj.gravitydirection ~= math.pi/2 and (not b.gravitydirection or b.gravitydirection ~= obj.gravitydirection) then
 		--Player vs box hardcode fix
 		if (a == "box" and obj.category == 3) or (a == "player" and obj.category == 9) then
-			
+
 		else
 			obj.gravitydirection = math.pi/2
 			obj.speedy = 0
 			obj.speedx = -obj.speedx
 		end
 	end
-	
+
 	--AFTER ROTATION CALLS!!! WOAAAH
 	if not prerotatecall(a, b) then
 		r = collisionscalls(dir, obj, a, b, c, d)
 	end
-	
+
 	obj.speedx, obj.speedy = convertfromstandard(obj, obj.speedx, obj.speedy)
-	
+
 	return r
 end
 
@@ -804,11 +804,11 @@ end
 
 function checkrect(x, y, width, height, list, statics)
 	local out = {}
-	
+
 	local inobj
-	
+
 	local catlist = ""
-	
+
 	if type(list) == "table" and list[1] == "exclude" then
 		inobj = {unpack(list)}
 		table.remove(inobj, 1)
@@ -817,8 +817,8 @@ function checkrect(x, y, width, height, list, statics)
 
 	for i, v in pairs(objects) do
 		local contains = false
-		
-		if list and list ~= "all" then			
+
+		if list and list ~= "all" then
 			for j = 1, #list do
 				if list[j] == i then
 					contains = true
@@ -828,7 +828,7 @@ function checkrect(x, y, width, height, list, statics)
 				end
 			end
 		end
-		
+
 		if list == "all" or contains then
 			for j, w in pairs(v) do
 				if statics or w.static ~= true or list ~= "all" then
@@ -838,11 +838,11 @@ function checkrect(x, y, width, height, list, statics)
 							if v == w then
 								skip = true
 							end
-							
+
 							if (v.mask ~= nil and v.mask[w.category] == true) or (w.mask ~= nil and w.mask[v.category] == true) then
 								skip = true
 							end
-							
+
 						end
 					end
 					if not skip then
@@ -859,7 +859,7 @@ function checkrect(x, y, width, height, list, statics)
 			end
 		end
 	end
-	
+
 	return out
 end
 
@@ -877,73 +877,73 @@ function inportal(self)
 			local portal2yplus = 0
 			local portal1X = v.x1
 			local portal2X = v.x2
-			
+
 			--Get the extra block of each portal
 			if v.facing1 == "up" then
 				portal1xplus = 1
 			elseif v.facing1 == "down" then
 				portal1xplus = -1
 			end
-			
+
 			if v.facing2 == "up" then
 				portal2xplus = 1
 			elseif v.facing2 == "down" then
 				portal2xplus = -1
 			end
-			
+
 			if v.facing1 == "right" then
 				portal1yplus = 1
 			elseif v.facing1 == "left" then
 				portal1yplus = -1
 			end
-			
+
 			if v.facing2 == "right" then
 				portal2yplus = 1
 			elseif v.facing2 == "left" then
 				portal2yplus = -1
 			end
-			
+
 			local x = math.floor(self.x+self.width/2)+1
 			local y = math.floor(self.y+self.height/2)+1
-			
+
 			if (x == portal1X or x == portal1X + portal1xplus) and (y == portal1Y or y == portal1Y + portal1yplus) then
 				local entryportalX = v.x1
 				local entryportalY = v.y1
 				local entryportalfacing = v.facing1
-				
+
 				local exitportalX = v.x2
 				local exitportalY = v.y2
 				local exitportalfacing = v.facing2
-				
+
 				self.x, self.y, self.speedx, self.speedy, self.rotation = portalcoords(self.x, self.y, self.speedx, self.speedy, self.width, self.height, self.rotation, self.animationdirection, entryportalX, entryportalY, entryportalfacing, exitportalX, exitportalY, exitportalfacing, self, true)
 
 			elseif (x == portal2X or x == portal2X + portal2xplus) and (y == portal2Y or y == portal2Y + portal2yplus) then
 				local entryportalX = v.x2
 				local entryportalY = v.y2
 				local entryportalfacing = v.facing2
-				
+
 				local exitportalX = v.x1
 				local exitportalY = v.y1
 				local exitportalfacing = v.facing1
-				
+
 				self.x, self.y, self.speedx, self.speedy, self.rotation = portalcoords(self.x, self.y, self.speedx, self.speedy, self.width, self.height, self.rotation, self.animationdirection, entryportalX, entryportalY, entryportalfacing, exitportalX, exitportalY, exitportalfacing, self)
 
 			end
 		end
 	end
-	
+
 	return false
 end
 
 function checkportalHOR(self, nextY) --handles horizontal (up- and down facing) portal teleportation
 	for i, v in pairs(portals) do
 		if v.x1 ~= false and v.x2 ~= false then
-		
+
 			local portal1xplus = 0
 			local portal2xplus = 0
 			local portal1Y = v.y1
 			local portal2Y = v.y2
-			
+
 			--Get the extra block of each portal
 			if v.facing1 == "up" then
 				portal1xplus = 1
@@ -951,18 +951,18 @@ function checkportalHOR(self, nextY) --handles horizontal (up- and down facing) 
 			elseif v.facing1 == "down" then
 				portal1xplus = -1
 			end
-			
+
 			if v.facing2 == "up" then
 				portal2xplus = 1
 				portal2Y = portal2Y - 1
 			elseif v.facing2 == "down" then
 				portal2xplus = -1
 			end
-			
+
 			--first part checks whether object is in the portal's x range,                                  second part whether object just moved through the portal's Y value
 			if ((v.x1 == math.floor(self.x+1) or v.x1+portal1xplus == math.floor(self.x+1)) and inrange(portal1Y, self.y+self.height/2, nextY+self.height/2))
 			or ((v.x2 == math.floor(self.x+1) or v.x2+portal2xplus == math.floor(self.x+1)) and inrange(portal2Y, self.y+self.height/2, nextY+self.height/2)) then
-			
+
 				--check which portal is entry
 				local entryportalX, entryportalY, entryportalfacing
 				local exitportalX, exitportalY, exitportalfacing
@@ -972,7 +972,7 @@ function checkportalHOR(self, nextY) --handles horizontal (up- and down facing) 
 					entryportalY = v.y1
 					entryportalfacing = v.facing1
 					entryportalxplus = portal1xplus
-					
+
 					exitportalX = v.x2
 					exitportalY = v.y2
 					exitportalfacing = v.facing2
@@ -980,15 +980,15 @@ function checkportalHOR(self, nextY) --handles horizontal (up- and down facing) 
 				else
 					entryportalX = v.x2
 					entryportalY = v.y2
-					entryportalfacing = v.facing2	
+					entryportalfacing = v.facing2
 					entryportalxplus = portal2xplus
-					
+
 					exitportalX = v.x1
 					exitportalY = v.y1
 					exitportalfacing = v.facing1
 					exitportalxplus = portal1xplus
 				end
-				
+
 				--check if movement makes that portal even a possibility
 				if entryportalfacing == "up" then
 					if self.speedy < 0 then
@@ -999,13 +999,13 @@ function checkportalHOR(self, nextY) --handles horizontal (up- and down facing) 
 						return false
 					end
 				end
-				
+
 				if entryportalfacing == "left" or entryportalfacing == "right" then
 					return false
 				end
-				
+
 				local testx, testy, testspeedx, testspeedy, testrotation = portalcoords(self.x, self.y, self.speedx, self.speedy, self.width, self.height, self.rotation, self.animationdirection, entryportalX, entryportalY, entryportalfacing, exitportalX, exitportalY, exitportalfacing, self, true)
-			
+
 				if #checkrect(testx, testy, self.width, self.height, {"exclude", self}, false) == 0 then --Check if exit position is free
 					self.x, self.y, self.speedx, self.speedy, self.rotation = testx, testy, testspeedx, testspeedy, testrotation
 				else
@@ -1018,19 +1018,19 @@ function checkportalHOR(self, nextY) --handles horizontal (up- and down facing) 
 						end
 					end
 				end
-				
-				
+
+
 				if (entryportalfacing == "down" and exitportalfacing == "up") or (entryportalfacing == "up" and exitportalfacing == "down") then
-					
+
 				else
 					self.jumping = false
 					self.falling = true
 				end
-				
+
 				if self.portaled then
 					self:portaled(exitportalfacing)
 				end
-				
+
 				return true
 			end
 		end
@@ -1045,7 +1045,7 @@ function checkportalVER(self, nextX) --handles vertical (left- and right facing)
 			local portal2yplus = 0
 			local portal1X = v.x1
 			local portal2X = v.x2
-			
+
 			--Get the extra block of each portal
 			if v.facing1 == "right" then
 				portal1yplus = 1
@@ -1053,14 +1053,14 @@ function checkportalVER(self, nextX) --handles vertical (left- and right facing)
 				portal1yplus = -1
 				portal1X = portal1X - 1
 			end
-			
+
 			if v.facing2 == "right" then
 				portal2yplus = 1
 			elseif v.facing2 == "left" then
 				portal2yplus = -1
 				portal2X = portal2X - 1
 			end
-			
+
 			if ((v.y1 == math.floor(self.y+1) or v.y1+portal1yplus == math.floor(self.y+1)) and inrange(portal1X, self.x+self.width/2, nextX+self.width/2))
 			or ((v.y2 == math.floor(self.y+1) or v.y2+portal2yplus == math.floor(self.y+1)) and inrange(portal2X, self.x+self.width/2, nextX+self.width/2)) then
 				--check which portal is entry
@@ -1072,7 +1072,7 @@ function checkportalVER(self, nextX) --handles vertical (left- and right facing)
 					entryportalY = v.y1
 					entryportalfacing = v.facing1
 					entryportalyplus = portal1yplus
-					
+
 					exitportalX = v.x2
 					exitportalY = v.y2
 					exitportalfacing = v.facing2
@@ -1082,13 +1082,13 @@ function checkportalVER(self, nextX) --handles vertical (left- and right facing)
 					entryportalY = v.y2
 					entryportalfacing = v.facing2
 					entryportalyplus = portal2yplus
-					
+
 					exitportalX = v.x1
 					exitportalY = v.y1
 					exitportalfacing = v.facing1
 					exitportalyplus = portal1yplus
 				end
-				
+
 				--check if movement makes that portal even a possibility
 				if entryportalfacing == "right" then
 					if self.speedx > 0 then
@@ -1099,26 +1099,26 @@ function checkportalVER(self, nextX) --handles vertical (left- and right facing)
 						return false
 					end
 				end
-				
+
 				if entryportalfacing == "up" or entryportalfacing == "down" then
 					return false
 				end
-				
+
 				local testx, testy, testspeedx, testspeedy, testrotation = portalcoords(self.x, self.y, self.speedx, self.speedy, self.width, self.height, self.rotation, self.animationdirection, entryportalX, entryportalY, entryportalfacing, exitportalX, exitportalY, exitportalfacing, self, true)
-			
+
 				if #checkrect(testx, testy, self.width, self.height, {"exclude", self}, false) == 0 then
 					self.x, self.y, self.speedx, self.speedy, self.rotation = testx, testy, testspeedx, testspeedy, testrotation
 				else
 					self.speedx = -self.speedx
 				end
-				
+
 				self.jumping = false
 				self.falling = true
-				
+
 				if self.portaled then
 					self:portaled(exitportalfacing)
 				end
-				
+
 				return true
 			end
 		end
@@ -1129,10 +1129,10 @@ end
 function portalcoords(x, y, speedx, speedy, width, height, rotation, animationdirection, entryportalX, entryportalY, entryportalfacing, exitportalX, exitportalY, exitportalfacing, self, live)
 	x = x + width/2
 	y = y + height/2
-	
+
 	local directrange --vector orthogonal to portal vector T
 	local relativerange --vector symmetrical to portal vector =
-	
+
 	if entryportalfacing == "up" then
 		directrange = entryportalY - y - 1
 		if width == 2 then
@@ -1148,7 +1148,7 @@ function portalcoords(x, y, speedx, speedy, width, height, rotation, animationdi
 			relativerange = ((y-height/2) - entryportalY + 1) / (2-height)
 		end
 	elseif entryportalfacing == "down" then
-		directrange = y - entryportalY	
+		directrange = y - entryportalY
 		if width == 2 then
 			relativerange = 0
 		else
@@ -1162,16 +1162,16 @@ function portalcoords(x, y, speedx, speedy, width, height, rotation, animationdi
 			relativerange = ((y-height/2) - entryportalY + 2) / (2-height)
 		end
 	end
-	
+
 	relativerange = math.min(1, math.max(0, relativerange))
-	
+
 	if entryportalfacing == "up" and exitportalfacing == "up" then --up -> up
 		newx = x + (exitportalX - entryportalX)
 		newy = exitportalY + directrange - 1
 		speedy = -speedy
-		
+
 		rotation = rotation - math.pi
-		
+
 		if live then
 			local grav = yacceleration
 			if self and self.gravity then
@@ -1179,9 +1179,9 @@ function portalcoords(x, y, speedx, speedy, width, height, rotation, animationdi
 			end
 
 			--keep it from bugging out by having a minimum exit speed
-			
+
 			local minspeed = math.sqrt(2*grav*(height))
-			
+
 			if speedy > -minspeed then
 				speedy = -minspeed
 			end
@@ -1190,68 +1190,68 @@ function portalcoords(x, y, speedx, speedy, width, height, rotation, animationdi
 		newx = x + (exitportalX - entryportalX)
 		newy = exitportalY - directrange
 		speedy = -speedy
-		
+
 		rotation = rotation - math.pi
-		
+
 	elseif entryportalfacing == "up" and exitportalfacing == "right" then --up -> right
 		newy = exitportalY - relativerange*(2-height) - height/2 + 1
 		newx = exitportalX - directrange
-		
+
 		speedx, speedy = speedy, -speedx
-		
+
 		rotation = rotation - math.pi/2
-		
+
 	elseif entryportalfacing == "up" and exitportalfacing == "left" then --up -> left
 		newy = exitportalY + relativerange*(2-height) + height/2 - 2
 		newx = exitportalX + directrange - 1
-		
+
 		speedx, speedy = -speedy, speedx
-		
+
 		rotation = rotation + math.pi/2
-		
+
 	elseif (entryportalfacing == "up" and exitportalfacing == "down") then --up -> down
 		newx = x + (exitportalX - entryportalX) - 1
 		newy = exitportalY - directrange
-		
-	
+
+
 		--prevent low-fps bugs in a cheap way:
 		if entryportalY > exitportalY then
 			while newy+.5 + speedy*gdt > entryportalY do
 				newy = newy - 0.01
 			end
-			
+
 			while newy+.5 < exitportalY do
 				newy = newy + 0.01
 			end
 		end
-		
+
 		--prevent porting into block by limiting X, yo
 		if newx <= exitportalX - 2 + width/2 then
 			newx = exitportalX - 2 + width/2
 		elseif newx > exitportalX - width/2 then
 			newx = exitportalX - width/2
 		end
-		
+
 	elseif (entryportalfacing == "down" and exitportalfacing == "up") then --down -> up
 		newx = x + (exitportalX - entryportalX) + 1
 		newy = exitportalY + directrange - 1
-		
+
 	elseif (entryportalfacing == "down" and exitportalfacing == "left") then --down -> left
 		newy = exitportalY - relativerange*(2-height) - height/2
 		newx = exitportalX + directrange - 1
-		
+
 		speedx, speedy = speedy, -speedx
-		
+
 		rotation = rotation - math.pi/2
-		
+
 	elseif (entryportalfacing == "down" and exitportalfacing == "right") then --down -> right
 		newy = exitportalY + relativerange*(2-height) + height/2 - 1
 		newx = exitportalX - directrange
-		
+
 		speedx, speedy = -speedy, speedx
-		
+
 		rotation = rotation + math.pi/2
-		
+
 	--LEFT/RIGHT CODE!
 	elseif (entryportalfacing == "left" and exitportalfacing == "right") then --left -> right
 		newx = exitportalX - directrange
@@ -1262,89 +1262,89 @@ function portalcoords(x, y, speedx, speedy, width, height, rotation, animationdi
 	elseif (entryportalfacing == "right" and exitportalfacing == "right") then --right -> right
 		newx = exitportalX - directrange
 		newy = y + (exitportalY - entryportalY)
-		
+
 		speedx = -speedx
 		if animationdirection == "left" then
 			animationdirection = "right"
 		elseif animationdirection == "right" then
 			animationdirection = "left"
 		end
-		
+
 	elseif (entryportalfacing == "left" and exitportalfacing == "left") then --left -> left
 		newx = exitportalX + directrange - 1
 		newy = y + (exitportalY - entryportalY)
-		
+
 		speedx = -speedx
 		if animationdirection == "left" then
 			animationdirection = "right"
 		elseif animationdirection == "right" then
 			animationdirection = "left"
 		end
-		
+
 	elseif (entryportalfacing == "left" and exitportalfacing == "up") then --left -> up
 		newx = exitportalX + relativerange*(2-width) + width/2 - 1
 		newy = exitportalY + directrange - 1
-		
+
 		speedx, speedy = speedy, -speedx
-		
+
 		rotation = rotation - math.pi/2
-		
-		if live then		
-			--keep it from bugging out by having a minimum exit speed
-			local grav = yacceleration
-			if self and self.gravity then
-				grav = self.gravity
-			end
-			
-			local minspeed = math.sqrt(2*grav*(height))
-			
-			if speedy > -minspeed then
-				speedy = -minspeed
-			end
-		end
-		
-	elseif (entryportalfacing == "right" and exitportalfacing == "up") then --right -> up
-		newx = exitportalX - relativerange*(2-width) - width/2 + 1
-		newy = exitportalY + directrange - 1
-		
-		speedx, speedy = -speedy, speedx
-		
-		rotation = rotation + math.pi/2
-		
+
 		if live then
 			--keep it from bugging out by having a minimum exit speed
 			local grav = yacceleration
 			if self and self.gravity then
 				grav = self.gravity
 			end
-			
+
 			local minspeed = math.sqrt(2*grav*(height))
-			
+
 			if speedy > -minspeed then
 				speedy = -minspeed
 			end
 		end
-		
+
+	elseif (entryportalfacing == "right" and exitportalfacing == "up") then --right -> up
+		newx = exitportalX - relativerange*(2-width) - width/2 + 1
+		newy = exitportalY + directrange - 1
+
+		speedx, speedy = -speedy, speedx
+
+		rotation = rotation + math.pi/2
+
+		if live then
+			--keep it from bugging out by having a minimum exit speed
+			local grav = yacceleration
+			if self and self.gravity then
+				grav = self.gravity
+			end
+
+			local minspeed = math.sqrt(2*grav*(height))
+
+			if speedy > -minspeed then
+				speedy = -minspeed
+			end
+		end
+
 	elseif (entryportalfacing == "left" and exitportalfacing == "down") then --left -> down
 		newx = exitportalX - relativerange*(2-width) - width/2
 		newy = exitportalY - directrange
-		
+
 		speedx, speedy = -speedy, speedx
-		
+
 		rotation = rotation + math.pi/2
-		
+
 	elseif (entryportalfacing == "right" and exitportalfacing == "down") then --right -> down
 		newx = exitportalX + relativerange*(2-width) + width/2 - 2
 		newy = exitportalY - directrange
-		
+
 		speedx, speedy = speedy, -speedx
-		
+
 		rotation = rotation - math.pi/2
 	end
-	
+
 	newx = newx - width/2
 	newy = newy - height/2
-	
+
 	return newx, newy, speedx, speedy, rotation, animationdirection
 end
 
@@ -1352,16 +1352,16 @@ function converttostandard(obj, speedx, speedy)
 	--Convert speedx and speedy to horizontal values
 	local speed = math.sqrt(speedx^2+speedy^2)
 	local speeddir = math.atan2(speedy, speedx)
-	
+
 	local speedx, speedy = math.cos(speeddir-obj.gravitydirection+math.pi/2)*speed, math.sin(speeddir-obj.gravitydirection+math.pi/2)*speed
-				
+
 	if math.abs(speedy) < 0.00001 then
 		speedy = 0
 	end
 	if math.abs(speedx) < 0.00001 then
 		speedx = 0
 	end
-	
+
 	return speedx, speedy
 end
 
@@ -1369,29 +1369,29 @@ function convertfromstandard(obj, speedx, speedy)
 	--reconvert speedx and speedy to actual directions
 	local speed = math.sqrt(speedx^2+speedy^2)
 	local speeddir = math.atan2(speedy, speedx)
-	
+
 	local speedx, speedy = math.cos(speeddir+obj.gravitydirection-math.pi/2)*speed, math.sin(speeddir+obj.gravitydirection-math.pi/2)*speed
-	
+
 	if math.abs(speedy) < 0.00001 then
 		speedy = 0
 	end
 	if math.abs(speedx) < 0.00001 then
 		speedx = 0
 	end
-	
+
 	return speedx, speedy
 end
 
 function unrotate(rotation, gravitydirection, dt)
 	--rotate back to gravitydirection (portals)
 	rotation = math.mod(rotation, math.pi*2)
-	
+
 	if rotation < -math.pi then
 		rotation = rotation + math.pi*2
 	elseif rotation > math.pi then
 		rotation = rotation - math.pi*2
 	end
-	
+
 	if rotation == math.pi and gravitydirection == 0 then
 		rotation = rotation + portalrotationalignmentspeed*dt
 	elseif rotation <= -math.pi/2 and gravitydirection == math.pi*1.5 then
@@ -1407,6 +1407,6 @@ function unrotate(rotation, gravitydirection, dt)
 			rotation = (gravitydirection-math.pi/2)
 		end
 	end
-	
+
 	return rotation
 end

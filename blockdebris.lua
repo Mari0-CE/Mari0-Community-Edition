@@ -6,7 +6,7 @@ function blockdebris:init(x, y, speedx, speedy)
 	self.y = y
 	self.speedx = speedx
 	self.speedy = speedy
-	
+
 	self.timer = 0
 	self.frame = 1
 end
@@ -21,17 +21,17 @@ function blockdebris:update(dt)
 			self.frame = 1
 		end
 	end
-	
+
 	self.speedy = self.speedy + blockdebrisgravity*dt
-	
+
 	self.x = self.x + self.speedx*dt
 	self.y = self.y + self.speedy*dt
-	
-	
+
+
 	if self.y > mapheight then
 		return true
 	end
-	
+
 	return false
 end
 

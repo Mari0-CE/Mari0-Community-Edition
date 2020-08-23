@@ -1,6 +1,6 @@
 /*
    4xGLSLHqFilter shader
-   
+
    Copyright (C) 2005 guest(r) - guest.r@gmail.com
 
    This program is free software; you can redistribute it and/or
@@ -34,7 +34,7 @@ vec4 effect(vec4 vcolor, Image texture, vec2 texture_coords, vec2 pixel_coords)
 	vec2 dg1 = vec2( x,y);  vec2 dg2 = vec2(-x,y);
 	vec2 sd1 = dg1*0.5;     vec2 sd2 = dg2*0.5;
 	vec2 ddx = vec2(x,0.0); vec2 ddy = vec2(0.0,y);
-	
+
 	vec3 c  = Texel(texture, texture_coords).xyz;
 	vec3 i1 = Texel(texture, texture_coords - sd1).xyz;
 	vec3 i2 = Texel(texture, texture_coords - sd2).xyz;
@@ -70,9 +70,9 @@ vec4 effect(vec4 vcolor, Image texture, vec2 texture_coords, vec2 pixel_coords)
 	w3 = k*dot(abs(s1-c)+abs(s3-c),dt)/(0.125*dot(s1+s3,dt)+lum_add);
 	w4 = k*dot(abs(s2-c)+abs(s4-c),dt)/(0.125*dot(s2+s4,dt)+lum_add);
 
-	w1 = clamp(w1+mx,min_w,max_w); 
+	w1 = clamp(w1+mx,min_w,max_w);
 	w2 = clamp(w2+mx,min_w,max_w);
-	w3 = clamp(w3+mx,min_w,max_w); 
+	w3 = clamp(w3+mx,min_w,max_w);
 	w4 = clamp(w4+mx,min_w,max_w);
 
 	return vec4((w1*(i1+i3)+w2*(i2+i4)+w3*(s1+s3)+w4*(s2+s4)+c)/(2.0*(w1+w2+w3+w4)+1.0), 1.0);

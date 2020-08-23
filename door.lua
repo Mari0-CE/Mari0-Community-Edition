@@ -4,12 +4,12 @@ function door:init(x, y, r)
 	self.cox = x
 	self.coy = y
 	self.dir = "ver"
-	
+
 	self.open = false
 	self.timer = 0
-	
+
 	self.input1state = "off"
-	
+
 	--Input list
 	self.r = {unpack(r)}
 	table.remove(self.r, 1)
@@ -29,7 +29,7 @@ function door:init(x, y, r)
 		self.forceclose = (self.r[1] == "true")
 		table.remove(self.r, 1)
 	end
-	
+
 	--PHYSICS STUFF
 	if self.dir == "hor" then
 		self.x = x-1
@@ -43,15 +43,15 @@ function door:init(x, y, r)
 		self.height = 32/16
 	end
 	self.category = 25
-	
+
 	self.mask = {true}
-		
+
 	self.static = true
 	self.active = true
-	
+
 	self.drawable = false
 	self.firstupdate = true
-	
+
 	self:closeopen(self.open)
 	self.targetopen = self.open
 end
@@ -72,7 +72,7 @@ function door:link()
 	end
 end
 
-function door:update(dt)	
+function door:update(dt)
 	if self.targetopen ~= self.open then
 		if self.forceclose then
 			self:closeopen(self.targetopen)
@@ -82,7 +82,7 @@ function door:update(dt)
 			end
 		end
 	end
-	
+
 	if self.open then
 		if self.timer < 1 then
 			self.timer = self.timer + doorspeed*dt
@@ -110,7 +110,7 @@ function door:draw()
 	else
 		rot = self.timer * math.pi
 	end
-	
+
 	if self.dir == "hor" then
 		love.graphics.draw(doorpieceimg, math.floor((self.x+14/16-xscroll-ymod)*16*scale), (self.y-yscroll-4/16)*16*scale, math.pi*.5, scale, scale, 4, 0)
 		love.graphics.draw(doorpieceimg, math.floor((self.x+18/16-xscroll+ymod)*16*scale), (self.y-yscroll-4/16)*16*scale, math.pi*1.5, scale, scale, 4, 0)
@@ -153,7 +153,7 @@ function door:input(t, input)
 		elseif t == "toggle" then
 			self.targetopen = not self.targetopen
 		end
-		
+
 		self.input1state = t
 	end
 end
@@ -161,7 +161,7 @@ end
 function door:closeopen(open)
 	local prev = self.open
 	self.open = open
-	
+
 	if self.open then
 		if self.timer == 1 then
 			self.active = false
@@ -170,7 +170,7 @@ function door:closeopen(open)
 		self.active = true
 		self:pushstuff()
 	end
-	
+
 	if self.open ~= prev then
 		updateranges()
 	end

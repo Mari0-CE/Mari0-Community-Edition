@@ -6,7 +6,7 @@ function portalparticle:init(x, y, color, direction)
 	self.timer = 0
 	self.color = color or {1, 1, 1, 0}
 	self.direction = direction
-	
+
 	self.speedx, self.speedy = 0, 0
 	if self.direction == "left" then
 		self.speedx = -portalparticlespeed
@@ -23,20 +23,20 @@ function portalparticle:update(dt)
 	self.timer = self.timer + dt
 	self.x = self.x + self.speedx*dt
 	self.y = self.y + self.speedy*dt
-	
+
 	self.speedx = self.speedx + math.random(-10, 10)/70
 	self.speedy = self.speedy + math.random(-10, 10)/70
-	
+
 	if self.direction == "up" then
 		if self.speedy > 0 then
 			self.speedy = 0
 		end
 	end
-	
+
 	if self.timer > portalparticleduration then
 		return true
 	end
-	
+
 	return false
 end
 

@@ -5,10 +5,10 @@ function pushbutton:init(x, y, r)
 	self.coy = y
 	self.dir = "left"
 	self.base = "down"
-	
+
 	self.out = false
-	self.outtable = {}	
-	
+	self.outtable = {}
+
 	--Input list
 	self.r = {unpack(r)}
 	table.remove(self.r, 1)
@@ -25,7 +25,7 @@ function pushbutton:init(x, y, r)
 	end
 
 	adduserect(x-11/16, y-11/16, 6/16, 6/16, self)
-	
+
 	self.timer = pushbuttontime
 end
 
@@ -44,12 +44,12 @@ function pushbutton:draw()
 	if self.pusheddown then
 		quad = 2
 	end
-	
+
 	local horscale = scale
 	if self.dir == "right" then
 		horscale = -scale
 	end
-	
+
 	local r = 0
 	if self.base == "left" then
 		r = math.pi/2
@@ -58,7 +58,7 @@ function pushbutton:draw()
 	elseif self.base == "right" then
 		r = math.pi*1.5
 	end
-	
+
 	love.graphics.draw(pushbuttonimg, pushbuttonquad[quad], math.floor((self.cox-0.5-xscroll)*16*scale), (self.coy-yscroll-1)*16*scale, r, horscale, scale, 8, 8)
 end
 

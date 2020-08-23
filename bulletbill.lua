@@ -15,7 +15,7 @@ function rocketlauncher:update(dt)
 		if self:fire() then
 			self.timer = 0
 			self:randomtime()
-			
+
 			--remove on non solids
 			if not tilequads[map[self.x][self.y][1]]:getproperty("collision", self.x, self.y) then
 				return true
@@ -28,18 +28,18 @@ end
 
 function rocketlauncher:fire()
 	--count all bullet bills
-	
+
 	local count = 0
 	for i, v in pairs(objects["enemy"]) do
 		if v.t == "bulletbill" then
 			count = count + 1
 		end
 	end
-	
+
 	if count >= maximumbulletbills then
 		return false
 	end
-	
+
 	--get nearest player
 	local pl = 1
 	for i = 2, players do
@@ -47,7 +47,7 @@ function rocketlauncher:fire()
 			pl = i
 		end
 	end
-	
+
 	if objects["player"][pl].x + 14/16 > self.x + bulletbillrange then
 		table.insert(objects["enemy"], enemy:new(self.x, self.y, "bulletbill"))
 		return true
@@ -62,7 +62,7 @@ function rocketlauncher:randomtime()
 	self.time = rand
 end
 
----------------------- 
+----------------------
 --[[
 bulletbill = class("bulletbill")
 function bulletbill:init(x, y, dir)
@@ -86,7 +86,7 @@ function bulletbill:init(x, y, dir)
 	self.rotation = 0
 	self.autodelete = true
 	self.timer = 0
-	
+
 	--IMAGE STUFF
 	self.drawable = true
 	self.quad = bulletbillquad[spriteset]
@@ -95,20 +95,20 @@ function bulletbill:init(x, y, dir)
 	self.quadcenterX = 8
 	self.quadcenterY = 8
 	self.graphic = bulletbillimg
-	
+
 	self.category = 11
 	self.animationdirection = dir
-	
-	self.mask = {	true, 
+
+	self.mask = {	true,
 					true, false, false, false, true,
 					true, true, true, true, true,
 					true, false, true, true, true,
 					true, true, true, true, true,
 					true, true, true, true, true,
 					true, true, true, true, true}
-					
+
 	self.shot = false
-	
+
 	playsound("bulletbill")
 end
 
@@ -116,13 +116,13 @@ function bulletbill:update(dt)
 	if self.x < self.startx - 1 or self.x > self.startx + 1 then
 		self.customscissor = nil
 	end
-	
+
 	if self.shot then
 		self.speedy = self.speedy + shotgravity*dt
-		
+
 		self.x = self.x+self.speedx*dt
 		self.y = self.y+self.speedy*dt
-		
+
 		--check if goomba offscreen
 		if self.y > 18 then
 			return true
@@ -134,7 +134,7 @@ function bulletbill:update(dt)
 		if self.timer >= bulletbilllifetime then
 			return true
 		end
-	
+
 		if self.rotation ~= 0 then
 			if math.abs(math.abs(self.rotation)-math.pi/2) < 0.1 then
 				self.rotation = -math.pi/2
@@ -142,7 +142,7 @@ function bulletbill:update(dt)
 				self.rotation = 0
 			end
 		end
-		
+
 		if self.speedx < 0 then
 			self.animationdirection = "left"
 		elseif self.speedx > 0 then

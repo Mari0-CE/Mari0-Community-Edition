@@ -7,7 +7,7 @@ function rainboom:init(x, y, dir)
 	self.dir = dir
 	self.timer = 0
 	self.frame = 1
-	
+
 	self.r = 0
 	if dir == "up" then
 		self.r = -math.pi/2
@@ -24,11 +24,11 @@ function rainboom:update(dt)
 		self.frame = self.frame + 1
 		self.timer = self.timer - rainboomdelay
 	end
-	
+
 	if self.frame > rainboomframes then
 		return true
 	end
-	
+
 	return false
 end
 

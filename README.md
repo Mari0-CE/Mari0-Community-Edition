@@ -7,5 +7,5 @@ You can run the .love files found in the [RELEASE](https://github.com/Mari0-CE/M
 
 If you're looking for help or mappacks, or you made a mappack of your own, [the game's forum is here](http://forum.stabyourself.net/viewforum.php?f=8). You can also find a dedicated thread to sharing user-made mappacks [HERE](http://forum.stabyourself.net/viewtopic.php?f=12&t=3591).
 
-You can find the official releases of Mari0 SE [HERE](http://forum.stabyourself.net/viewtopic.php?f=8&t=4634) (note that they are unmaintained and might contain bugs/be incompatible with current mappacks).  
+You can find the official releases of Mari0 SE [HERE](http://forum.stabyourself.net/viewtopic.php?f=8&t=4634) (note that they are unmaintained and might contain bugs/be incompatible with current mappacks).
 If you think you'd prefer Alesan's Entities (a mod for Mari0 1.6 that shares many features with Mari0 SE and Mari0 CE), you can find it [HERE](http://forum.stabyourself.net/viewtopic.php?f=13&t=3636).

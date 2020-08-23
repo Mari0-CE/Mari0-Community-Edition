@@ -34,7 +34,7 @@ function camera:init(x,y, zoom, rot)
 	rot  = rot or 0
 	self.x = x
 	self.y = y
-	
+
 	self.scale = zoom
 	self.rot = rot
 end

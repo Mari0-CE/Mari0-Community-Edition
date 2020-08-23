@@ -5,12 +5,12 @@ function animationtrigger:init(x, y, r)
 	self.y = y
 	self.cox = x
 	self.coy = y
-	
+
 	--Input list
 	self.r = {unpack(r)}
 	table.remove(self.r, 1)
 	table.remove(self.r, 1)
-	
+
 	--IDENTIFIER
 	if #self.r > 0 and self.r[1] ~= "link" then
 		self.id = tostring(self.r[1])
@@ -40,7 +40,7 @@ function animationtrigger:input(t, input)
 			if not animationtriggerfuncs[self.id] then
 				return
 			end
-			
+
 			for i = 1, #animationtriggerfuncs[self.id] do
 				animationtriggerfuncs[self.id][i]:trigger()
 			end

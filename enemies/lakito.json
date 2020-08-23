@@ -1,15 +1,15 @@
 {
 	"description": "you can also add a lakito end tile",
-	
+
 	"quadcount": 2,
-	
+
 	"animationtype": "frames",
 	"animationframes": 1,
 	"animationstart": 1,
 	"animationspeed": 100,
-	
+
 	"nospritesets": false,
-	
+
 	"width": 0.75,
 	"height": 0.75,
 
@@ -24,27 +24,27 @@
 	"gravity": 0,
 	"portalable": false,
 	"category": 21,
-	
+
 	"movement": "follow",
 	"stompable": true,
 	"killsonsides": true,
 	"killsonbottom": true,
-	
+
 	"offsetX": 6,
 	"offsetY": 6,
 	"quadcenterX": 8,
 	"quadcenterY": 12,
-	
+
 	"followspace": 4,
 	"distancetime": 1.5,
-	
+
 	"emancipatecheck": true,
 	"spawnsenemy": "spikeyegg",
 	"spawnenemydelays": [4],
 	"spawnenemyspeedy": -10,
-	
+
 	"throwquadoffset": 1,
 	"throwpreparetime": 0.5,
-	
+
 	"ignorefaithplates": true
 }

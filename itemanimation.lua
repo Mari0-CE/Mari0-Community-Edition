@@ -5,7 +5,7 @@ function itemanimation:init(x, y, i)
 	self.y = y
 	self.i = i
 	self.timer = 0
-	
+
 	self.v = enemiesdata[self.i]
 end
 

@@ -17,10 +17,10 @@ vec4 effect(vec4 vcolor, Image texture, vec2 texture_coords, vec2 pixel_coords)
 	vec2 dg2 = vec2(-x, y);
 	vec2 dx = vec2(x, 0.0);
 	vec2 dy = vec2(0.0, y);
-	
+
 	vec4 texcolor = Texel(texture, texture_coords);
-	
-	vec3 c00 = Texel(texture, texture_coords - dg1).xyz; 
+
+	vec3 c00 = Texel(texture, texture_coords - dg1).xyz;
 	vec3 c10 = Texel(texture, texture_coords - dy).xyz;
 	vec3 c20 = Texel(texture, texture_coords - dg2).xyz;
 	vec3 c01 = Texel(texture, texture_coords - dx).xyz;

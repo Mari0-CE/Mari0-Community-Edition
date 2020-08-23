@@ -6,15 +6,15 @@ function squarewave:init(x, y, r)
 	self.cox = x
 	self.coy = y
 	self.r = r
-	
+
 	self.outtable = {}
-	
+
 	self.timer = 0
 	self.time1 = 1
 	self.time2 = 1
 	self.visible = false
 	self.initial = true
-	
+
 	--Input list
 	self.input1state = "off"
 	self.r = {unpack(r)}
@@ -53,12 +53,12 @@ function squarewave:update(dt)
 			self:out("on")
 		end
 	end
-	
+
 	self.timer = self.timer + dt
 	if self.timer - dt <= self.time1 and self.timer > self.time1 then
 		self:out("on")
 	end
-	
+
 	if self.timer - dt <= self.time2+self.time1 and self.timer > self.time2+self.time1 then
 		self:out("off")
 		self.timer = self.timer - self.time2-self.time1

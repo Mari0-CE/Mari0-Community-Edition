@@ -22,7 +22,7 @@ This shader works best at scale 3x or else the pixels don't match up correctly.
 
 
 vec4 effect(vec4 vcolor, Image texture, vec2 texture_coords, vec2 pixel_coords)
-{ 
+{
 	vec4 rgb = Texel(texture, texture_coords);
 	vec4 intens;
 	if (fract(gl_FragCoord.y * (0.5*4.0/3.0)) > 0.5)

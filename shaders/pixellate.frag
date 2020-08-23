@@ -36,7 +36,7 @@ vec4 effect(vec4 vcolor, Image texture, vec2 texcoord, vec2 pixel_coords)
 	averageColor += ((right - border.x) * (border.y - bottom) / totalArea) * bottomRightColor;
 	averageColor += ((border.x - left)  * (border.y - bottom) / totalArea) * bottomLeftColor;
 	averageColor += ((right - border.x) * (top - border.y)    / totalArea) * topRightColor;
-	
+
 	averageColor.a = 1.0;
 
 	return averageColor;

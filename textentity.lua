@@ -5,11 +5,11 @@ function textentity:init(x, y, r)
 	self.y = y
 	self.power = true
 	self.text = ""
-	
+
 	self.red = 1
 	self.green = 1
 	self.blue = 1
-	
+
 	--Input list
 	self.input1state = "off"
 	self.r = {unpack(r)}
@@ -37,17 +37,17 @@ function textentity:init(x, y, r)
 				print(i, "bool")
 				self.textsplit[n] = globoolSH(string.sub(i,4), "check")
 				self.hasaprefix = true
-				self.boolcache[string.sub(i,4)] = {globoolSH(string.sub(i,4), "check"), n} 
+				self.boolcache[string.sub(i,4)] = {globoolSH(string.sub(i,4), "check"), n}
 			elseif prefix == "gi:" then
 				print(i, "int")
 				self.textsplit[n] = globints[string.sub(i,4)] or "uninit"
 				self.hasaprefix = true
-				self.glintcache[string.sub(i,4)] = {globints[string.sub(i,4)], n} 
+				self.glintcache[string.sub(i,4)] = {globints[string.sub(i,4)], n}
 			elseif prefix == "bi:" then
 				print(i, "g_")
 				self.textsplit[n] = _G[string.sub(i,4)] or "typo"
 				self.hasaprefix = true
-				self.builtincache[string.sub(i,4)] = {_G[string.sub(i,4)], n} 
+				self.builtincache[string.sub(i,4)] = {_G[string.sub(i,4)], n}
 			elseif prefix == "bb:" then
 				local splitup = string.sub(i,4)
 				splitup = splitup:split("/")
@@ -58,7 +58,7 @@ function textentity:init(x, y, r)
 				end
 				self.hasaprefix = true
 				self.boolbincache[splitup[1]] = {splitup[2], splitup[3], globoolSH(splitup[1], "check"), n}
-				
+
 			end
 			print(n,i)
 		end
@@ -69,9 +69,9 @@ function textentity:init(x, y, r)
 	if self.hasaprefix then
 	self.text = table.concat(self.textsplit, " ")
 	end
-	
+
 	end
-	
+
 	--POWER
 	if #self.r > 0 and self.r[1] ~= "link" then
 		self.power = not (self.r[1] == "true")
@@ -119,7 +119,7 @@ function textentity:input(t, input)
 		elseif t == "toggle" then
 			self.power = not self.power
 		end
-		
+
 		self.input1state = t
 	end
 end

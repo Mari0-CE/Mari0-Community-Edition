@@ -88,7 +88,7 @@ setmetatable(Object, { __index = Object.__classDict, __newindex = Object.__class
 function Object.getterFor(theClass, attr) return 'get' .. attr:gsub("^%l", string.upper) end
 function Object.setterFor(theClass, attr) return 'set' .. attr:gsub("^%l", string.upper) end
 function Object.getter(theClass, attributeName, defaultValue)
-  theClass[theClass:getterFor(attributeName)] = function(self) 
+  theClass[theClass:getterFor(attributeName)] = function(self)
     if(self[attributeName]~=nil) then return self[attributeName] end
     return defaultValue
   end

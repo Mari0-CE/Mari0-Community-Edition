@@ -1,6 +1,6 @@
 entity = class("entity")
 
-entitylist = {	
+entitylist = {
 	{t="remove", category="misc", description="place anywhere - acts as an entity eraser", iconauthor="Assasin-Kiashi"},
 	{t="powerup", category="smb stuff", description="place on block - will give either a mushroom or a flower", iconauthor=""},
 	{t="cheepcheep", category="smb stuff", description="place on empty tile - red or white cheep cheep", iconauthor="alesan99"},
@@ -293,50 +293,50 @@ rightclickmenues.warppipe = {
 }
 
 rightclickmenues.funnel = {
-	{t="text", value="direction:"}, 
-	{t="directionbuttons", left=true, up=true, right=true, down=true, default="right"}, 
-	{}, 
-	{t="text", value="speed:"}, 
-	{t="scrollbar", min=funnelminspeed, max=funnelmaxspeed, step=0.01, default=3}, 
-	{}, 
-	{t="checkbox", text="reverse", default="false"}, 
-	{t="checkbox", text="default off", default="false"}, 
+	{t="text", value="direction:"},
+	{t="directionbuttons", left=true, up=true, right=true, down=true, default="right"},
+	{},
+	{t="text", value="speed:"},
+	{t="scrollbar", min=funnelminspeed, max=funnelmaxspeed, step=0.01, default=3},
+	{},
+	{t="checkbox", text="reverse", default="false"},
+	{t="checkbox", text="default off", default="false"},
 	{},
 	{t="linkbutton", value="link reverse", link="reverse"},
 	{t="linkbutton", value="link power", link="power"}
 }
 
 rightclickmenues.emance = {
-	{t="text", value="direction:"}, 
-	{t="directionbuttons", hor=true, ver=true, default="ver"}, 
-	{}, 
-	{t="checkbox", text="default off", default="false"}, 
-	{}, 
+	{t="text", value="direction:"},
+	{t="directionbuttons", hor=true, ver=true, default="ver"},
+	{},
+	{t="checkbox", text="default off", default="false"},
+	{},
 	{t="linkbutton", value="link power", link="power"}
 }
 
 rightclickmenues.laser = {
-	{t="text", value="direction:"}, 
-	{t="directionbuttons", left=true, up=true, right=true, down=true, default="right"}, 
-	{}, 
-	{t="checkbox", text="default off", default="false"}, 
-	{}, 
+	{t="text", value="direction:"},
+	{t="directionbuttons", left=true, up=true, right=true, down=true, default="right"},
+	{},
+	{t="checkbox", text="default off", default="false"},
+	{},
 	{t="linkbutton", value="link power", link="power"}
 }
 
 rightclickmenues.lightbridge = {
-	{t="text", value="direction:"}, 
-	{t="directionbuttons", left=true, up=true, right=true, down=true, default="right"}, 
-	{}, 
-	{t="checkbox", text="default off", default="false"}, 
-	{}, 
+	{t="text", value="direction:"},
+	{t="directionbuttons", left=true, up=true, right=true, down=true, default="right"},
+	{},
+	{t="checkbox", text="default off", default="false"},
+	{},
 	{t="linkbutton", value="link power", link="power"}
 }
 
 rightclickmenues.platformspawner = {
-	{t="text", value="direction:"}, 
-	{t="directionbuttons", up=true, down=true, default="up"}, 
-	{}, 
+	{t="text", value="direction:"},
+	{t="directionbuttons", up=true, down=true, default="up"},
+	{},
 	{t="text", value="width:"},
 	{t="scrollbar", min=1, max=10, step=0.5, default=3},
 	{t="text", value="speed:"},
@@ -357,9 +357,9 @@ rightclickmenues.platform = {
 }
 
 rightclickmenues.scaffold = {
-	{t="text", value="direction:"}, 
+	{t="text", value="direction:"},
 	{t="directionbuttons", down=true, left=true, right=true, up=true, default="right"},
-	{t="checkbox", text="default off", default="false"}, 
+	{t="checkbox", text="default off", default="false"},
 	{t="text", value="width:"},
 	{t="scrollbar", min=0.5, max=15, step=0.5, default=3},
 	{t="text", value="distance:"},
@@ -398,7 +398,7 @@ rightclickmenues.gel = {
 	{t="text", value="type:"},
 	{t="submenu", entries={"blue", "orange", "white", "purple"}, default=1, width=6},
 	{},
-	{t="text", value="direction:"}, 
+	{t="text", value="direction:"},
 	{t="checkbox", text="left", default="false"},
 	{t="checkbox", text="top", default="true"},
 	{t="checkbox", text="right", default="false"},
@@ -406,8 +406,8 @@ rightclickmenues.gel = {
 }
 
 rightclickmenues.geldispenser = {
-	{t="text", value="direction:"}, 
-	{t="directionbuttons", left=true, right=true, down=true, up=true, default="down"}, 
+	{t="text", value="direction:"},
+	{t="directionbuttons", left=true, right=true, down=true, up=true, default="down"},
 	{},
 	{t="text", value="type:"},
 	{t="submenu", entries={"blue", "orange", "white", "purple", "clear"}, default=1, width=6},
@@ -418,11 +418,11 @@ rightclickmenues.geldispenser = {
 }
 
 rightclickmenues.panel = {
-	{t="text", value="direction:"}, 
-	{t="directionbuttons", left=true, up=true, right=true, down=true, default="right"}, 
-	{}, 
-	{t="checkbox", text="start white", default="false"}, 
-	{}, 
+	{t="text", value="direction:"},
+	{t="directionbuttons", left=true, up=true, right=true, down=true, default="right"},
+	{},
+	{t="checkbox", text="start white", default="false"},
+	{},
 	{t="linkbutton", value="link power", link="power"}
 }
 
@@ -498,8 +498,8 @@ rightclickmenues.checkpoint = {
 }
 
 rightclickmenues.portal1 = {
-	{t="text", value="direction:"}, 
-	{t="directionbuttons", left=true, right=true, down=true, up=true, default="up"}, 
+	{t="text", value="direction:"},
+	{t="directionbuttons", left=true, right=true, down=true, up=true, default="up"},
 	{},
 	{t="text", value="portal id:"},
 	{t="submenu", entries={"1", "2", "3", "4", "5", "6", "7", "8"}, default=1, width=1},
@@ -510,8 +510,8 @@ rightclickmenues.portal1 = {
 }
 
 rightclickmenues.portal2 = {
-	{t="text", value="direction:"}, 
-	{t="directionbuttons", left=true, right=true, down=true, up=true, default="up"}, 
+	{t="text", value="direction:"},
+	{t="directionbuttons", left=true, right=true, down=true, up=true, default="up"},
 	{},
 	{t="text", value="portal id:"},
 	{t="submenu", entries={"1", "2", "3", "4", "5", "6", "7", "8"}, default=1, width=1},
@@ -554,7 +554,7 @@ end
 
 function entity:init(img, x, y, width, height)
 	self.image = img
-	self.quad = love.graphics.newQuad((x-1)*17, (y-1)*17, 16, 16, width, height)	
+	self.quad = love.graphics.newQuad((x-1)*17, (y-1)*17, 16, 16, width, height)
 end
 
 function entity:sett(i)

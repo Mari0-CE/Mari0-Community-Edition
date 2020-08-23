@@ -5,7 +5,7 @@ function zginttrigger:init(x, y, r)
 	self.y = y
 	self.cox = x
 	self.coy = y
-	
+
 	self.condition = false
 	self.outtable = {}
 	self.id = false
@@ -14,7 +14,7 @@ function zginttrigger:init(x, y, r)
 	self.r = {unpack(r)}
 	table.remove(self.r, 1)
 	table.remove(self.r, 1)
-	
+
 	self.checktable = false
 	self.conditions = {"greater","less","equal"}
 	--TRIGGER ON PLAYER?
@@ -22,25 +22,25 @@ function zginttrigger:init(x, y, r)
 		self.condition = self.conditions[self.r[1]]
 		table.remove(self.r, 1)
 	end
-	
+
 	--TRIGGER ON ENEMY?
 	if #self.r > 0 and self.r[1] ~= "link" then
-		self.value = self.r[1]	
+		self.value = self.r[1]
 		table.remove(self.r, 1)
 	end
-	
+
 	--REGION
 	if #self.r > 0 and self.r[1] ~= "link" then
 		self.id = self.r[1]
 		table.remove(self.r, 1)
 	end
-	
+
 	self.out = "off"
 end
 
 function zginttrigger:update(dt)
-	local col = globintCH(self.id, self.condition, self.value) 
-	
+	local col = globintCH(self.id, self.condition, self.value)
+
 	if self.out == "off" and col then
 		self.out = "on"
 		for i = 1, #self.outtable do

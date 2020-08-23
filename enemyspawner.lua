@@ -11,13 +11,13 @@ function enemyspawner:init(x, y, r)
 	self.enemytospawn = "goomba"
 	table.remove(self.r, 1)
 	table.remove(self.r, 1)
-	
+
 	--ENEMY NAME
 	if #self.r > 0 and self.r[1] ~= "link" then
 		self.enemytospawn = self.r[1]
 		table.remove(self.r, 1)
 	end
-	
+
 	--Xspeed
 	if #self.r > 0 then
 		if string.sub(self.r[1], 1, 1) == "m" then
@@ -27,7 +27,7 @@ function enemyspawner:init(x, y, r)
 		end
 		table.remove(self.r, 1)
 	end
-	
+
 	--Yspeed
 	if #self.r > 0 then
 		if string.sub(self.r[1], 1, 1) == "m" then

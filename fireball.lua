@@ -16,7 +16,7 @@ function fireball:init(x, y, dir, v)
 	self.active = true
 	self.static = false
 	self.category = 13
-	
+
 	self.mask = {	true,
 					false, true, false, false, true,
 					false, true, false, true, false,
@@ -24,11 +24,11 @@ function fireball:init(x, y, dir, v)
 					true, true, false, false, false,
 					false, true, false, false, true,
 					false, false, false, false, true}
-					
+
 	self.destroy = false
 	self.destroysoon = false
 	--self.gravity = 40
-	
+
 	--IMAGE STUFF
 	self.drawable = true
 	self.graphic = fireballimg
@@ -37,21 +37,21 @@ function fireball:init(x, y, dir, v)
 	self.offsetY = 4
 	self.quadcenterX = 4
 	self.quadcenterY = 4
-	
+
 	self.fireballthrower = v
-	
+
 	self.rotation = 0 --for portals
 	self.gravitydirection = math.pi/2
 	self.timer = 0
 	self.quadi = 1
-	
+
 	self.emancipatecheck = true
 end
 
 function fireball:update(dt)
 	--rotate back to 0 (portals)
 	self.rotation = 0
-	
+
 	--animate
 	self.timer = self.timer + dt
 	if self.destroysoon == false then
@@ -70,17 +70,17 @@ function fireball:update(dt)
 				self.destroy = true
 				self.quadi = 7
 			end
-			
+
 			self.quad = fireballquad[self.quadi]
 			self.timer = self.timer - staranimationdelay
 		end
 	end
-	
+
 	if self.x < xscroll-1 or self.x > xscroll+width+1 or self.y > mapheight and self.active then
 		self.fireballthrower:fireballcallback()
 		self.destroy = true
 	end
-	
+
 	if self.destroy then
 		return true
 	else
@@ -91,14 +91,14 @@ end
 function fireball:leftcollide(a, b)
 	self.x = self.x-.5
 	self:hitstuff(a, b)
-	
+
 	self.speedx = fireballspeed
 	return false
 end
 
 function fireball:rightcollide(a, b)
 	self:hitstuff(a, b)
-	
+
 	self.speedx = -fireballspeed
 	return false
 end
@@ -107,7 +107,7 @@ function fireball:floorcollide(a, b)
 	if a ~= "tile" and a ~= "portalwall" then
 		self:hitstuff(a, b)
 	end
-	
+
 	self.speedy = -fireballjumpforce
 	return false
 end
@@ -125,7 +125,7 @@ function fireball:hitstuff(a, b)
 	if a == "tile" or a == "bulletbill" or a == "portalwall" or a == "spring" then
 		self:explode()
 		playsound("blockhit")
-		
+
 	elseif a == "enemy" or a == "bowser" then
 		if b:shotted("right", false, false, true) ~= false then
 			if a ~= "bowser" then
@@ -139,7 +139,7 @@ end
 function fireball:explode()
 	if self.active then
 		self.fireballthrower:fireballcallback()
-		
+
 		self.destroysoon = true
 		self.quadi = 5
 		self.quad = fireballquad[self.quadi]

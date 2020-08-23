@@ -28,7 +28,7 @@ vec4 effect(vec4 vcolor, Image texture, vec2 texture_coords, vec2 pixel_coords)
 {
 	vec4 sum = vec4(0.0);
 	vec4 bum = vec4(0.0);
-	
+
 	int j;
 	int i;
 
@@ -39,19 +39,19 @@ vec4 effect(vec4 vcolor, Image texture, vec2 texture_coords, vec2 pixel_coords)
 		for (j = -1; j < 1; j++)
 		{
 			sum += Texel(texture, texture_coords + vec2(-i, j)*glaresize) * power;
-			bum += Texel(texture, texture_coords + vec2(j, i)*glaresize) * power;            
+			bum += Texel(texture, texture_coords + vec2(j, i)*glaresize) * power;
 		}
 	}
-	
+
 	vec4 texcolor = vec4(0.0);
 
 	if (Texel(texture, texture_coords).r < 2.0)
 	{
 		texcolor = sum*sum*sum*0.001+bum*bum*bum*0.0080 + Texel(texture, texture_coords);
 	}
-	
+
 	texcolor.a = 1.0;
-	
+
 	return texcolor;
 }
 

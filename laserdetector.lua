@@ -4,9 +4,9 @@ function laserdetector:init(x, y, r)
 	self.cox = x
 	self.coy = y
 	self.dir = "right"
-	
+
 	self.drawable = false
-	
+
 	--Input list
 	self.r = {unpack(r)}
 	table.remove(self.r, 1)
@@ -16,7 +16,7 @@ function laserdetector:init(x, y, r)
 		self.dir = self.r[1]
 		table.remove(self.r, 1)
 	end
-	
+
 	self.outtable = {}
 	self.allowclear = true
 	self.out = "off"
@@ -24,7 +24,7 @@ end
 
 function laserdetector:update(dt)
 	self.allowclear = true
-	
+
 	if self.out ~= self.prevout then
 		self.prevout = self.out
 		for i = 1, #self.outtable do

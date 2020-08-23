@@ -10,19 +10,19 @@ function rightclickmenu:init(x, y, elements, tx, ty)
 	self.elements = elements
 	self.x = x
 	self.y = y
-	
+
 	self.tx = tx
 	self.ty = ty
-	
+
 	--keep menu in window
 	if self.x + rightclickwidth > width*16 then
 		self.x = width*16 - rightclickwidth
 	end
-	
+
 	if self.y + ((rightclickcellheight+rightclickcellspacing)*#self.elements+1) > height*16 then
 		self.y = height*16 - ((rightclickcellheight+rightclickcellspacing)*#self.elements+1)
 	end
-	
+
 	self.t = {}
 	self.variables = {}
 	local actuali = 1
@@ -33,21 +33,21 @@ function rightclickmenu:init(x, y, elements, tx, ty)
 		if v.t == "text" then
 			table.insert(self.t, guielement:new(v.t, self.x, self.y+2+(rightclickcellheight+rightclickcellspacing)*(i-1), v.value))
 			table.insert(self.variables, v)
-			
+
 		elseif v.t == "button" then
 			table.insert(self.t, guielement:new(v.t, self.x, self.y+(rightclickcellheight+rightclickcellspacing)*(i-1), v.value, nil, nil, nil, nil, rightclickwidth-3))
 			table.insert(self.variables, v)
-			
+
 		elseif v.t == "linkbutton" then
 			table.insert(self.t, guielement:new("button", self.x, self.y+(rightclickcellheight+rightclickcellspacing)*(i-1), v.value, rightclickmenu.linkcallback, nil, {nil, self, v.link, false}, nil, rightclickwidth-14))
 			table.insert(self.t, guielement:new("button", self.x+rightclickwidth-11, self.y+(rightclickcellheight+rightclickcellspacing)*(i-1), "x", rightclickmenu.linkcallback, nil, {nil, self, v.link, true}, nil, 8))
 			self.t[#self.t].textcolor = {0.8, 0, 0}
 			table.insert(self.variables, v)
-			
+
 		elseif v.t == "regionselect" then
 			table.insert(self.t, guielement:new("button", self.x, self.y+(rightclickcellheight+rightclickcellspacing)*(i-1), v.value, rightclickmenu.regioncallback, nil, {nil, self, v.region}, nil, rightclickwidth-3))
 			table.insert(self.variables, v)
-			
+
 		elseif v.t == "scrollbar" then
 			local current = 0
 			if string.sub(map[tx][ty][actuali+2], 1, 1) == "m" then
@@ -55,11 +55,11 @@ function rightclickmenu:init(x, y, elements, tx, ty)
 			else
 				current = tonumber(map[tx][ty][actuali+2])
 			end
-			
+
 			table.insert(self.t, guielement:new(v.t, self.x+1, self.y+1+(rightclickcellheight+rightclickcellspacing)*(i-1), rightclickwidth-2, 33, rightclickcellheight, current, "hor", true, v.min, v.max, v.step))
 			set = true
 			self.t[#self.t].backgroundcolor = {0, 0, 0, 1}
-			
+
 		elseif v.t == "input" then
 			local default = v.default
 			if map[tx][ty][actuali+2] then
@@ -67,7 +67,7 @@ function rightclickmenu:init(x, y, elements, tx, ty)
 			end
 			table.insert(self.t, guielement:new(v.t, self.x, self.y+(rightclickcellheight+rightclickcellspacing)*(i-1), rightclickwidth/8-5/8, nil, default, v.max))
 			set = true
-			
+
 		elseif v.t == "checkbox" then
 			local start = false
 			if map[tx][ty][actuali+2] == "true" then
@@ -75,11 +75,11 @@ function rightclickmenu:init(x, y, elements, tx, ty)
 			end
 			table.insert(self.t, guielement:new(v.t, self.x+1, self.y+1+(rightclickcellheight+rightclickcellspacing)*(i-1), nil, start, v.text))
 			set = true
-			
+
 		elseif v.t == "directionbuttons" then
 			local j = 0
 			local add = {}
-			
+
 			for k = 1, 6 do
 				local dir
 				if k == 1 then
@@ -95,35 +95,35 @@ function rightclickmenu:init(x, y, elements, tx, ty)
 				elseif k == 6 then
 					dir = "down"
 				end
-				
+
 				if v[dir] then
 					table.insert(add, guielement:new("button", self.x+j*12, self.y+(rightclickcellheight+rightclickcellspacing)*(i-1), "_dir" .. k, rightclickmenu.directioncallback, nil, {nil, self, #self.t+1, dir}, nil, rightclickcellheight-1))
 					j = j + 1
-					
+
 					if map[tx][ty][actuali+2] == dir then
 						add[#add].bordercolor = {1, 0, 0}
 						add[#add].bordercolorhigh = {1, 0.5, 0.5}
-						
-						
+
+
 						variablesadd["value"] = dir
-					end				
+					end
 				end
 			end
-			
+
 			table.insert(self.t, add)
 			set = true
-			
+
 		elseif v.t == "submenu" then
-		
+
 			local values
 			if type(v.entries) == "function" then
 				values = v.entries()
 			else
 				values = v.entries
 			end
-			
+
 			local start = map[tx][ty][actuali+2]
-			
+
 			if v.actualvalue then
 				for i, w in pairs(values) do
 					if w == start then
@@ -131,27 +131,27 @@ function rightclickmenu:init(x, y, elements, tx, ty)
 					end
 				end
 			end
-			
+
 			if not tonumber(start) then
 				start = 1
 			end
-			
+
 			table.insert(self.t, guielement:new(v.t, self.x, self.y+(rightclickcellheight+rightclickcellspacing)*(i-1), 12.5, v.width or 6, values, start))
 			self.t[#self.t].actualvalue = v.actualvalue
 			set = true
-			
+
 		end
-		
+
 		if set then
 			actuali = actuali + 1
 			table.insert(self.variables, v)
-			
+
 			for j, k in pairs(variablesadd) do
 				self.variables[#self.variables][j] = k
 			end
 		end
-			
-		
+
+
 		self.t[#self.t].active = true
 	end
 end
@@ -172,7 +172,7 @@ function rightclickmenu:draw()
 	love.graphics.setColor(0.2, 0.2, 0.2, 0.7*rightclicka)
 	--background
 	love.graphics.rectangle("fill", self.x*scale, self.y*scale, rightclickwidth*scale, ((rightclickcellheight+rightclickcellspacing)*#self.elements+1)*scale)
-	
+
 	for i, v in pairs(self.t) do
 		if type(self.t[i][1]) == "table" then
 			for j = 1, #self.t[i] do
@@ -199,15 +199,15 @@ function rightclickmenu:mousepressed(x, y, button)
 			end
 		end
 	end
-	
+
 	if r then
 		return true
 	end
-	
+
 	if x < self.x*scale or x >= (self.x+rightclickwidth)*scale or y < self.y*scale or y > (self.y+(rightclickcellheight+rightclickcellspacing)*#self.elements+1)*scale then
 		return false
 	end
-	
+
 	return true
 end
 
@@ -260,7 +260,7 @@ function rightclickmenu:directioncallback(self, y, x)
 		self.t[y][i].bordercolor = {0.5, 0.5, 0.5}
 		self.t[y][i].bordercolorhigh = {1, 1, 1}
 	end
-	
+
 	for i = 1, #self.t[y] do
 		if self.t[y][i].arguments[4] == x then
 			self.t[y][i].bordercolor = {1, 0, 0}
@@ -268,6 +268,6 @@ function rightclickmenu:directioncallback(self, y, x)
 			break
 		end
 	end
-	
+
 	self.variables[y].value = x
 end

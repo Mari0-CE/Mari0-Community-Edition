@@ -8,7 +8,7 @@ EQUALSIGN = {"¨","="}
 --HUGO'S VARIABLES
 portalbouncethreshold = 256
 
---SETABLE VARS--	
+--SETABLE VARS--
 --almost all vars are in "blocks", "blocks per second" or just "seconds". Should be obvious enough what's what.
 portalgundelay = 0.2
 gellifetime = 2
@@ -423,7 +423,7 @@ pedestaltime = 1
 
 --[[ Oh noes this shit sucks
 platformwidthfunction = function (i) return math.floor(i*18+2)/2 end
-platformspeedfunction = function (i) return i*9.5+0.5 end	
+platformspeedfunction = function (i) return i*9.5+0.5 end
 platformspawndelayfunc = function (i) return i*9+1 end
 
 scaffoldwidthfunction = function (i) return math.floor(i*18+2)/2 end
@@ -451,7 +451,7 @@ upfirewaitfunction = function (i) return i*5.9+.1 end
 upfirerandomfunction = function (i) return i*6 end
 
 platformdistancefunction = function (i) return i*14.5+.5 end
-platformtimefunction = function (i) return i*9+1 end 
+platformtimefunction = function (i) return i*9+1 end
 --]]
 
 arcadeexittime = 2

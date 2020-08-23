@@ -6,15 +6,15 @@ function animatedtiletrigger:init(x, y, r)
 	self.r = {unpack(r)}
 	table.remove(self.r, 1)
 	table.remove(self.r, 1)
-	
+
 	self.visible = true
-	
+
 	--VISIBLE
 	if #self.r > 0 and self.r[1] ~= "link" then
 		self.visible = (self.r[1] == "true")
 		table.remove(	self.r, 1)
 	end
-	
+
 	--REGION
 	if #self.r > 0 then
 		local s = self.r[1]:split(":")
@@ -25,7 +25,7 @@ function animatedtiletrigger:init(x, y, r)
 		if string.sub(self.regionY, 1, 1) == "m" then
 			self.regionY = -tonumber(string.sub(self.regionY, 2))
 		end
-		
+
 		self.regionX = tonumber(self.regionX) + self.x - 1
 		self.regionY = tonumber(self.regionY) + self.y - 1
 		table.remove(self.r, 1)
@@ -52,7 +52,7 @@ function animatedtiletrigger:update()
 
 end
 
-function animatedtiletrigger:draw()	
+function animatedtiletrigger:draw()
 	if self.visible then
 		love.graphics.draw(animatedtiletriggerimg, math.floor((self.x-1-xscroll)*16*scale), ((self.y-yscroll-1)*16-8)*scale, 0, scale, scale)
 	end

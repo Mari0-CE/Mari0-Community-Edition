@@ -36,7 +36,7 @@ end
 
 function umsg.recv(data, id)
 	clienttimeouttimer = 0
-	
+
 	if lagtime == 0 then
 		umsg.recv2(data, id)
 	else

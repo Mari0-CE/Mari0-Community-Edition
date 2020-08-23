@@ -3,7 +3,7 @@ button = class("button")
 function button:init(x, y, r)
 	self.cox = x
 	self.coy = y
-	
+
 	--PHYSICS STUFF
 	self.x = x-15/16
 	self.y = y-3/16
@@ -14,11 +14,11 @@ function button:init(x, y, r)
 	self.category = 22
 	self.dir = "down"
 	self.objtable = {"player", "enemy", "box"}
-	
+
 	self.mask = {true}
-	
+
 	self.drawable = false
-	
+
 	--Input list
 	self.input1state = "off"
 	self.r = {unpack(r)}
@@ -29,7 +29,7 @@ function button:init(x, y, r)
 		self.dir = self.r[1]
 		table.remove(self.r, 1)
 	end
-	
+
 	self.out = false
 	self.outtable = {}
 	self.pressings = {}
@@ -58,9 +58,9 @@ function button:update(dt)
 		width = 20/16
 		height = 1
 	end
-	
+
 	local colls = checkrect(x, y, width, height, self.objtable)
-	
+
 	for j = 1, #colls, 2 do
 		local add = true
 		for i, v in pairs(self.pressings) do
@@ -68,7 +68,7 @@ function button:update(dt)
 				add = false
 			end
 		end
-		
+
 		if add then
 			table.insert(self.pressings, objects[colls[j]][colls[j+1]])
 			if objects[colls[j]][colls[j+1]].onbutton then
@@ -76,10 +76,10 @@ function button:update(dt)
 			end
 		end
 	end
-	
-	
+
+
 	local delete = {}
-	
+
 	for i, v in pairs(self.pressings) do
 		local rem = true
 		for j = 1, #colls, 2 do
@@ -87,21 +87,21 @@ function button:update(dt)
 				rem = false
 			end
 		end
-		
+
 		if rem then
 			table.insert(delete, i)
 		end
 	end
-	
+
 	table.sort(delete, function(a,b) return a>b end)
-	
+
 	for i, v in pairs(delete) do
 		if self.pressings[v].onbutton then
 			self.pressings[v]:onbutton(false)
 		end
 		table.remove(self.pressings, v)
 	end
-	
+
 	if (#colls > 0) ~= self.out then
 		self.out = not self.out
 		for i = 1, #self.outtable do
@@ -122,7 +122,7 @@ function button:draw()
 		quad = 2
 	end
 
-	if self.dir == "down" then	
+	if self.dir == "down" then
 		love.graphics.draw(buttonimg, buttonquad[quad], math.floor((self.x-1/16-xscroll)*16*scale), ((self.y-yscroll)*16-10)*scale, 0, scale, scale)
 	elseif self.dir == "left" then
 		love.graphics.draw(buttonimg, buttonquad[quad], math.floor((self.x+4/16-xscroll)*16*scale), ((self.y-yscroll)*16-21)*scale, math.pi/2, scale, scale)

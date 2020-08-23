@@ -5,17 +5,17 @@ function lightbridge:init(x, y, r)
 	self.coy = y
 	self.dir = "right"
 	self.r = {unpack(r)}
-	
+
 	self.childtable = {}
-	
+
 	self.power = true
 	self.glowa = 1
 	self.glowtimer = 0
 	self.input1state = "off"
 	self.children = 0
-	
+
 	self.dir = "right"
-	
+
 	--Input list
 	table.remove(self.r, 1)
 	table.remove(self.r, 1)
@@ -24,7 +24,7 @@ function lightbridge:init(x, y, r)
 		self.dir = self.r[1]
 		table.remove(self.r, 1)
 	end
-	
+
 	--POWER
 	if #self.r > 0 and self.r[1] ~= "link" then
 		if self.r[1] == "true" then
@@ -32,7 +32,7 @@ function lightbridge:init(x, y, r)
 		end
 		table.remove(self.r, 1)
 	end
-	
+
 	self:updaterange()
 end
 
@@ -62,14 +62,14 @@ function lightbridge:input(t, input)
 			self.power = not self.power
 		end
 		self:updaterange()
-		
+
 		self.input1state = t
 	end
 end
 
 function lightbridge:update(dt)
 	self.glowtimer = self.glowtimer + dt*2
-	
+
 end
 
 function lightbridge:getglowa(offset)
@@ -92,7 +92,7 @@ end
 function lightbridge:updaterange()
 	--save old gel values
 	local gels = {}
-	
+
 	for i, v in pairs(self.childtable) do
 		if v.gels.top then
 			table.insert(gels, {x=v.cox, y=v.coy, dir="top", i=v.gels.top})
@@ -103,27 +103,27 @@ function lightbridge:updaterange()
 		elseif v.gels.bottom then
 			table.insert(gels, {x=v.cox, y=v.coy, dir="bottom", i=v.gels.bottom})
 		end
-	end	
-	
+	end
+
 	for i, v in pairs(self.childtable) do
 		v.destroy = true
 	end
 	self.childtable = {}
-	
+
 	if self.power == false then
 		return
 	end
-	
+
 	local dir = self.dir
 	local startx, starty = self.cox, self.coy
 	local x, y = self.cox, self.coy
 	self.children = 0
-	
+
 	local firstcheck = true
 	local quit = false
 	while x >= 1 and x <= mapwidth and y >= 1 and y <= mapheight and (tilequads[map[x][y][1]]:getproperty("collision", x, y) == false or tilequads[map[x][y][1]]:getproperty("grate", x, y)) and (x ~= startx or y ~= starty or dir ~= self.dir or firstcheck == true) and quit == false do
 		firstcheck = false
-		
+
 		self.children = self.children + 1
 		if dir == "right" then
 			x = x + 1
@@ -138,7 +138,7 @@ function lightbridge:updaterange()
 			y = y + 1
 			table.insert(objects["lightbridgebody"], lightbridgebody:new(self, x, y-1, "ver", self.children))
 		end
-		
+
 		--check if current block is a portal
 		local opp = "left"
 		if dir == "left" then
@@ -148,12 +148,12 @@ function lightbridge:updaterange()
 		elseif dir == "down" then
 			opp = "up"
 		end
-		
+
 		local portalx, portaly, portalfacing, infacing = getPortal(x, y, opp)
 		if portalx ~= false and ((dir == "left" and infacing == "right") or (dir == "right" and infacing == "left") or (dir == "up" and infacing == "down") or (dir == "down" and infacing == "up")) then
 			x, y = portalx, portaly
 			dir = portalfacing
-			
+
 			if dir == "right" then
 				x = x + 1
 			elseif dir == "left" then
@@ -164,7 +164,7 @@ function lightbridge:updaterange()
 				y = y + 1
 			end
 		end
-		
+
 		--doors
 		for i, v in pairs(objects["door"]) do
 			if v.active then
@@ -180,7 +180,7 @@ function lightbridge:updaterange()
 			end
 		end
 	end
-	
+
 	--Restore gels! yay!
 	--crosscheck childtable with gels to see any matching shit
 	for j, w in pairs(self.childtable) do
@@ -231,11 +231,11 @@ function lightbridgebody:init(parent, x, y, dir, i)
 	self.static = true
 	self.active = true
 	self.category = 28
-	
+
 	self.mask = {true}
-	
+
 	self.gels = {}
-	
+
 	self:pushstuff()
 end
 
@@ -285,9 +285,9 @@ end
 
 function lightbridgebody:draw()
 	love.graphics.setColor(1, 1, 1)
-	
+
 	local glowa = self.parent:getglowa(self.i)
-	
+
 	if self.dir == "hor" then
 		love.graphics.draw(lightbridgeimg, math.floor((self.cox-xscroll-1)*16*scale), (self.coy-yscroll-1.5)*16*scale, 0, scale, scale)
 		love.graphics.setColor(1, 1, 1, glowa)
@@ -297,9 +297,9 @@ function lightbridgebody:draw()
 		love.graphics.setColor(1, 1, 1, glowa)
 		love.graphics.draw(lightbridgeglowimg, math.floor((self.cox-xscroll-1/16)*16*scale), (self.coy-yscroll-1)*16*scale, math.pi/2, scale, scale, 8, 1)
 	end
-	
+
 	love.graphics.setColor(1, 1, 1)
-	
+
 	--gel
 	for i = 1, 4 do
 		local dir = "top"
@@ -314,7 +314,7 @@ function lightbridgebody:draw()
 			dir = "left"
 			r = math.pi*1.5
 		end
-		
+
 		for i = 1, 4 do
 			if self.gels[dir] == i then
 				if i == 1 then
@@ -326,7 +326,7 @@ function lightbridgebody:draw()
 				elseif i == 4 then
 					img = gel4groundimg
 				end
-				
+
 				love.graphics.draw(img, math.floor((self.cox-.5-xscroll)*16*scale), math.floor((self.coy-1-yscroll)*16*scale), r, scale, scale, 8, 2)
 			end
 		end

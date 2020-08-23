@@ -2,7 +2,7 @@ gel = class("gel")
 
 function gel:init(x, y, id)
 	self.id = id
-	
+
 	--PHYSICS STUFF
 	self.x = x-14/16
 	self.y = y-12/16
@@ -17,7 +17,7 @@ function gel:init(x, y, id)
 	self.gravity = 50
 	self.autodelete = true
 	self.timer = 0
-	
+
 	--IMAGE STUFF
 	self.drawable = true
 	self.quad = gelquad[math.random(3)]
@@ -37,7 +37,7 @@ function gel:init(x, y, id)
 	elseif self.id == 5 then
 		self.graphic = gel5img
 	end
-	
+
 	self.destroy = false
 end
 
@@ -46,24 +46,24 @@ function gel:update(dt)
 	if self.funnel and not self.infunnel then
 		self:enteredfunnel(true)
 	end
-	
+
 	if self.infunnel and not self.funnel then
 		self:enteredfunnel(false)
 	end
-	
+
 	self.funnel = false
 
 	if self.speedy > gelmaxspeed then
 		self.speedy = gelmaxspeed
 	end
-	
+
 	self.rotation = 0
-	
+
 	self.timer = self.timer + dt
 	if self.timer >= gellifetime then
 		return true
 	end
-	
+
 	return self.destroy
 end
 
@@ -74,18 +74,18 @@ function gel:leftcollide(a, b)
 	self.destroy = true
 	if a == "tile" then
 		local x, y = b.cox, b.coy
-		
+
 		if (inmap(x+1, y) and tilequads[map[x+1][y][1]]:getproperty("collision", x+1, y)) or (inmap(x, y) and tilequads[map[x][y][1]]:getproperty("collision", x, y) == false) then
 			return
 		end
-		
+
 		--see if adjsajcjet tile is a better fit
 		if math.floor(self.y+self.height/2)+1 ~= y then
 			if inmap(x, math.floor(self.y+self.height/2)+1) and tilequads[map[x][math.floor(self.y+self.height/2)+1][1]]:getproperty("collision", x, math.floor(self.y+self.height/2)+1) then
 				y = math.floor(self.y+self.height/2)+1
 			end
 		end
-		
+
 		map[x][y]["gels"]["right"] = self.id
 	elseif a == "lightbridgebody" and b.dir == "ver" then
 		b.gels.right = self.id
@@ -99,18 +99,18 @@ function gel:rightcollide(a, b)
 	self.destroy = true
 	if a == "tile" then
 		local x, y = b.cox, b.coy
-		
+
 		if (inmap(x-1, y) and tilequads[map[x-1][y][1]]:getproperty("collision", x-1, y)) or (inmap(x, y) and tilequads[map[x][y][1]]:getproperty("collision", x, y) == false) then
 			return
 		end
-		
+
 		--see if adjsajcjet tile is a better fit
 		if math.floor(self.y+self.height/2)+1 ~= y then
 			if inmap(x, math.floor(self.y+self.height/2)+1) and tilequads[map[x][math.floor(self.y+self.height/2)+1][1]]:getproperty("collision", x, math.floor(self.y+self.height/2)+1) then
 				y = math.floor(self.y+self.height/2)+1
 			end
 		end
-		
+
 		map[x][y]["gels"]["left"] = self.id
 	elseif a == "lightbridgebody" and b.dir == "ver" then
 		b.gels.left = self.id
@@ -124,18 +124,18 @@ function gel:floorcollide(a, b)
 	self.destroy = true
 	if a == "tile" then
 		local x, y = b.cox, b.coy
-		
+
 		if (inmap(x, y-1) and tilequads[map[x][y-1][1]]:getproperty("collision", x, y-1)) or (inmap(x, y) and tilequads[map[x][y][1]]:getproperty("collision", x, y) == false) then
 			return
 		end
-		
+
 		--see if adjsajcjet tile is a better fit
 		if math.floor(self.x+self.width/2)+1 ~= x then
 			if inmap(x, y) and tilequads[map[x][y][1]]:getproperty("collision", x, y) then
 				x = math.floor(self.x+self.width/2)+1
 			end
 		end
-		
+
 		if inmap(x, y) and tilequads[map[x][y][1]]:getproperty("collision", x, y) then
 			if map[x][y]["gels"]["top"] == self.id then
 				if self.speedx > 0 then
@@ -179,7 +179,7 @@ function gel:ceilcollide(a, b)
 		local x, y = b.cox, b.coy
 		if not inmap(x, y+1) or tilequads[map[x][y+1][1]]:getproperty("collision", x, y+1) == false then
 			local x, y = b.cox, b.coy
-			
+
 			map[x][y]["gels"]["bottom"] = self.id
 		end
 	elseif a == "lightbridgebody" and b.dir == "hor" then

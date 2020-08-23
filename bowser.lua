@@ -15,7 +15,7 @@ function bowser:init(x, y, i)
 	self.active = true
 	self.emancipatecheck = true
 	self.category = 16
-	
+
 	self.mask = {	true,
 					false, false, false, false, true,
 					false, true, false, true, false,
@@ -23,9 +23,9 @@ function bowser:init(x, y, i)
 					true, true, false, false, true,
 					false, true, true, false, false,
 					true, false, true, true, true}
-	
+
 	self.gravity = bowsergravity
-	
+
 	--IMAGE STUFF
 	self.drawable = true
 	self.graphic = bowserimg
@@ -35,11 +35,11 @@ function bowser:init(x, y, i)
 	self.offsetY = -2
 	self.quadcenterX = 16
 	self.quadcenterY = 12
-	
+
 	self.rotation = 0 --for portals
 	self.gravitydirection = math.pi/2
 	self.jump = false
-	
+
 	self.animationtimer = 0
 	self.animationdirection = "right"
 	self.fireframe = 1
@@ -50,26 +50,26 @@ function bowser:init(x, y, i)
 	if self.level >= 6 then
 		self.hammers = true
 	end
-	
+
 	self.hp = bowserhealth
-	
+
 	self.shot = false
 	self.fall = false
-	
+
 	self:newtargetx("right")
 end
 
 function bowser:update(dt)
 	if self.shot then
 		self.speedy = self.speedy + shotgravity*dt
-		
+
 		self.x = self.x+self.speedx*dt
 		self.y = self.y+self.speedy*dt
-		
+
 		if self.speedy > bowserfallspeed then
 			self.speedy = bowserfallspeed
 		end
-		
+
 		return false
 	else
 		if self.speedy > bowserfallspeed then
@@ -77,7 +77,7 @@ function bowser:update(dt)
 		end
 
 		self.rotation = unrotate(self.rotation, self.gravitydirection, dt)
-		
+
 		if not self.fall then
 			self.animationtimer = self.animationtimer + dt
 			while self.animationtimer > bowseranimationspeed do
@@ -88,7 +88,7 @@ function bowser:update(dt)
 					self.walkframe = 1
 				end
 			end
-			
+
 			if self.x < self.targetx then
 				self.speedx = bowserspeedforwards
 				if self.x+self.speedx*dt >= self.targetx then
@@ -100,29 +100,29 @@ function bowser:update(dt)
 					self:newtargetx("right")
 				end
 			end
-			
+
 			--stop, hammertime
 			if self.hammers and self.backwards == false then
 				self.hammertimer = self.hammertimer + dt
 				while self.hammertimer > self.hammertime do
 					table.insert(objects["enemy"], enemy:new(self.x+4/16, self.y+.5, "hammer", {}))
 					self.hammertimer = self.hammertimer - self.hammertime
-					
+
 					--new delay
 					self.hammertime = bowserhammertable[math.random(#bowserhammertable)]
 				end
 			end
 		end
-		
+
 		if self.backwards == false and firestarted and firetimer > firedelay-0.5 then
 			self.fireframe = 2
 			self.speedx = 0
 		else
 			self.fireframe = 1
 		end
-		
+
 		self.quad = bowserquad[self.fireframe][self.walkframe]
-		
+
 		--left of player override
 		if not self.fall then
 			if objects["player"][getclosestplayer(self.x+15/16)].x > self.x+15/16 and self.jump == false then
@@ -141,7 +141,7 @@ function bowser:update(dt)
 			end
 		end
 	end
-	
+
 	return false
 end
 
@@ -178,9 +178,9 @@ function bowser:firedeath()
 	self.active = false
 	self.gravity = shotgravity
 	self.speedx = 0
-	
+
 	addpoints(firepoints["bowser"], self.x+self.width/2, self.y)
-	
+
 	--image
 	if marioworld <= 7 then
 		self.graphic = decoysimg

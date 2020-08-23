@@ -23,11 +23,11 @@ function box:init(x, y)
 					true, true, false, false, true,
 					false, true, true, false, false,
 					true, false, true, true, true}
-					
+
 	self.emancipatecheck = true
 
 	self.userect = adduserect(self.x, self.y, 12/16, 12/16, self)
-	
+
 	--IMAGE STUFF
 	self.drawable = true
 	self.graphic = boximg
@@ -36,10 +36,10 @@ function box:init(x, y)
 	self.offsetY = 2
 	self.quadcenterX = 6
 	self.quadcenterY = 6
-	
+
 	self.rotation = 0 --for portals
 	self.gravitydirection = math.pi/2
-	
+
 	self.falling = false
 	self.destroying = false
 	self.outtable = {}
@@ -51,18 +51,18 @@ function box:update(dt)
 	if self.falling == false then
 		friction = boxfriction
 	end
-	
+
 	--Funnels and fuck
 	if self.funnel and not self.infunnel then
 		self:enteredfunnel(true)
 	end
-	
+
 	if self.infunnel and not self.funnel then
 		self:enteredfunnel(false)
 	end
-	
+
 	self.funnel = false
-	
+
 	if not self.pushed then
 		if self.speedx > 0 then
 			self.speedx = self.speedx - friction*dt
@@ -78,16 +78,16 @@ function box:update(dt)
 	else
 		self.pushed = false
 	end
-	
+
 	self.rotation = 0
-	
+
 	if self.parent then
 		local oldx = self.x
 		local oldy = self.y
-		
+
 		self.x = self.parent.x+math.sin(-self.parent.pointingangle)*0.3
 		self.y = self.parent.y-math.cos(-self.parent.pointingangle)*0.3
-		
+
 		if self.portaledframe == false then
 			for h, u in pairs(emancipationgrills) do
 				if u.active then
@@ -103,10 +103,10 @@ function box:update(dt)
 				end
 			end
 		end
-		
+
 		self.rotation = self.parent.rotation
 	end
-	
+
 	self.userect.x = self.x
 	self.userect.y = self.y
 
@@ -114,9 +114,9 @@ function box:update(dt)
 	if self.y > mapheight+2 then
 		self:destroy()
 	end
-	
+
 	self.portaledframe = false
-	
+
 	if self.destroying then
 		return true
 	else
@@ -164,7 +164,7 @@ function box:rightcollide(a, b)
 	if self:globalcollide(a, b, c, d, "right") then
 		return false
 	end
-	
+
 	if a == "button" then
 		self.y = b.y - self.height
 		self.x = b.x - self.width+0.01
@@ -182,11 +182,11 @@ function box:floorcollide(a, b)
 	if self:globalcollide(a, b, c, d, "floor") then
 		return false
 	end
-	
+
 	if self.falling then
 		self.falling = false
 	end
-	
+
 	if a == "enemy" and b.killedbyboxes then
 		if b.stompable then
 			b:stomp()
@@ -205,7 +205,7 @@ function box:passivecollide(a, b)
 	if self:globalcollide(a, b, c, d, "passive") then
 		return false
 	end
-	
+
 	if a == "player" then
 		if self.x+self.width > b.x+b.width then
 			self.x = b.x+b.width
@@ -235,7 +235,7 @@ end
 function box:destroy()
 	self.userect.delete = true
 	self.destroying = true
-	
+
 	for i = 1, #self.outtable do
 		if self.outtable[i][1].input then
 			self.outtable[i][1]:input("toggle", self.outtable[i][2])

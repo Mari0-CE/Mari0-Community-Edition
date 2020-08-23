@@ -15,17 +15,17 @@ function animatedtimer:init(x, y, tileno)
 		self.frametimes[i] = self.length
 	end
 	self.dir = 0
-	
-	
+
+
 	table.insert(animatedtimerlist, self)
 end
 
 function animatedtimer:update(dt)
-	
-	
+
+
 	local oldi = self:geti()
 	self.timer = self.timer + dt*self.dir
-	
+
 	if self.timer > self.length then
 		self.timer = self.length
 		self.dir = 0
@@ -34,13 +34,13 @@ function animatedtimer:update(dt)
 		self.dir = 0
 	end
 	local newi = self:geti()
-	
+
 	if oldi ~= newi then
 		local oldcol = self.quadobj.properties[oldi].collision
 		local oldportalable = self.quadobj.properties[oldi].portalable
-		
+
 		local props = self.quadobj.properties[newi]
-		
+
 		if oldcol ~= props.collision then
 			if props.collision then
 				objects["tile"][self.x .. "-" .. self.y] = tile:new(self.x-1, self.y-1)
@@ -49,7 +49,7 @@ function animatedtimer:update(dt)
 				checkportalremove(self.x, self.y)
 			end
 		end
-		
+
 		if oldportalable ~= props.portalable then
 			if not props.portalable then
 				checkportalremove(self.x, self.y)
@@ -65,7 +65,7 @@ function animatedtimer:input(t)
 		self.dir = -1
 	elseif t == "toggle" then
 		self.dir = -self.dir
-		
+
 		if self.dir == 0 then
 			if self.timer == 0 then
 				self.dir = 1
@@ -82,6 +82,6 @@ function animatedtimer:geti()
 			return i
 		end
 	end
-	
+
 	return 1
 end

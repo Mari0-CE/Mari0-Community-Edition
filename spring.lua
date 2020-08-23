@@ -3,7 +3,7 @@ spring = class("spring")
 function spring:init(x, y)
 	self.cox = x
 	self.coy = y
-	
+
 	--PHYSICS STUFF
 	self.x = x-1
 	self.y = y-31/16
@@ -11,15 +11,15 @@ function spring:init(x, y)
 	self.height = 31/16
 	self.static = true
 	self.active = true
-	
+
 	self.drawable = false
-	
+
 	self.timer = springtime
-	
+
 	self.category = 19
-	
+
 	self.mask = {true}
-	
+
 	self.frame = 1
 end
 

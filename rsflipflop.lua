@@ -9,13 +9,13 @@ function rsflipflop:init(x, y, r)
 	self.r = {unpack(r)}
 	table.remove(self.r, 1)
 	table.remove(self.r, 1)
-	
+
 	--VISIBLE
 	if #self.r > 0 and self.r[1] ~= "link" then
 		self.visible = (self.r[1] == "true")
 		table.remove(self.r, 1)
 	end
-	
+
 	self.outtable = {}
 	self.output = false
 end
@@ -29,7 +29,7 @@ function rsflipflop:link()
 				end
 			end
 		end
-		
+
 		table.remove(self.r, 1)
 		table.remove(self.r, 1)
 		table.remove(self.r, 1)

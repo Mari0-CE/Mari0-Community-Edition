@@ -10,7 +10,7 @@ table.insert(toenter, {name = "mapload",
 		t="trigger",
 		nicename="on map load",
 		entries={
-			
+
 		}
 	}
 })
@@ -24,7 +24,7 @@ table.insert(toenter, {name = "animationtrigger",
 				t="text",
 				value="with id",
 			},
-			
+
 			{
 				t="input",
 				default="myanim",
@@ -143,17 +143,17 @@ table.insert(toenter, {name = "whenintis",
 
 --CONDITIONS:
 
-table.insert(toenter, {name = "noprevsublevel", 
+table.insert(toenter, {name = "noprevsublevel",
 	t = {
 		t="condition",
 		nicename="map started here",
 		entries={
-			
+
 		}
 	}
 })
 
-table.insert(toenter, {name = "worldequals", 
+table.insert(toenter, {name = "worldequals",
 	t = {
 		t="condition",
 		nicename="world is number",
@@ -165,7 +165,7 @@ table.insert(toenter, {name = "worldequals",
 	}
 })
 
-table.insert(toenter, {name = "levelequals", 
+table.insert(toenter, {name = "levelequals",
 	t = {
 		t="condition",
 		nicename="level is number",
@@ -248,7 +248,7 @@ table.insert(toenter, {name = "ifint",
 
 --ACTIONS:
 
-table.insert(toenter, {name = "disablecontrols", 
+table.insert(toenter, {name = "disablecontrols",
 	t = {
 		t="action",
 		nicename="disable controls",
@@ -257,7 +257,7 @@ table.insert(toenter, {name = "disablecontrols",
 				t="text",
 				value="of"
 			},
-			
+
 			{
 				t="playerselection",
 			},
@@ -265,7 +265,7 @@ table.insert(toenter, {name = "disablecontrols",
 	}
 })
 
-table.insert(toenter, {name = "enablecontrols", 
+table.insert(toenter, {name = "enablecontrols",
 	t = {
 		t="action",
 		nicename="enable controls",
@@ -274,7 +274,7 @@ table.insert(toenter, {name = "enablecontrols",
 				t="text",
 				value="of"
 			},
-			
+
 			{
 				t="playerselection",
 			},
@@ -282,7 +282,7 @@ table.insert(toenter, {name = "enablecontrols",
 	}
 })
 
-table.insert(toenter, {name = "sleep", 
+table.insert(toenter, {name = "sleep",
 	t = {
 		t="action",
 		nicename="sleep/wait",
@@ -291,7 +291,7 @@ table.insert(toenter, {name = "sleep",
 				t="numinput",
 				default="1",
 			},
-			
+
 			{
 				t="text",
 				value="seconds",
@@ -300,7 +300,7 @@ table.insert(toenter, {name = "sleep",
 	}
 })
 
-table.insert(toenter, {name = "setcamerax", 
+table.insert(toenter, {name = "setcamerax",
 	t = {
 		t="action",
 		nicename="set camera to x:",
@@ -312,11 +312,11 @@ table.insert(toenter, {name = "setcamerax",
 	}
 })
 
-table.insert(toenter, {name = "setcameray", 
+table.insert(toenter, {name = "setcameray",
 	t = {
 		t="action",
 		nicename="set camera to y:",
-		entries={		
+		entries={
 			{
 				t="numinput",
 			},
@@ -324,7 +324,7 @@ table.insert(toenter, {name = "setcameray",
 	}
 })
 
-table.insert(toenter, {name = "pancameratox", 
+table.insert(toenter, {name = "pancameratox",
 	t = {
 		t="action",
 		nicename="pan camera to x:",
@@ -332,16 +332,16 @@ table.insert(toenter, {name = "pancameratox",
 			{
 				t="numinput",
 			},
-			
+
 			{
 				t="text",
 				value="over",
 			},
-			
+
 			{
 				t="numinput",
 			},
-			
+
 			{
 				t="text",
 				value="seconds",
@@ -350,7 +350,7 @@ table.insert(toenter, {name = "pancameratox",
 	}
 })
 
-table.insert(toenter, {name = "pancameratoy", 
+table.insert(toenter, {name = "pancameratoy",
 	t = {
 		t="action",
 		nicename="pan camera to y:",
@@ -358,16 +358,16 @@ table.insert(toenter, {name = "pancameratoy",
 			{
 				t="numinput",
 			},
-			
+
 			{
 				t="text",
 				value="over",
 			},
-			
+
 			{
 				t="numinput",
 			},
-			
+
 			{
 				t="text",
 				value="seconds",
@@ -376,67 +376,67 @@ table.insert(toenter, {name = "pancameratoy",
 	}
 })
 
-table.insert(toenter, {name = "disablescroll", 
+table.insert(toenter, {name = "disablescroll",
 	t = {
 		t="action",
 		nicename="disable scrolling",
 		entries={
-		
+
 		}
 	}
 })
 
-table.insert(toenter, {name = "enablescroll", 
+table.insert(toenter, {name = "enablescroll",
 	t = {
 		t="action",
 		nicename="enable scrolling",
 		entries={
-		
+
 		}
 	}
 })
 
-table.insert(toenter, {name = "disablexscroll", 
+table.insert(toenter, {name = "disablexscroll",
 	t = {
 		t="action",
 		nicename="disable horizontal scrolling",
 		entries={
-		
+
 		}
 	}
 })
 
-table.insert(toenter, {name = "enablexscroll", 
+table.insert(toenter, {name = "enablexscroll",
 	t = {
 		t="action",
 		nicename="enable horizontal scrolling",
 		entries={
-		
+
 		}
 	}
 })
 
-table.insert(toenter, {name = "disableyscroll", 
+table.insert(toenter, {name = "disableyscroll",
 	t = {
 		t="action",
 		nicename="disable vertical scrolling",
 		entries={
-		
+
 		}
 	}
 })
 
-table.insert(toenter, {name = "enableyscroll", 
+table.insert(toenter, {name = "enableyscroll",
 	t = {
 		t="action",
 		nicename="enable vertical scrolling",
 		entries={
-		
+
 		}
 	}
 })
 
-table.insert(toenter, {name = "setx", 
+table.insert(toenter, {name = "setx",
 	t = {
 		t="action",
 		nicename="move player to x:",
@@ -444,12 +444,12 @@ table.insert(toenter, {name = "setx",
 			{
 				t="playerselection"
 			},
-			
+
 			{
 				t="text",
 				value="to x=",
 			},
-			
+
 			{
 				t="numinput"
 			}
@@ -457,7 +457,7 @@ table.insert(toenter, {name = "setx",
 	}
 })
 
-table.insert(toenter, {name = "sety", 
+table.insert(toenter, {name = "sety",
 	t = {
 		t="action",
 		nicename="move player to y:",
@@ -465,12 +465,12 @@ table.insert(toenter, {name = "sety",
 			{
 				t="playerselection"
 			},
-			
+
 			{
 				t="text",
 				value="to y=",
 			},
-			
+
 			{
 				t="numinput"
 			}
@@ -478,7 +478,7 @@ table.insert(toenter, {name = "sety",
 	}
 })
 
-table.insert(toenter, {name = "playerwalk", 
+table.insert(toenter, {name = "playerwalk",
 	t = {
 		t="action",
 		nicename="animate to walk:",
@@ -486,12 +486,12 @@ table.insert(toenter, {name = "playerwalk",
 			{
 				t="playerselection",
 			},
-			
+
 			{
 				t="text",
 				value="towards"
 			},
-			
+
 			{
 				t="directionselection",
 			}
@@ -499,7 +499,7 @@ table.insert(toenter, {name = "playerwalk",
 	}
 })
 
-table.insert(toenter, {name = "playeranimationstop", 
+table.insert(toenter, {name = "playeranimationstop",
 	t = {
 		t="action",
 		nicename="stop playeranimations:",
@@ -511,27 +511,27 @@ table.insert(toenter, {name = "playeranimationstop",
 	}
 })
 
-table.insert(toenter, {name = "disableanimation", 
+table.insert(toenter, {name = "disableanimation",
 	t = {
 		t="action",
 		nicename="disable this animation",
 		entries={
-			
+
 		}
 	}
 })
 
-table.insert(toenter, {name = "enableanimation", 
+table.insert(toenter, {name = "enableanimation",
 	t = {
 		t="action",
 		nicename="enable this anim",
 		entries={
-			
+
 		}
 	}
 })
 
-table.insert(toenter, {name = "playerjump", 
+table.insert(toenter, {name = "playerjump",
 	t = {
 		t="action",
 		nicename="make jump:",
@@ -543,7 +543,7 @@ table.insert(toenter, {name = "playerjump",
 	}
 })
 
-table.insert(toenter, {name = "playerstopjump", 
+table.insert(toenter, {name = "playerstopjump",
 	t = {
 		t="action",
 		nicename="stop jumping:",
@@ -555,7 +555,7 @@ table.insert(toenter, {name = "playerstopjump",
 	}
 })
 
-table.insert(toenter, {name = "dialogbox", 
+table.insert(toenter, {name = "dialogbox",
 	t = {
 		t="action",
 		nicename="create dialog",
@@ -564,17 +564,17 @@ table.insert(toenter, {name = "dialogbox",
 				t="text",
 				value="with text"
 			},
-			
+
 			{
 				t="input",
 				length=300
 			},
-			
+
 			{
 				t="text",
 				value="and speaker"
 			},
-			
+
 			{
 				t="input"
 			},
@@ -582,17 +582,17 @@ table.insert(toenter, {name = "dialogbox",
 	}
 })
 
-table.insert(toenter, {name = "removedialogbox", 
+table.insert(toenter, {name = "removedialogbox",
 	t = {
 		t="action",
 		nicename="destroy dialogs",
 		entries={
-			
+
 		}
 	}
 })
 
-table.insert(toenter, {name = "playmusic", 
+table.insert(toenter, {name = "playmusic",
 	t = {
 		t="action",
 		nicename="play music",
@@ -604,7 +604,7 @@ table.insert(toenter, {name = "playmusic",
 	}
 })
 
-table.insert(toenter, {name = "playsound", 
+table.insert(toenter, {name = "playsound",
 	t = {
 		t="action",
 		nicename="play sound",
@@ -616,7 +616,7 @@ table.insert(toenter, {name = "playsound",
 	}
 })
 
-table.insert(toenter, {name = "screenshake", 
+table.insert(toenter, {name = "screenshake",
 	t = {
 		t="action",
 		nicename="shake the screen",
@@ -625,11 +625,11 @@ table.insert(toenter, {name = "screenshake",
 				t="text",
 				value="with"
 			},
-			
+
 			{
 				t="numinput",
 			},
-			
+
 			{
 				t="text",
 				value="force",
@@ -638,7 +638,7 @@ table.insert(toenter, {name = "screenshake",
 	}
 })
 
-table.insert(toenter, {name = "addcoins", 
+table.insert(toenter, {name = "addcoins",
 	t = {
 		t="action",
 		nicename="add coins",
@@ -647,7 +647,7 @@ table.insert(toenter, {name = "addcoins",
 				t="numinput",
 				default="1"
 			},
-			
+
 			{
 				t="text",
 				value="coins"
@@ -656,7 +656,7 @@ table.insert(toenter, {name = "addcoins",
 	}
 })
 
-table.insert(toenter, {name = "addpoints", 
+table.insert(toenter, {name = "addpoints",
 	t = {
 		t="action",
 		nicename="add points",
@@ -665,7 +665,7 @@ table.insert(toenter, {name = "addpoints",
 				t="numinput",
 				default="1"
 			},
-			
+
 			{
 				t="text",
 				value="points"
@@ -674,7 +674,7 @@ table.insert(toenter, {name = "addpoints",
 	}
 })
 
-table.insert(toenter, {name = "changebackgroundcolor", 
+table.insert(toenter, {name = "changebackgroundcolor",
 	t = {
 		t="action",
 		nicename="change background color",
@@ -683,27 +683,27 @@ table.insert(toenter, {name = "changebackgroundcolor",
 				t="text",
 				value="to r"
 			},
-			
+
 			{
 				t="numinput",
 				default="255"
 			},
-			
+
 			{
 				t="text",
 				value="g"
 			},
-			
+
 			{
 				t="numinput",
 				default="255"
 			},
-			
+
 			{
 				t="text",
 				value="b"
 			},
-			
+
 			{
 				t="numinput",
 				default="255"
@@ -712,7 +712,7 @@ table.insert(toenter, {name = "changebackgroundcolor",
 	}
 })
 
-table.insert(toenter, {name = "killplayer", 
+table.insert(toenter, {name = "killplayer",
 	t = {
 		t="action",
 		nicename="kill player:",
@@ -724,7 +724,7 @@ table.insert(toenter, {name = "killplayer",
 	}
 })
 
-table.insert(toenter, {name = "changetime", 
+table.insert(toenter, {name = "changetime",
 	t = {
 		t="action",
 		nicename="change time left",
@@ -733,7 +733,7 @@ table.insert(toenter, {name = "changetime",
 				t="text",
 				value="to"
 			},
-		
+
 			{
 				t="numinput",
 				default="400"
@@ -742,7 +742,7 @@ table.insert(toenter, {name = "changetime",
 	}
 })
 
-table.insert(toenter, {name = "loadlevel", 
+table.insert(toenter, {name = "loadlevel",
 	t = {
 		t="action",
 		nicename="load level:",
@@ -751,27 +751,27 @@ table.insert(toenter, {name = "loadlevel",
 				t="text",
 				value="world"
 			},
-		
+
 			{
 				t="numinput",
 				default="1"
 			},
-			
+
 			{
 				t="text",
 				value="level"
 			},
-		
+
 			{
 				t="numinput",
 				default="1"
 			},
-			
+
 			{
 				t="text",
 				value="sublevel"
 			},
-		
+
 			{
 				t="numinput",
 				default="0"
@@ -780,7 +780,7 @@ table.insert(toenter, {name = "loadlevel",
 	}
 })
 
-table.insert(toenter, {name = "disableplayeraim", 
+table.insert(toenter, {name = "disableplayeraim",
 	t = {
 		t="action",
 		nicename="disable aiming",
@@ -789,7 +789,7 @@ table.insert(toenter, {name = "disableplayeraim",
 				t="text",
 				value="of"
 			},
-			
+
 			{
 				t="playerselection",
 			},
@@ -797,7 +797,7 @@ table.insert(toenter, {name = "disableplayeraim",
 	}
 })
 
-table.insert(toenter, {name = "enableplayeraim", 
+table.insert(toenter, {name = "enableplayeraim",
 	t = {
 		t="action",
 		nicename="enable aiming",
@@ -806,7 +806,7 @@ table.insert(toenter, {name = "enableplayeraim",
 				t="text",
 				value="of"
 			},
-			
+
 			{
 				t="playerselection",
 			},
@@ -814,7 +814,7 @@ table.insert(toenter, {name = "enableplayeraim",
 	}
 })
 
-table.insert(toenter, {name = "closeportals", 
+table.insert(toenter, {name = "closeportals",
 	t = {
 		t="action",
 		nicename="close portals",
@@ -823,7 +823,7 @@ table.insert(toenter, {name = "closeportals",
 				t="text",
 				value="of"
 			},
-			
+
 			{
 				t="playerselection",
 			},
@@ -831,7 +831,7 @@ table.insert(toenter, {name = "closeportals",
 	}
 })
 
-table.insert(toenter, {name = "makeplayerlook", 
+table.insert(toenter, {name = "makeplayerlook",
 	t = {
 		t="action",
 		nicename="make player aim to deg",
@@ -839,16 +839,16 @@ table.insert(toenter, {name = "makeplayerlook",
 			{
 				t="playerselection",
 			},
-			
+
 			{
 				t="text",
 				value="to"
 			},
-			
+
 			{
 				t="numinput",
 			},
-			
+
 			{
 				t="text",
 				value="degrees"
@@ -857,7 +857,7 @@ table.insert(toenter, {name = "makeplayerlook",
 	}
 })
 
-table.insert(toenter, {name = "makeplayerfireportal", 
+table.insert(toenter, {name = "makeplayerfireportal",
 	t = {
 		t="action",
 		nicename="make fire portal:",
@@ -866,16 +866,16 @@ table.insert(toenter, {name = "makeplayerfireportal",
 				t="text",
 				value="player"
 			},
-			
+
 			{
 				t="playerselection",
 			},
-			
+
 			{
 				t="text",
 				value="portal #"
 			},
-			
+
 			{
 				t="numinput",
 				default="1"
@@ -884,7 +884,7 @@ table.insert(toenter, {name = "makeplayerfireportal",
 	}
 })
 
-table.insert(toenter, {name = "disableportalgun", 
+table.insert(toenter, {name = "disableportalgun",
 	t = {
 		t="action",
 		nicename="disable portal gun of",
@@ -896,7 +896,7 @@ table.insert(toenter, {name = "disableportalgun",
 	}
 })
 
-table.insert(toenter, {name = "enableportalgun", 
+table.insert(toenter, {name = "enableportalgun",
 	t = {
 		t="action",
 		nicename="enable portal gun of",
@@ -908,7 +908,7 @@ table.insert(toenter, {name = "enableportalgun",
 	}
 })
 
-table.insert(toenter, {name = "dotobool", 
+table.insert(toenter, {name = "dotobool",
 	t = {
 		t="action",
 		nicename="change global boolean",
@@ -916,12 +916,12 @@ table.insert(toenter, {name = "dotobool",
 			{
 				t="input"
 			},
-			
+
 			{
 				t="text",
 				value="to",
 			},
-			
+
 			{
 				t="booleanselection"
 			}
@@ -929,7 +929,7 @@ table.insert(toenter, {name = "dotobool",
 	}
 })
 
-table.insert(toenter, {name = "dotoint", 
+table.insert(toenter, {name = "dotoint",
 	t = {
 		t="action",
 		nicename="change global integer",
@@ -937,16 +937,16 @@ table.insert(toenter, {name = "dotoint",
 			{
 				t="input"
 			},
-			
+
 			{
 				t="text",
 				value="by",
 			},
-			
+
 			{
 				t="intmodselection"
 			},
-			
+
 			{
 				t="numinput"
 			}
@@ -954,7 +954,7 @@ table.insert(toenter, {name = "dotoint",
 	}
 })
 
-table.insert(toenter, {name = "dotoallbool", 
+table.insert(toenter, {name = "dotoallbool",
 	t = {
 		t="action",
 		nicename="change all global booleans",
@@ -963,16 +963,16 @@ table.insert(toenter, {name = "dotoallbool",
 				t="text",
 				value="with prefix",
 			},
-			
+
 			{
 				t="input"
 			},
-			
+
 			{
 				t="text",
 				value="to",
 			},
-			
+
 			{
 				t="booleanselection"
 			}
@@ -980,7 +980,7 @@ table.insert(toenter, {name = "dotoallbool",
 	}
 })
 
-table.insert(toenter, {name = "dotoallint", 
+table.insert(toenter, {name = "dotoallint",
 	t = {
 		t="action",
 		nicename="change all global integers",
@@ -989,20 +989,20 @@ table.insert(toenter, {name = "dotoallint",
 				t="text",
 				value="with prefix",
 			},
-			
+
 			{
 				t="input"
 			},
-			
+
 			{
 				t="text",
 				value="by",
 			},
-			
+
 			{
 				t="intmodselection"
 			},
-			
+
 			{
 				t="numinput"
 			}
@@ -1029,7 +1029,7 @@ end
 function animationguiline:init(tabl, t2)
 	self.t = tabl
 	self.type = t2
-	
+
 	local x = 0
 	self.elements = {}
 	self.elements[1] = {}
@@ -1040,19 +1040,19 @@ function animationguiline:init(tabl, t2)
 		end
 	end
 	local firstwidth = 22--#animationstrings[self.type][start]
-	
+
 	self.deletebutton = guielement:new("button", 0, 0, "x", function() self:delete() end, nil, nil, nil, 8, 0.1)
 	self.deletebutton.textcolor = {0.6, 0, 0}
-	
+
 	self.downbutton = guielement:new("button", 0, 0, "_dir6", function() self:movedown() end, nil, nil, nil, 8, 0.1)
 	self.downbutton.textcolor = {1, 1, 1}
-	
+
 	self.upbutton = guielement:new("button", 0, 0, "_dir4", function() self:moveup() end, nil, nil, nil, 8, 0.1)
 	self.upbutton.textcolor = {1, 1, 1}
-	
+
 	self.elements[1].gui = guielement:new("dropdown", 0, 0, firstwidth, function(val) self:changemainthing(val) end, start, unpack(animationstrings[self.type]))
 	self.elements[1].width = 14+firstwidth*8
-	
+
 	if not self.t[1] then
 		for i, v in pairs(animationlist) do
 			if v.nicename == animationstrings[self.type][1] then
@@ -1061,82 +1061,82 @@ function animationguiline:init(tabl, t2)
 			end
 		end
 	end
-	
+
 	local tid = 1
 	if animationlist[self.t[1] ] then
 		for i, v in ipairs(animationlist[self.t[1] ].entries) do
 			local temp = {}
-			
+
 			if v.t == "text" then
 				temp.t = "text"
 				temp.value = v.value
 				temp.width = #v.value*8
 			else
 				tid = tid + 1
-				
+
 				local dropdown = false
 				local dropwidth
 				local args
-				
+
 				if v.t == "input" then
 					local width = 15
 					local maxwidth = v.length or 30
 					temp.gui = guielement:new("input", 0, 0, width, nil, self.t[tid] or v.default or "", maxwidth, nil, nil, 0)
 					temp.width = 4+width*8
-					
+
 				elseif v.t == "numinput" then
 					local width = 10
 					local maxwidth = 30
 					temp.gui = guielement:new("input", 0, 0, width, nil, self.t[tid] or v.default or "0", maxwidth, nil, nil, 0)
 					temp.width = 4+width*8
-					
+
 				elseif v.t == "playerselection" then
 					dropdown = true
 					dropwidth = 8
 					args = {"everyone", "player 1", "player 2", "player 3", "player 4"}
-					
+
 				elseif v.t == "worldselection" then
 					dropdown = true
 					dropwidth = 1
 					args = {"1", "2", "3", "4", "5", "6", "7", "8"}
-					
+
 				elseif v.t == "levelselection" then
 					dropdown = true
 					dropwidth = 1
 					args = {"1", "2", "3", "4"}
-					
+
 				elseif v.t == "sublevelselection" then
 					dropdown = true
 					dropwidth = 4
 					args = {"main", "1", "2", "3", "4", "5"}
-					
+
 				elseif v.t == "directionselection" then
 					dropdown = true
 					dropwidth = 5
 					args = {"right", "left"}
-				
+
 				elseif v.t == "booleanselection" then
 					dropdown = true
 					dropwidth = 5
 					args = {"true", "false", "flip"}
-				
+
 				elseif v.t == "intmodselection" then
 					dropdown = true
 					dropwidth = 8
 					args = {"add", "subtract", "set"}
-				
+
 				elseif v.t == "integerselection" then
 					dropdown = true
 					dropwidth = 8
 					args = {"greater", "less", "equal"}
-					
+
 				elseif v.t == "musicselection" then
 					dropdown = true
 					dropwidth = 15
 					args = {unpack(musiclist)}
-					
+
 				end
-				
+
 				if dropdown then
 					local j = #self.elements+1
 					local starti = 1
@@ -1145,12 +1145,12 @@ function animationguiline:init(tabl, t2)
 							starti = j
 						end
 					end
-					
+
 					temp.gui = guielement:new("dropdown", 0, 0, dropwidth, function(val) self:submenuchange(val, j) end, starti, unpack(args))
 					temp.width = dropwidth*8+14
 				end
 			end
-			
+
 			table.insert(self.elements, temp)
 		end
 	end
@@ -1170,23 +1170,23 @@ function animationguiline:draw(x, y)
 	love.graphics.setColor(0, 0, 0)
 	love.graphics.rectangle("fill", x*scale, y*scale, (width*16-x)*scale, 11*scale)
 	love.graphics.setColor(1, 1, 1)
-	
+
 	local xadd = 0
 	self.deletebutton.x = x+xadd
 	self.deletebutton.y = y
 	self.deletebutton:draw()
 	xadd = xadd + 10
-	
+
 	self.downbutton.x = x+xadd
 	self.downbutton.y = y
 	self.downbutton:draw()
 	xadd = xadd + 10
-	
+
 	self.upbutton.x = x+xadd
 	self.upbutton.y = y
 	self.upbutton:draw()
 	xadd = xadd + 12
-	
+
 	for i = 1, #self.elements do
 		if self.elements[i].t == "text" then
 			love.graphics.setColor(1, 1, 1)
@@ -1206,17 +1206,17 @@ function animationguiline:click(x, y, button)
 	if self.deletebutton:click(x, y, button) then
 		return true
 	end
-	
+
 	if self.downbutton:click(x, y, button) then
 		return true
 	end
-	
+
 	if self.upbutton:click(x, y, button) then
 		return true
 	end
-	
+
 	local rettrue
-	
+
 	local i = 1
 	while i <= #self.elements do
 		if self.elements[i].gui then
@@ -1226,7 +1226,7 @@ function animationguiline:click(x, y, button)
 		end
 		i = i + 1
 	end
-	
+
 	return rettrue
 end
 
@@ -1285,6 +1285,6 @@ function animationguiline:haspriority()
 			end
 		end
 	end
-	
+
 	return false
 end

@@ -13,7 +13,7 @@ function actionblock:init(x, y)
 	self.static = true
 	self.category = 2
 	self.mask = {true}
-	
+
 	self.state = "off"
 	self.outtable = {}
 	self.timer = blockbouncetime
@@ -38,7 +38,7 @@ function actionblock:draw()
 			bounceyoffset = (2 - self.timer / (blockbouncetime/2)) * blockbounceheight
 		end
 	end
-	
+
 	local q = 1
 	if self.state == "on" then
 		q = 2
@@ -55,7 +55,7 @@ function actionblock:floorcollide(a, b, c, d)
 	if self.timer == blockbouncetime then
 		self.timer = 0
 	end
-	
+
 	self:out(self.state)
 end
 

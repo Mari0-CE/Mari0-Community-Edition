@@ -5,7 +5,7 @@ function zgbooltrigger:init(x, y, r)
 	self.y = y
 	self.cox = x
 	self.coy = y
-	
+
 	self.inverted = false
 	self.outtable = {}
 	self.id = false
@@ -14,41 +14,41 @@ function zgbooltrigger:init(x, y, r)
 	self.r = {unpack(r)}
 	table.remove(self.r, 1)
 	table.remove(self.r, 1)
-	
+
 	self.checktable = false
-	
+
 	--TRIGGER ON PLAYER?
 	if #self.r > 0 and self.r[1] ~= "link" then
 		if self.r[1] == "true" then
 			self.inverted = true
-		end			
+		end
 		table.remove(self.r, 1)
 	end
-	
+
 	--TRIGGER ON ENEMY?
 	if #self.r > 0 and self.r[1] ~= "link" then
-		self.id = self.r[1]	
+		self.id = self.r[1]
 		table.remove(self.r, 1)
 	end
-	
+
 	--REGION
 	if #self.r > 0 and self.r[1] ~= "link" then
 		if self.r[1] == "true" then
 			self.invisible = true
-		end	
+		end
 		table.remove(self.r, 1)
 	end
-	
+
 	self.out = "off"
 end
 
 function zgbooltrigger:update(dt)
-	local col = globoolSH(self.id, "check") 
-	
+	local col = globoolSH(self.id, "check")
+
 	if self.inverted then
 		col = not col
 	end
-	
+
 	if self.out == "off" and col then
 		self.out = "on"
 		for i = 1, #self.outtable do
@@ -72,7 +72,7 @@ function zgbooltrigger:draw()
 	if self.out=="on" then
 		quad = 2
 	end
-	
+
 	if not self.invisible then
 		love.graphics.drawq(zgbooltriggerimg, zgbooltriggerquad[quad], math.floor((self.x-1-xscroll)*16*scale), ((self.y-yscroll-1)*16-8)*scale, 0, scale, scale)
 	end

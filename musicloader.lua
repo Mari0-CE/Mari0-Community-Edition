@@ -20,7 +20,7 @@ music = {
 
 function getfilepath(name)
 	local musicpaths = {"sounds/", "mappacks/" .. mappack .. "/music/"}
-	
+
 	for i = 1, #musicpaths do
 		if love.filesystem.getInfo(musicpaths[i] .. name, "file") then
 			return musicpaths[i] .. name
@@ -34,7 +34,7 @@ function music:load(name)
 		print(string.format("can't load music %q: can't find file!", name))
 		return false
 	end
-	
+
 	if not self.loaded[filepath] then
 		local loaded, source = pcall(love.audio.newSource, filepath, MUSICFIX)
 		if loaded then
@@ -47,7 +47,7 @@ function music:load(name)
 			return false
 		end
 	end
-	
+
 	return true
 end
 
@@ -58,12 +58,12 @@ function music:play(name, fast)
 			name = newname
 		end
 	end
-	
+
 	-- try to load source from disk if it hasn't been loaded already
 	if not self.loaded[name] and not self:load(name) then
 		return
 	end
-	
+
 	if self.loaded[name] then
 		if soundenabled then
 			self.loaded[name]:stop()
@@ -81,7 +81,7 @@ function music:stop(name, fast)
 			name = newname
 		end
 	end
-	
+
 	if self.loaded[name] then
 		self.loaded[name]:stop()
 		self.loaded[name]:seek(0)

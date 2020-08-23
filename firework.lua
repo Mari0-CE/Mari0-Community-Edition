@@ -9,11 +9,11 @@ end
 
 function fireworkboom:update(dt)
 	self.timer = self.timer + dt
-	
+
 	if self.timer >= fireworksoundtime and self.timer-dt < fireworksoundtime then
 		playsound("boom")
 	end
-	
+
 	if self.timer > fireworkdelay then
 		return true
 	end
@@ -28,6 +28,6 @@ function fireworkboom:draw()
 	if self.timer > framelength*2 then
 		frame = 7
 	end
-	
+
 	love.graphics.draw(fireballimg, fireballquad[frame], math.floor((self.x-xscroll)*16*scale), (self.y-yscroll-0.5)*16*scale, 0, scale, scale, 8, 8)
 end

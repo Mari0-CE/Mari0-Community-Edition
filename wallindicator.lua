@@ -6,15 +6,15 @@ function wallindicator:init(x, y, r)
 	self.r = {unpack(r)}
 	table.remove(self.r, 1)
 	table.remove(self.r, 1)
-	
+
 	self.lighted = false
-	
+
 	--default off
 	if #self.r > 0 and self.r[1] ~= "link" then
 		self.lighted = (self.r[1] == "true")
 		table.remove(self.r, 1)
 	end
-	
+
 	self.input1state = "off"
 end
 
@@ -44,7 +44,7 @@ function wallindicator:draw()
 	if self.lighted then
 		quad = 2
 	end
-	
+
 	love.graphics.draw(wallindicatorimg, wallindicatorquad[quad], math.floor((self.x-1-xscroll)*16*scale), ((self.y-yscroll-1)*16-8)*scale, 0, scale, scale)
 end
 
@@ -57,7 +57,7 @@ function wallindicator:input(t, input)
 		elseif t == "toggle" then
 			self.lighted = not self.lighted
 		end
-		
+
 		self.input1state = t
 	end
 end

@@ -5,24 +5,24 @@ function walltimer:init(x, y, r)
 	self.y = y
 	self.cox = x
 	self.coy = y
-	
+
 	self.outtable = {}
 	self.lighted = false
 	self.time = 1
 	self.quad = 1
-	
+
 	self.input1state = "off"
-	
+
 	--Input list
 	self.r = {unpack(r)}
 	table.remove(self.r, 1)
-	table.remove(self.r, 1)	
+	table.remove(self.r, 1)
 	--TIME
 	if #self.r > 0 and self.r[1] ~= "link" then
 		self.time = tonumber(self.r[1])
 		table.remove(self.r, 1)
 	end
-	
+
 	self.timer = self.time
 end
 
@@ -59,7 +59,7 @@ function walltimer:update(dt)
 				self.quad = i+1
 			end
 		end
-		
+
 		if self.timer >= self.time then
 			self:out("off")
 			self.timer = self.time
@@ -69,7 +69,7 @@ end
 
 function walltimer:draw()
 	love.graphics.setColor(1, 1, 1)
-	
+
 	love.graphics.draw(walltimerimg, walltimerquad[self.quad], math.floor((self.x-1-xscroll)*16*scale), ((self.y-yscroll-1)*16-8)*scale, 0, scale, scale)
 end
 
@@ -97,7 +97,7 @@ function walltimer:input(t, input)
 			self.lighted = false
 			self:out("on")
 		end
-		
+
 		self.input1state = t
 	end
 end

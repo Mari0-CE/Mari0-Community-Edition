@@ -1,27 +1,27 @@
 function enemies_load()
 	defaultvalues = {quadcount=1, quadno=1}
-	
+
 	nobasevalues = {"description"} --values that aren't loaded from base
-	
+
 	enemiesdata = {}
 	enemies = {}
-	
+
 	--ENEMIIIIEEES
 	loaddelayed = {}
-	
+
 	local fl = love.filesystem.getDirectoryItems("enemies/")
 	local fl2 = love.filesystem.getDirectoryItems("mappacks/" .. mappack .. "/enemies/")
-	
+
 	local realfl = {}
-	
+
 	for i = 1, #fl do
 		table.insert(realfl, "enemies/" .. fl[i]) --STANDARD ENEMIES
 	end
-	
+
 	for i = 1, #fl2 do
 		table.insert(realfl, "mappacks/" .. mappack .. "/enemies/" .. fl2[i]) --MAPPACK ENEMIES
 	end
-	
+
 	for i = 1, #realfl do
 		if string.sub(realfl[i], -4) == "json" then
 			loadenemy(realfl[i])
@@ -35,9 +35,9 @@ function loadenemy(filename)
 	for i = 1, #ss-1 do
 		folder = folder .. ss[i] .. "/"
 	end
-	
+
 	local s = string.sub(ss[#ss], 1, -6):lower()
-	
+
 	--CHECK FOR - , ; * AND WHATEVER ELSE WOULD BREAK MAPS
 	local skip = false
 	local badlist = {",", ";", "-", "*"} --badlist sounds like a movie
@@ -46,11 +46,11 @@ function loadenemy(filename)
 			skip = true
 		end
 	end
-	
+
 	if not skip then --bad letter
 		local data = love.filesystem.read(filename)
 		data = data:gsub("\r", "")
-		
+
 		if string.sub(data, 1, 4) == "base" then
 			local split = data:split("\n")
 			local base = string.sub(split[1], 6)
@@ -62,11 +62,11 @@ function loadenemy(filename)
 						newdata = newdata .. "\n"
 					end
 				end
-				
+
 				enemiesdata[s] = usebase(enemiesdata[base])
-				
+
 				local temp = JSON:decode(newdata)
-				
+
 				for i, v in pairs(temp) do
 					enemiesdata[s][i] = v
 				end
@@ -84,7 +84,7 @@ function loadenemy(filename)
 		else
 			enemiesdata[s] = JSON:decode(data)
 		end
-		
+
 		--CASE INSENSITVE THING
 		for i, v in pairs(enemiesdata[s]) do
 			local a = i:lower()
@@ -104,31 +104,31 @@ function loadenemy(filename)
 				end
 			end
 		end
-		
+
 		for i, v in pairs(defaultvalues) do
 			if enemiesdata[s][i] == nil then
 				enemiesdata[s][i] = v
 			end
 		end
-		
+
 		--Load graphics if it exists
 		if love.filesystem.getInfo(folder .. s .. ".png") then
 			enemiesdata[s].graphic = love.graphics.newImage(folder .. s .. ".png")
 		end
-		
+
 		--Set up quads if given
 		if enemiesdata[s].graphic and enemiesdata[s].quadcount then
 			local imgwidth, imgheight = enemiesdata[s].graphic:getWidth(), enemiesdata[s].graphic:getHeight()
 			local quadwidth = imgwidth/enemiesdata[s].quadcount
 			local quadheight = imgheight/4
-			
+
 			if math.floor(quadwidth) == quadwidth and math.floor(quadheight) == quadheight then
 				if enemiesdata[s].nospritesets then
 					quadheight = quadheight*4
 				end
-				
+
 				enemiesdata[s].quadbase = {}
-				
+
 				for y = 1, 4 do
 					enemiesdata[s].quadbase[y] = {}
 					for x = 1, enemiesdata[s].quadcount do
@@ -141,7 +141,7 @@ function loadenemy(filename)
 				end
 			end
 		end
-		
+
 		--check if graphic for enemy exists
 		if enemiesdata[s].quadbase and enemiesdata[s].graphic then
 			enemiesdata[s].drawable = true
@@ -152,10 +152,10 @@ function loadenemy(filename)
 				enemiesdata[s].quad = enemiesdata[s].quadbase[spriteset][enemiesdata[s].quadno]
 			end
 		end
-		
+
 		table.insert(enemies, s)
-		
-		
+
+
 		if loaddelayed[s] and #loaddelayed[s] > 0 then
 			for j = #loaddelayed[s], 1, -1 do
 				loadenemy(loaddelayed[s][j]) --RECURSIVE PROGRAMMING AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAH
@@ -169,7 +169,7 @@ end
 
 function usebase(t)
 	local r = {}
-	
+
 	for i, v in pairs(t) do
 		check = true
 		for j in pairs(nobasevalues) do
@@ -184,6 +184,6 @@ function usebase(t)
 			end
 		end
 	end
-	
+
 	return r
 end

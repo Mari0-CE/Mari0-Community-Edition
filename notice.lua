@@ -15,9 +15,9 @@ end
 function notice.update(dt)
 	for i = #notice.notices, 1, -1 do
 		local v = notice.notices[i]
-		
+
 		v.life = v.life - dt
-		
+
 		if v.life <= 0 then
 			table.remove(notice.notices, i)
 		end
@@ -28,7 +28,7 @@ function notice.draw()
 	local y = 0
 	for i = #notice.notices, 1, -1 do
 		local v = notice.notices[i]
-		
+
 		--get width by finding longest line
 		local split = v.text:split("|")
 		local longest = #split[1]
@@ -37,28 +37,28 @@ function notice.draw()
 				longest = #split[i]
 			end
 		end
-		
+
 		local height = #split*10+3
-		
+
 		actualy = notice.gety(y, v.life, height, v.duration)
-		
+
 		local targetrect = {width*16 - longest*8-5, actualy, longest*8+5, height}
 		local scissor = {(width*16 - longest*8-5)*scale, y*scale, (longest*8+5)*scale, (actualy-y+height)*scale}
-		
+
 		love.graphics.setScissor(unpack(scissor))
-		
+
 		love.graphics.setColor(0, 0, 0, 0.8)
 		love.graphics.rectangle("fill", targetrect[1]*scale, targetrect[2]*scale, targetrect[3]*scale, targetrect[4]*scale)
-		
+
 		love.graphics.setColor(1, 1, 1, 1)
 		drawrectangle(targetrect[1]+1, targetrect[2]+1, targetrect[3]-2, targetrect[4]-2)
-		
+
 		love.graphics.setColor(v.color)
 		properprint(v.text, (targetrect[1]+2)*scale, (actualy+3)*scale)
 		y = actualy+height
 		love.graphics.setScissor()
 	end
-	
+
 	love.graphics.setColor(1, 1, 1)
 end
 

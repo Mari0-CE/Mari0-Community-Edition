@@ -14,10 +14,10 @@ function cubedispenser:init(x, y, r)
 	self.active = true
 	self.category = 7
 	self.mask = {true, false, false, false, false, false, false, false, true}
-	
+
 	self.timer = cubedispensertime
 	self.t = "box"
-	
+
 	--Input list
 	self.input1state = "off"
 	self.r = {unpack(r)}
@@ -30,20 +30,20 @@ function cubedispenser:init(x, y, r)
 		end
 		table.remove(self.r, 1)
 	end
-	
+
 	--DROP ON LOAD
 	if #self.r > 0 and self.r[1] ~= "link" then
 		self.spawnondestroy = self.r[1] == "true"
 		table.remove(self.r, 1)
 	end
-	
+
 	--TYPE
 	if #self.r > 0 and self.r[1] ~= "link" then
 		self.t = self.r[1]
-		
+
 		table.remove(self.r, 1)
 	end
-	
+
 	self.inputactive = false
 	self.boxexists = false
 	self.box = nil
@@ -58,7 +58,7 @@ function cubedispenser:input(t, input)
 					self:removebox()
 				end
 			end
-			
+
 			self.timer = 0
 		end
 	end
@@ -83,7 +83,7 @@ end
 function cubedispenser:update(dt)
 	if self.timer < cubedispensertime then
 		self.timer = self.timer + dt
-		
+
 		if self.timer > 0.6 and self.boxexists == false then
 			local temp
 			if self.t == "box" then
@@ -92,20 +92,20 @@ function cubedispenser:update(dt)
 				table.insert(objects["box"], temp)
 			elseif tablecontains(enemies, self.t) then
 				temp = enemy:new(self.cox, self.coy+2-enemiesdata[self.t].height, self.t)
-				
+
 				if self.spawnondestroy then
 					temp:addoutput(self, "drop_enemy_triggered")
 				end
-				
+
 				temp.mask[7] = true
 				table.insert(objects["enemy"], temp)
 			end
-			
+
 			self.box = temp
 			self.boxexists = true
 		elseif self.timer > 1 then
 			self.timer = 1
-		end	
+		end
 	end
 	return false
 end

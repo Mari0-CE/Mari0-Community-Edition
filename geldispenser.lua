@@ -15,14 +15,14 @@ function geldispenser:init(x, y, r)
 	self.active = true
 	self.category = 7
 	self.mask = {true, false, false, false, false, false}
-	
+
 	self.dir = "down"
 	self.id = 1
 	self.timer = 0
 	self.input1state = "off"
-	
+
 	self.dropping = true
-	
+
 	--Input list
 	self.r = {unpack(r)}
 	table.remove(self.r, 1)
@@ -44,7 +44,7 @@ function geldispenser:init(x, y, r)
 		end
 		table.remove(self.r, 1)
 	end
-	
+
 	self:link()
 end
 
@@ -67,7 +67,7 @@ end
 function geldispenser:update(dt)
 	if self.dropping then
 		self.timer = self.timer + dt
-		
+
 		while self.timer > geldispensespeed do
 			self.timer = self.timer - geldispensespeed
 			if self.dir == "down" then
@@ -87,7 +87,7 @@ function geldispenser:update(dt)
 			end
 		end
 	end
-	
+
 	return false
 end
 
@@ -112,7 +112,7 @@ function geldispenser:input(t, input)
 		elseif t == "toggle" then
 			self.dropping = not self.dropping
 		end
-		
+
 		self.input1state = t
 	end
 end

@@ -5,7 +5,7 @@ function portalent:init(x, y, i, r)
 	self.coy = y
 	self.x = x
 	self.y = y
-	
+
 	self.dir = "up"
 	self.portal = i
 	self.id = 1
@@ -16,29 +16,29 @@ function portalent:init(x, y, i, r)
 	self.r = {unpack(r)}
 	table.remove(self.r, 1)
 	table.remove(self.r, 1)
-	
+
 	--DIRECTION
 	if #self.r > 0 and self.r[1] ~= "link" then
 		self.dir = self.r[1]
 		table.remove(self.r, 1)
 	end
-	
+
 	--ID
 	if #self.r > 0 then
 		self.id = tonumber(self.r[1])
 		table.remove(self.r, 1)
 	end
-	
+
 	--POWER
 	if #self.r > 0 and self.r[1] ~= "link" then
 		self.power = self.r[1] == "true"
 		table.remove(self.r, 1)
 	end
-	
+
 	if not portals[self.id] then
 		portals[self.id] = portal:new(self.id)
 	end
-	
+
 	if self.power then
 		self:trigger()
 	end
@@ -61,11 +61,11 @@ function portalent:link()
 end
 
 function portalent:update(dt)
-	
+
 end
 
 function portalent:draw()
-	
+
 end
 
 function portalent:input(t, input)
@@ -78,13 +78,13 @@ function portalent:input(t, input)
 		elseif t == "toggle" then
 			self.power = not self.power
 		end
-		
+
 		if self.power and not oldpower then
 			self:trigger()
 		elseif not self.power and oldpower then
 			self:rem()
 		end
-		
+
 		self.input1state = t
 	end
 end

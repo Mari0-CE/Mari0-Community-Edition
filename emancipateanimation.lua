@@ -17,11 +17,11 @@ function emancipateanimation:init(x, y, width, height, img, quad, speedx, speedy
 	self.offsetY = offsetY
 	self.quadcenterX = quadcenterX
 	self.quadcenterY = quadcenterY
-	
+
 	self.speedx = math.max(-emancemaxspeed, math.min(emancemaxspeed, self.speedx))
-	
+
 	self.speedy = math.max(-emancemaxspeed, math.min(emancemaxspeed, self.speedy))
-	
+
 	self.rotationspeed = (math.random()-.5)*8
 	self.timer = 0
 	self.timer2 = 0
@@ -33,9 +33,9 @@ function emancipateanimation:update(dt)
 
 	self.x = self.x + self.speedx*dt
 	self.y = self.y + self.speedy*dt
-	
+
 	self.rotation = self.rotation + self.rotationspeed*dt
-	
+
 	if self.timer < emancipateanimationtime-emancipatefadeouttime then
 		self.timer2 = self.timer2 + dt
 		while self.timer2 > emancipationfizzledelay do
@@ -43,7 +43,7 @@ function emancipateanimation:update(dt)
 			self.timer2 = self.timer2 -emancipationfizzledelay
 		end
 	end
-	
+
 	self.timer = self.timer + dt
 	if self.timer > emancipateanimationtime then
 		return true

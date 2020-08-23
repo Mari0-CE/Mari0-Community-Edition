@@ -22,7 +22,7 @@ function entitytooltip:draw(a)
 		drawrectangle(self.x/scale, self.y/scale+8, (twidth+4), (theight+4))
 		love.graphics.setColor(1, 1, 1, a)
 		drawrectangle(self.x/scale+1, self.y/scale+9, 66, theight+2)
-		
+
 		local r, g, b = love.graphics.getBackgroundColor()
 		love.graphics.setColor(r, g, b, a)
 		love.graphics.rectangle("fill", self.x+2*scale, self.y+10*scale, 64*scale, 64*scale)

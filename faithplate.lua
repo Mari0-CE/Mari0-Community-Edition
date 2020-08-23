@@ -3,7 +3,7 @@ faithplate = class("faithplate")
 function faithplate:init(x, y, r)
 	self.cox = x
 	self.coy = y
-	
+
 	self.x = x-1
 	self.y = y-1
 	self.width = 2
@@ -11,20 +11,20 @@ function faithplate:init(x, y, r)
 	self.active = true
 	self.static = true
 	self.category = 26
-	
+
 	self.power = true
-	
+
 	self.mask = {true}
-	
+
 	self.animationtimer = 1
-	
+
 	self.includetable = {"player", "box", "enemy"}
-	
+
 	self.xspeed = 0
 	self.yspeed = 20
-	
+
 	self.input1state = "off"
-	
+
 	--Input list
 	self.r = {unpack(r)}
 	table.remove(self.r, 1)
@@ -50,7 +50,7 @@ function faithplate:init(x, y, r)
 		end
 		table.remove(self.r, 1)
 	end
-	
+
 	--determine rough direction
 	if self.yspeed > math.abs(self.xspeed)*2 then
 		self.dir = "up"
@@ -70,7 +70,7 @@ function faithplate:input(t, input)
 		elseif t == "toggle" then
 			self.power = not self.power
 		end
-		
+
 		self.input1state = t
 	end
 end
@@ -95,23 +95,23 @@ function faithplate:update(dt)
 	if self.animationtimer < 1 then
 		self.animationtimer = self.animationtimer + dt / faithplatetime
 	end
-	
+
 	if self.power then
 		local intable = checkrect(self.x+.5, self.y-0.125, 1, 0.125, self.includetable)
-		
+
 		for i = 1, #intable, 2 do
 			if not objects[intable[i]][intable[i+1]].ignorefaithplates then
 				if objects[intable[i]][intable[i+1]].speedy >= 0 then
 					objects[intable[i]][intable[i+1]].speedy = -self.yspeed
 					objects[intable[i]][intable[i+1]].speedx = self.xspeed
-					
+
 					objects[intable[i]][intable[i+1]].x = self.x+1-objects[intable[i]][intable[i+1]].width/2
-					
-					
+
+
 					if objects[intable[i]][intable[i+1]].faithplate then
 						objects[intable[i]][intable[i+1]]:faithplate(self.dir)
 					end
-					
+
 					self.animationtimer = 0
 				end
 			end
@@ -124,13 +124,13 @@ function faithplate:draw()
 	if self.power then
 		quad = 1
 	end
-	
+
 	love.graphics.setScissor(math.floor((self.cox-1-xscroll)*16*scale), (self.coy-yscroll-4)*16*scale, 32*scale, (2.5+2/16)*16*scale)
-	
+
 	love.graphics.setColor(unpack(background))
 	love.graphics.rectangle("fill", math.floor((self.cox-1-xscroll)*16*scale), (self.coy-yscroll-1.5)*16*scale, 32*scale, 2*scale)
 	love.graphics.setColor(1, 1, 1)
-	
+
 
 	if self.animationtimer < 1 then
 		if self.dir == "right" then
@@ -142,7 +142,7 @@ function faithplate:draw()
 			else
 				rot = math.pi/4*(1 - (self.animationtimer-0.3)/0.7)
 			end
-				
+
 			love.graphics.draw(faithplateplateimg, faithplatequad[quad], math.floor((self.cox+1-xscroll)*16*scale), (self.coy-yscroll-1.5)*16*scale, rot, scale, scale, 32)
 		elseif self.dir == "left" then
 			local rot = 0
@@ -153,7 +153,7 @@ function faithplate:draw()
 			else
 				rot = math.pi/4*(1 - (self.animationtimer-0.3)/0.7)
 			end
-			
+
 			love.graphics.draw(faithplateplateimg, faithplatequad[quad], math.floor((self.cox-1-xscroll)*16*scale), (self.coy-yscroll-1.5)*16*scale, -rot, -scale, scale, 32)
 		elseif self.dir == "up" then
 			local ymod = 0
@@ -164,7 +164,7 @@ function faithplate:draw()
 			else
 				ymod = .5*(1 - (self.animationtimer-0.3)/0.7)
 			end
-			
+
 			love.graphics.draw(faithplateplateimg, faithplatequad[quad], math.floor((self.cox-1-xscroll)*16*scale), (self.coy-yscroll-1.5-ymod)*16*scale, 0, scale, scale)
 		end
 	else
@@ -174,6 +174,6 @@ function faithplate:draw()
 			love.graphics.draw(faithplateplateimg, faithplatequad[quad], math.floor((self.cox+1-xscroll)*16*scale), (self.coy-yscroll-1.5)*16*scale, 0, -scale, scale)
 		end
 	end
-	
+
 	love.graphics.setScissor()
 end
