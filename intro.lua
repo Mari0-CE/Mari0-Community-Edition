@@ -1,12 +1,33 @@
 function intro_load()
 	gamestate = "intro"
-
 	introduration = 2.5
 	blackafterintro = 0.3
 	introfadetime = 0.5
 	introprogress = 0
-
 	allowskip = false
+	love.graphics.clear()
+	love.graphics.setColor(0.4, 0.4, 0.4)
+	loadingtexts = {"reticulating splines", "rendering important stuff", "01110000011011110110111001111001", "sometimes, i dream about cheese",
+					"baking cake", "happy explosion day", "raising coolness by a fifth", "yay facepunch", "stabbing myself", "sharpening knives",
+					"tanaka, thai kick", "slime will find you", "becoming self-aware", "it's a secret to everybody", "there is no minus world",
+					"oh my god, jc, a bomb", "silly loading message here", "motivational art by jorichi", "love.graphics.print(\"loading..\", 200, 120)",
+					"you're my favorite deputy", "licensed under wtfpl", "banned in australia", "loading anti-piracy module", "watch out there's a sni",
+					"attack while its tail's up!", "what a horrible night to have a curse", "han shot first", "establishing connection to nsa servers..",
+					"how do i programm", "making palette inaccurate..", "y cant mario crawl?"}
+	loadingtext = loadingtexts[math.random(#loadingtexts)]
+	local logoscale = scale
+	if logoscale <= 1 then
+		logoscale = 0.5
+	else
+		logoscale = 1
+	end
+	love.graphics.setColor(1, 1, 1)
+	love.graphics.draw(logo, love.graphics.getWidth()/2, love.graphics.getHeight()/2, 0, logoscale, logoscale, 142, 150)
+	love.graphics.setColor(0.6, 0.6, 0.6)
+	properprint("loading mari0 ce..", love.graphics.getWidth()/2-string.len("loading mari0 ce..")*4*scale, love.graphics.getHeight()/2-170*logoscale-7*scale)
+	love.graphics.setColor(0.2, 0.2, 0.2)
+	properprint(loadingtext, love.graphics.getWidth()/2-string.len(loadingtext)*4*scale, love.graphics.getHeight()/2+165*logoscale)
+	love.graphics.present()
 end
 
 function intro_update(dt)

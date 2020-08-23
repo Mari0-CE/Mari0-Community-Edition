@@ -432,42 +432,6 @@ function love.load(arg)
 		fontquadsback[string.sub(fontglyphs, i, i)] = love.graphics.newQuad((i-1)*10, 0, 10, 10, fontimageback:getWidth(), fontimageback:getHeight())
 	end
 
-	love.graphics.clear()
-	love.graphics.setColor(0.4, 0.4, 0.4)
-	loadingtexts = {"reticulating splines", "rendering important stuff", "01110000011011110110111001111001", "sometimes, i dream about cheese",
-					"baking cake", "happy explosion day", "raising coolness by a fifth", "yay facepunch", "stabbing myself", "sharpening knives",
-					"tanaka, thai kick", "slime will find you", "becoming self-aware", "it's a secret to everybody", "there is no minus world",
-					"oh my god, jc, a bomb", "silly loading message here", "motivational art by jorichi", "love.graphics.print(\"loading..\", 200, 120)",
-					"you're my favorite deputy", "licensed under wtfpl", "banned in australia", "loading anti-piracy module", "watch out there's a sni",
-					"attack while its tail's up!", "what a horrible night to have a curse", "han shot first", "establishing connection to nsa servers..",
-					"how do i programm", "making palette inaccurate..", "y cant mario crawl?"}
-
-	loadingtext = loadingtexts[math.random(#loadingtexts)]
-
-	if mariocharacter[1] == "rainbow dash-unfinished" then -- /)^3^(\
-		logo = love.graphics.newImage("graphics/stabyourselfdash.png")
-		logoblood = love.graphics.newImage("graphics/stabyourselfblooddash.png")
-	else
-		logo = love.graphics.newImage("graphics/stabyourself.png")
-		logoblood = love.graphics.newImage("graphics/stabyourselfblood.png")
-	end
-
-	local logoscale = scale
-	if logoscale <= 1 then
-		logoscale = 0.5
-	else
-		logoscale = 1
-	end
-
-	love.graphics.setColor(1, 1, 1)
-
-	love.graphics.draw(logo, love.graphics.getWidth()/2, love.graphics.getHeight()/2, 0, logoscale, logoscale, 142, 150)
-	love.graphics.setColor(0.6, 0.6, 0.6)
-	properprint("loading mari0 ce..", love.graphics.getWidth()/2-string.len("loading mari0 ce..")*4*scale, love.graphics.getHeight()/2-170*logoscale-7*scale)
-	love.graphics.setColor(0.2, 0.2, 0.2)
-	properprint(loadingtext, love.graphics.getWidth()/2-string.len(loadingtext)*4*scale, love.graphics.getHeight()/2+165*logoscale)
-	love.graphics.present()
-
 	add("Variables")
 
 	--require ALL the files!
@@ -1012,6 +976,13 @@ function love.load(arg)
 	if skipintro then
 		menu_load()
 	else
+		if mariocharacter[1] == "rainbow dash-unfinished" then -- /)^3^(\
+			logo = love.graphics.newImage("graphics/stabyourselfdash.png")
+			logoblood = love.graphics.newImage("graphics/stabyourselfblooddash.png")
+		else
+			logo = love.graphics.newImage("graphics/stabyourself.png")
+			logoblood = love.graphics.newImage("graphics/stabyourselfblood.png")
+		end
 		intro_load()
 	end
 	add("Intro Load")
