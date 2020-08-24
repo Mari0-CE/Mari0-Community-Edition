@@ -450,6 +450,8 @@ function love.load(arg)
 	require "animatedquad"
 	require "intro"
 	require "menu"
+	require "menu_map"
+	require "menu_options"
 	require "levelscreen"
 	require "game"
 	require "editor"
@@ -734,8 +736,6 @@ function love.load(arg)
 	for i = 1, 4 do
 		seesawquad[i] = love.graphics.newQuad((i-1)*16, 0, 16, 16, 64, 16)
 	end
-
-	playerselectimg = love.graphics.newImage("graphics/playerselectarrow.png")
 
 	starquad = {}
 	for i = 1, 4 do
@@ -1053,7 +1053,28 @@ function love.update(dt)
 		keyprompt_update()
 
 		if gamestate == "menu" or gamestate == "mappackmenu" or gamestate == "onlinemenu" or gamestate == "options" or gamestate == "lobby" then
-			menu_update(dt)
+
+			--coinanimation
+			coinanimation = coinanimation + dt*6.75
+			while coinanimation >= 6 do
+				coinanimation = coinanimation - 5
+			end
+			coinframe = math.max(1, math.floor(coinanimation))
+
+			--Animate animated tiles because I say so
+			for i = 1, #animatedtiles do
+				animatedtiles[i]:update(dt)
+			end
+			menu_map_update(dt)
+			menu_map_dlc_update(dt)
+			menu_map_1_6_update(dt)
+			if gamestate == "options" and optionstab == 2 then
+				menu_skins_update(dt)
+			elseif gamestate == "onlinemenu" then
+				onlinemenu_update(dt)
+			elseif gamestate == "lobby" then
+				lobby_update(dt)
+			end
 		elseif gamestate == "levelscreen" or gamestate == "gameover" or gamestate == "sublevelscreen" or gamestate == "mappackfinished" then
 			levelscreen_update(dt)
 		elseif gamestate == "game" then
@@ -1080,7 +1101,41 @@ function love.draw()
 
 	--mycamera:attach()
 	if gamestate == "menu" or gamestate == "mappackmenu" or gamestate == "onlinemenu" or gamestate == "options" or gamestate == "lobby" then
-		menu_draw()
+		-- Moved from menu.lua to main.lua because the background should be independent of the menu.
+		--GUI LIBRARY?! Never heard of that.
+		--I'm not proud of this at all; But I'm even lazier than not proud. Seriously, don't take this as an example of what to do.
+		drawlevel()
+		drawui()
+		for j = 1, players do
+			local v = characters[mariocharacter[j]]
+			local angle = 3
+			if v.nopointing then
+				angle = 1
+			end
+			local pid = j
+			if pid > 4 then
+				pid = 5
+			end
+			local portalcolor1, portalcolor2 = portalcolor[j][1], portalcolor[j][2]
+			if players == 1 then
+				portalcolor1, portalcolor2 = {60 / 255, 188 / 255, 252 / 255}, {232 / 255, 130 / 255, 30 / 255}
+			end
+			drawplayer(nil, ((startx[pid]-xscroll)*16)+8*(j-1), ((starty[pid]-yscroll)*16-12), scale,     v.smalloffsetX, v.smalloffsetY, 0, v.smallquadcenterX, v.smallquadcenterY, "idle", false, false, mariohats[j], v.animations, v.idle[angle], 0, false, false, mariocolors[j], 1, portalcolor1, portalcolor2, nil, nil, nil, nil, nil, nil, characters[mariocharacter[j]])
+		end
+		love.graphics.setColor(1, 1, 1, 1)
+		drawforeground()
+		if gamestate == "menu" then
+			menu_draw()
+		elseif gamestate == "mappackmenu" then
+			menu_map_draw()
+		elseif gamestate == "options" then
+			menu_options_draw()
+		elseif gamestate == "onlinemenu" then
+			onlinemenu_draw()
+		elseif gamestate == "lobby" then
+			lobby_draw()
+		end
+		love.graphics.translate(0, yoffset*scale)
 	elseif gamestate == "levelscreen" or gamestate == "gameover" or gamestate == "mappackfinished" then
 		levelscreen_draw()
 	elseif gamestate == "game" then
@@ -1378,7 +1433,15 @@ function love.keypressed(key, isrepeat)
 			saveconfig()
 			notice.new("Cheats unlocked!")
 		end
-		menu_keypressed(key)
+		if gamestate == "menu" then
+			menu_keypressed(key)
+		elseif gamestate == "mappackmenu" then
+			menu_map_keypressed(key)
+		elseif gamestate == "onlinemenu" then
+			menu_onlinemenu_keypressed(key)
+		elseif gamestate == "options" then
+			menu_options_keypressed(key)
+		end
 	elseif gamestate == "game" then
 		game_keypressed(key)
 	elseif gamestate == "intro" then
