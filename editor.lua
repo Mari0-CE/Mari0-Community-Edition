@@ -2804,13 +2804,19 @@ function mapnumberclick(i, j, k)
 		marioworld = tonumber(i)
 		mariolevel = tonumber(j)
 		editorloadopen = true
+		local needs_to_be_saved
 		if k then
 			k = tonumber(k)
-			loadlevel(i .. "-" .. j .. "_" .. k)
+			needs_to_be_saved = loadlevel(i .. "-" .. j .. "_" .. k)
 		else
-			loadlevel(i .. "-" .. j)
+			needs_to_be_saved = loadlevel(i .. "-" .. j)
 		end
 		startlevel()
+		if needs_to_be_saved then
+			print("needs_to_be_saved")
+			savelevel()
+			getmaps()
+		end
 	end
 end
 
