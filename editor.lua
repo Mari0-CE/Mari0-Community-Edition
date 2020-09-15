@@ -2813,7 +2813,6 @@ function mapnumberclick(i, j, k)
 		end
 		startlevel()
 		if needs_to_be_saved then
-			print("needs_to_be_saved")
 			savelevel()
 			getmaps()
 		end
