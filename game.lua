@@ -2988,7 +2988,9 @@ function loadlevel(level)
 	spriteset = 1
 	
 	--LOAD THE MAP
+	local needs_to_be_saved = false
 	if loadmap(level, true) == false then --make one up
+		needs_to_be_saved = true
 		mapwidth = width
 		background = {unpack(backgroundcolor[1])}
 		mapheight = 15
@@ -3196,6 +3198,7 @@ function loadlevel(level)
 	updateranges()
 	
 	generatespritebatch()
+	return needs_to_be_saved
 end
 
 function startlevel(levelstart)
