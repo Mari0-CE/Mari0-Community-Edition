@@ -3215,7 +3215,7 @@ function mario:startfall()
 end
 
 function mario:die(how)
-	if self.dead then 
+	if self.dead or levelfinished then 
 		return
 	end
 	if editormode then
