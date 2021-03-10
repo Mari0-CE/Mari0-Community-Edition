@@ -6,6 +6,7 @@
 	"movement": "none",
 	"killsontop": true,
 	"killsonsides": true,
+	"killsonbottom": true,
 	
 	"stompable": true,
 	"stompcombosuppressor": true,
