@@ -2215,8 +2215,22 @@ function mario:stompenemy(a, b, c, d, side)
 		if b.small then	
 			playsound("shot")
 			if b.speedx == 0 then
-				addpoints(500, b.x, b.y)
-				self.combo = 1
+				if self.combo < #mariocombo then
+					addpoints(mariocombo[self.combo], self.x, self.y)
+					if not b.stompcombosuppressor then
+						self.combo = self.combo + 1
+					end
+				else
+					if mariolivecount ~= false then
+						for i = 1, players do
+							mariolives[i] = mariolives[i]+1
+						end
+					end
+					table.insert(scrollingscores, scrollingscore:new("1up", self.x, self.y))
+					playsound("oneup")
+				end
+				--addpoints(500, b.x, b.y)
+				--self.combo = 1
 			end
 		else
 			playsound("stomp")
@@ -3215,7 +3229,7 @@ function mario:startfall()
 end
 
 function mario:die(how)
-	if self.dead then 
+	if self.dead or levelfinished then 
 		return
 	end
 	if editormode then
