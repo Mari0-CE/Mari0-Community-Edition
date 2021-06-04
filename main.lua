@@ -122,7 +122,7 @@ function love.errhand(msg)
 	table.insert(err, "Mari0 Over.")
 	table.insert(err, "Crash = Very Yes.\n\n")
 	if not versionerror then
-		table.insert(err, "Tell us what happened at github.com/HugoBDesigner/Mari0-Community-Edition/issues, that'd be swell.\nAlso send us a screenshot.\n")
+		table.insert(err, "Tell us what happened at github.com/Mari0-CE/Mari0-Community-Edition/issues, that'd be swell.\nAlso send us a screenshot.\n")
 	end
 	table.insert(err, "Mari0 " .. (marioversion or "UNKNOWN") .. ", LOVE " .. (love._version or "UNKNOWN") .. " running on " .. (love._os or "UNKNOWN") .. "\n")
 	if love.graphics.getRendererInfo then
