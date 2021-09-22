@@ -1021,29 +1021,24 @@ function drawui(hidetime)
 		love.graphics.translate(0, yoffset*scale)
 	end
 	
-	if not characters[mariocharacter[1]] then
-		mariocharacter[1] = "mario"
-	end
-	printfunction(characters[mariocharacter[1]].name, uispace*.5 - 24*scale, 8*scale)
-	printfunction(addzeros(marioscore, 6), uispace*0.5-24*scale, 16*scale)
+	if editormode == false then -- No point in showing this in the editor
+		if not characters[mariocharacter[1]] then
+			mariocharacter[1] = "mario"
+		end
+		printfunction(characters[mariocharacter[1]].name, uispace*.5 - 24*scale, 8*scale)
+		printfunction(addzeros(marioscore, 6), uispace*0.5-24*scale, 16*scale)
+		
+		printfunction("*", uispace*1.5-8*scale, 16*scale)
+		
+		love.graphics.draw(coinanimationimg, coinanimationquads[spriteset][coinframe], uispace*1.5-16*scale, 16*scale, 0, scale, scale)
+		printfunction(addzeros(mariocoincount, 2), uispace*1.5-0*scale, 16*scale)
+		
+		printfunction("world", uispace*2.5 - 20*scale, 8*scale)
+		printfunction(marioworld .. "-" .. mariolevel, uispace*2.5 - 12*scale, 16*scale)
 	
-	printfunction("*", uispace*1.5-8*scale, 16*scale)
-	
-	love.graphics.draw(coinanimationimg, coinanimationquads[spriteset][coinframe], uispace*1.5-16*scale, 16*scale, 0, scale, scale)
-	printfunction(addzeros(mariocoincount, 2), uispace*1.5-0*scale, 16*scale)
-	
-	printfunction("world", uispace*2.5 - 20*scale, 8*scale)
-	printfunction(marioworld .. "-" .. mariolevel, uispace*2.5 - 12*scale, 16*scale)
-	
-	printfunction("time", uispace*3.5 - 16*scale, 8*scale)
-	if not hidetime then
-		if editormode then
-			if linktool then
-				printfunction("link", uispace*3.5 - 16*scale, 16*scale)
-			else
-				printfunction("edit", uispace*3.5 - 16*scale, 16*scale)
-			end
-		else
+		printfunction("time", uispace*3.5 - 16*scale, 8*scale)
+		
+		if not hidetime then
 			if type(mariotime) == "number" then
 				printfunction(addzeros(math.ceil(mariotime), 3), uispace*3.5-8*scale, 16*scale)
 			else
@@ -4193,7 +4188,7 @@ function shootportal(plnumber, i, sourcex, sourcey, direction, mirrored, bounces
 	local cox, coy, side, tendency, x, y = traceline(sourcex, sourcey, direction)
 	
 	local mirror = false
-	if cox and tilequads[map[cox][coy]] and tilequads[map[cox][coy][1]]:getproperty("mirror", cox, coy) then
+	if cox and tilequads[map[cox][coy][1]] and tilequads[map[cox][coy][1]]:getproperty("mirror", cox, coy) then
 		mirror = true
 	end
 	

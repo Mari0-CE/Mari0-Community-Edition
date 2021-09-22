@@ -1233,6 +1233,15 @@ end
 function animationguiline:unclick(x, y, button)
 	self.downbutton:unclick(x, y, button)
 	self.upbutton:unclick(x, y, button)
+	
+	-- Why is it even done this way, and not with "for i = 1, #self.elements do"?
+	local i = 1
+	while i <= #self.elements do
+		if self.elements[i].gui then
+			self.elements[i].gui:unclick(x, y, button)
+		end
+		i = i + 1
+	end
 end
 
 function animationguiline:delete()

@@ -2441,3 +2441,13 @@ end
 function dbprint(x) --debugprint, can easily comment out the "print" thing
 	print(x)
 end
+
+function gradient(color1, color2, progress)
+	local ret = {}
+	for i = 1, math.max(#color1, #color2) do
+		local c1 = color1[i] or color2[i]
+		local c2 = color2[i] or color1[i]
+		ret[i] = c1 + (c2-c1)*progress
+	end
+	return ret
+end

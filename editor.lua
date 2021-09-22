@@ -89,8 +89,7 @@ function editor_load()
 	
 	mtsavehighlighttime = 5
 	mtsavetimer = 0
-	mtjustsaved = false
-	mtsavecolors = {1, 0.44, 0.44, 0.7}
+	mtjustsaved = 0
 	
 	pastingtiles = false
 	pastemode = false -- 1 transparent, 2 opaque
@@ -527,14 +526,14 @@ function editor_update(dt)
 								next = "down"
 							end
 							
-							if mushroomplatform then
+							if advanceddrawtool == "mushroom" then
 								powerlinedrawtable = { --mushroom platform
 								{"down", "up", 65, false},
 								{"left", "right", 22, false, hprev, 0, 20, false, (hprev/math.abs(hprev)), 0, 21, false, hprev-(hprev/math.abs(hprev)), 0, 21},
 								{"right", "left", 20, false, hprev, 0, 22, false, (hprev/math.abs(hprev)), 0, 21, false, hprev-(hprev/math.abs(hprev)), 0, 21},
 								{"down", "right", 21, false, 0, 1, 43},
 								{"down", "left", 21, false, 0, 1, 43}}
-							else
+							elseif advanceddrawtool == "powerlines" then
 								powerlinedrawtable = { --powerlines
 								{"up", "down", 43, true},
 								{"down", "up", 43, true},
@@ -590,6 +589,7 @@ function editor_update(dt)
 		elseif love.mouse.isDown("m") and not middlemode[1] then
 			if math.abs(love.mouse.getX() - middlemode[2]) >= 8*scale or math.abs(love.mouse.getY() - middlemode[3]) >= 8*scale then
 				middlemode[1] = true
+				love.mouse.setVisible(false)
 			end
 		end
 		
@@ -894,46 +894,38 @@ function editor_draw()
 						lx2 = math.max(tileselectionclick1x, tileselectionclick2x)
 						ly2 = math.max(tileselectionclick1y, tileselectionclick2y)
 						
-						love.graphics.setColor(0.67,1,0.67,0.3)
-						if mtjustsaved then
-							local r, g, b, a = unpack(mtsavecolors)
-							if r > 172 then
-								r = r - math.floor(mtsavetimer*3)
+						-- Laziness or cleverness?
+						local px, py = math.floor((lx1-xscroll-1)*16*scale), ((ly1-yscroll-1)*16+8)*scale
+						local pw, ph = (lx2-lx1)*16*scale+16*scale, (ly2-ly1)*16*scale+16*scale
+						
+						love.graphics.setColor(0.67,1,0.67,0.7)
+						local timeOscilator = love.timer.getTime() % 2
+						timeOscilator = 1 - math.abs( math.cos(timeOscilator * math.pi) )
+						
+						-- Highlight thing
+						love.graphics.rectangle("fill", px - (2 + timeOscilator*3)*scale, py - (2 + timeOscilator*3)*scale, 5*scale, scale)
+						love.graphics.rectangle("fill", px - (2 + timeOscilator*3)*scale, py - (1 + timeOscilator*3)*scale, scale, 4*scale)
+						love.graphics.rectangle("fill", px + pw + (2 + timeOscilator*3 - 5)*scale, py - (2 + timeOscilator*3)*scale, 5*scale, scale)
+						love.graphics.rectangle("fill", px + pw + (1 + timeOscilator*3)*scale, py - (1 + timeOscilator*3)*scale, scale, 4*scale)
+						love.graphics.rectangle("fill", px - (2 + timeOscilator*3)*scale, py + ph + (1 + timeOscilator*3)*scale, 5*scale, scale)
+						love.graphics.rectangle("fill", px - (2 + timeOscilator*3)*scale, py + ph + (1 + timeOscilator*3 - 4)*scale, scale, 4*scale)
+						love.graphics.rectangle("fill", px + pw + (2 + timeOscilator*3 - 5)*scale, py + ph + (1 + timeOscilator*3)*scale, 5*scale, scale)
+						love.graphics.rectangle("fill", px + pw + (1 + timeOscilator*3)*scale, py + ph + (1 + timeOscilator*3 - 4)*scale, scale, 4*scale)
+						
+						local saveColors = {1, 0.44, 0.44, 0.7}
+						local selectColors = {0.67, 1, 0.67, 0.3}
+						love.graphics.setColor(selectColors)
+						
+						if mtjustsaved > 0 then
+							local r, g, b, a = gradient(selectColors, saveColors, mtjustsaved)
+							love.graphics.setColor(r, g, b, a)
+							
+							mtjustsaved = math.max(mtjustsaved - love.timer.getDelta(), 0)
+							if mtjustsaved == 0 then -- Negative 0 thing
+								mtjustsaved = 0
 							end
-							if r < 172 then
-								r = 172
-							end
-							if g < 255 then
-								g = g + math.floor(mtsavetimer*3)
-							end
-							if g > 255 then
-								g = 255
-							end
-							if b > 172 then
-								b = b - math.floor(mtsavetimer*3)
-							end
-							if b < 172 then
-								b = 172
-							end
-							if a > 72 then
-								a = a - math.floor(mtsavetimer*3)
-							end
-							if a < 72 then
-								a = 72
-							end
-							love.graphics.setColor(r / 255, g / 255, b / 255, a / 255)
-							if r == 172 and g == 255 and b == 172 and a == 72 then
-								mtsavehighlighttime = 5
-								mtsavetimer = 0
-								mtjustsaved = false
-								r = 255
-								g = 112
-								b = 112
-								a = 128
-							end
-							mtsavecolors = {r, g, b, a}
 						end
-						love.graphics.rectangle("fill",math.floor((lx1-xscroll-1)*16*scale), ((ly1-yscroll-1)*16+8)*scale, (lx2-lx1)*16*scale+16*scale, (ly2-ly1)*16*scale+16*scale)
+						love.graphics.rectangle("fill", px, py, pw, ph)
 					end
 				elseif middlemode[1] then
 					love.graphics.push()
@@ -1225,6 +1217,38 @@ function editor_draw()
 			rightclickm:draw()
 		end
 		
+		-- EDITOR UI
+		local mode = "tiles"
+		local submode = false
+		if editorstate == "selection" then
+			mode = "selection"
+		elseif editorstate == "lightdraw" then
+			mode = "advanced draw tool"
+			submode = "power line draw"
+			if advanceddrawtool == "mushroom" then
+				submode = "mushroom platforms"
+			end
+		else
+			submode = "tiles"
+			if editenemies then
+				submode = "enemies"
+			elseif editentities then
+				submode = "entities"
+			end
+		end
+		love.graphics.setColor(1, 1, .8, .75)
+		properprint(" editor mode", 10*scale, 10*scale)
+		if submode then
+			properprint("tool submode", 10*scale, 18*scale)
+		end
+		properprint("f1 for help", (400-10-8*11)*scale, 10*scale)
+		
+		love.graphics.setColor(1, 1, 1, .75)
+		properprint(":" .. mode, (10+12*8)*scale, 10*scale)
+		if submode then
+			properprint(":" .. submode, (10+12*8)*scale, 18*scale)
+		end
+		
 		if love.keyboard.isDown("f1") and not rightclickm then
 			love.graphics.setColor(0, 0, 0, .85)
 			love.graphics.rectangle("fill", helpui[1]*scale, helpui[2]*scale, (helpui[3]-helpui[1])*scale, (helpui[4]-helpui[2])*scale)
@@ -1244,7 +1268,7 @@ function editor_draw()
 				{"ctrl+g","transforms the selected tiles into a|" ..
 						  "group bound to the top-left-most tile.", 1},
 				{"u","on the tile screen, removes the tile group|" ..
-					 "bound to the tile.", 1},--                 |
+					 "bound to the highlighted tile.", 1},--     |
 				{"ctrl+z/ctrl+y","undo/redo the last changes.", 0},
 				{"ctrl+c/ctrl+x/ctrl+v","copy/cut/paste region.", 0},
 				{"ctrl+a","select the entire level.", 0},--      |
@@ -1768,11 +1792,14 @@ function editor_draw()
 					properprint("delete", 10*scale, 210*scale)
 				end	
 			elseif editorstate == "lightdrawcustomize" then
-				love.graphics.setColor(0.5, 0.5, 0.5)
-				properprint("more coming soon", 5*scale, 55*scale)
-				guielements["tabtools"].textcolor = {math.random(),math.random(),math.random()}
-				guielements["tabtools"].fillcolor = {math.random(),math.random(),math.random()}
-				guielements["tabtools"].bordercolor = {math.random(),math.random(),math.random()}				
+				-- love.graphics.setColor(0.5, 0.5, 0.5)
+				-- properprint("more coming soon", 5*scale, 55*scale)
+				
+				-- I'm cancelling this stroke-inducing nightmare
+				
+				-- guielements["tabtools"].textcolor = {math.random(),math.random(),math.random()}
+				-- guielements["tabtools"].fillcolor = {math.random(),math.random(),math.random()}
+				-- guielements["tabtools"].bordercolor = {math.random(),math.random(),math.random()}				
 			end
 		end
 	end
@@ -2080,7 +2107,7 @@ function powerlinestab()
 		v.active = false
 	end
 	
-	guielements["tabtools"].text = "party"
+	-- guielements["tabtools"].text = "party"
 	guielements["tabmain"].active = true
 	guielements["tabtiles"].active = true
 	guielements["tabtools"].active = true
@@ -2927,10 +2954,13 @@ function savestate()
 		table.remove(savestates, 1)
 	end
 	local t = {}
+	t.coinmap = {}
 	for x = 1, #map do
 		t[x] = {}
+		t.coinmap[x] = {}
 		for y = 1, #map[x] do
 			t[x][y] = {}
+			t.coinmap[x][y] = coinmap[x][y]
 			for i, v in pairs(map[x][y]) do
 				t[x][y][i] = v
 			end
@@ -2945,10 +2975,13 @@ function loadstate(s)
 	
 	local v = savestates[s]
 	map = {}
+	coinmap = {}
 	for x = 1, #v do
 		map[x] = {}
+		coinmap[x] = {}
 		for y = 1, #v[x] do
 			map[x][y] = {}
+			coinmap[x][y] = v.coinmap[x][y]
 			for i, w in pairs(v[x][y]) do
 				map[x][y][i] = w
 			end
@@ -3234,6 +3267,9 @@ function editor_mousepressed(x, y, button)
 							loadmtobjects()
 						elseif mtbutton == 4 then
 							deleteline("mappacks/" .. mappack .. "/objects.txt", tile+1)
+							if guielements["renamebar"] and guielements["renamebar"].active then
+								guielements["renamebar"].active = false
+							end
 							loadmtobjects()
 						end
 					end
@@ -3242,6 +3278,7 @@ function editor_mousepressed(x, y, button)
 		end
 	elseif button == "m" then
 		middlemode = {false, x, y}
+		love.mouse.setVisible(true)
 	elseif button == "wu" then
 		if not editormenuopen then
 			if love.keyboard.isDown("lshift") or love.keyboard.isDown("rshift") then
@@ -3424,14 +3461,16 @@ function editor_mousereleased(x, y, button)
 	elseif button == "m" then
 		if middlemode[1] == false then
 			local cox, coy = getMouseTile(love.mouse.getX(), love.mouse.getY()+8*scale)
-			print("cox, coy = " .. cox .. ", " .. coy)
 			if inmap(cox, coy) == false then
 				return
 			end
-			print("Tile selected")
 			if not editentities then
 				tilesall()
 				currenttile = map[cox][coy][1]
+				
+				if currenttile == 1 and coinmap[cox][coy] then
+					currenttile = 116 -- Let's be nice to the map maker, alright?
+				end
 			elseif not editenemies then
 				tilesentities()
 				generateentitylist()
@@ -3450,6 +3489,7 @@ function editor_mousereleased(x, y, button)
 			end
 		end
 		middlemode[1] = false
+		love.mouse.setVisible(true)
 	end
 	allowdrag = true
 	hprev = 0
@@ -3515,6 +3555,7 @@ function editor_keypressed(key)
 				
 				savemtobject(group, tostring(name), "groups")
 				loadmtgroups()
+				notice.new("Saved as group!", notice.white, 2)
 			end
 		elseif key == "c" or key == "x" then
 			if tileselectionclick1 == true and tileselectionclick2 == true then
@@ -3831,8 +3872,8 @@ function toggleskiplevelscreen(var)
 end
 
 function changepastemode(var)
---	pastemode = var
---	guielements["pastemodedropdown"].var = var
+	--	pastemode = var
+	--	guielements["pastemodedropdown"].var = var
 	if var ~= nil then
 		pastemode = var
 	else
@@ -3941,8 +3982,10 @@ function test_level()
 end
 
 function drawpowerlines()
-	mushroomplatform = false
-
+	advanceddrawtool = "powerlines"
+	
+	editenemies = false
+	editentities = true
 	editorstate = "lightdraw"
 	lightdrawX = nil
 	lightdrawY = nil
@@ -3950,8 +3993,10 @@ function drawpowerlines()
 end
 
 function drawmushrooms()
-	mushroomplatform = true
+	advanceddrawtool = "mushroom"
 
+	editenemies = false
+	editentities = false
 	editorstate = "lightdraw"
 	lightdrawX = nil
 	lightdrawY = nil
@@ -4166,7 +4211,7 @@ function savemtobject(objecttable, name, file)
 	data = string.gsub(data, "mtobjsize", m .. " * " .. n)
 	data = data .. "\n"
 	love.filesystem.write("mappacks/" .. mappack .. "/" .. file .. ".txt", data)
-	mtjustsaved = true
+	mtjustsaved = 1
 end
 
 function objectclipboardcopy(objecttable)

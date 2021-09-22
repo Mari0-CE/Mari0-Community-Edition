@@ -8,6 +8,8 @@ function emancipationgrill:init(x, y, r)
 	self.active = true
 	self.inputstate = "off"
 	
+	self.thickness = 4 -- For aabb checks
+	
 	table.remove(self.r, 1)
 	table.remove(self.r, 1)
 	
@@ -135,10 +137,12 @@ function emancipationgrill:draw()
 			parstartleft = math.floor((self.startx-1-xscroll)*16*scale)
 			parstartright = math.floor((self.endx-1-xscroll)*16*scale)
 			if self.active then
-				love.graphics.setScissor(parstartleft, ((self.y-yscroll-1)*16-2)*scale, self.range - emanceimgwidth*scale, scale*4)
+				love.graphics.setScissor(parstartleft, ((self.y-yscroll-1)*16-self.thickness/2)*scale,
+					self.range - emanceimgwidth*scale, self.thickness*scale)
 				
 				love.graphics.setColor(unpack(emancelinecolor))
-				love.graphics.rectangle("fill", math.floor((self.startx-1-xscroll)*16*scale), ((self.y-yscroll-1)*16-2)*scale, self.range, scale*4)
+				love.graphics.rectangle("fill", math.floor((self.startx-1-xscroll)*16*scale), ((self.y-yscroll-1)*16-self.thickness/2)*scale,
+					self.range, self.thickness*scale)
 				love.graphics.setColor(1, 1, 1)
 				
 				for i, v in pairs(self.particles.i) do
@@ -162,10 +166,12 @@ function emancipationgrill:draw()
 			parstartup = math.floor((self.starty-yscroll-1)*16*scale)
 			parstartdown = math.floor((self.endy-yscroll-1)*16*scale)
 			if self.active then
-				love.graphics.setScissor(math.floor(((self.x-1-xscroll)*16+6)*scale), parstartup-8*scale, scale*4, self.range - emanceimgwidth*scale)
+				love.graphics.setScissor(math.floor(((self.x-1-xscroll)*16+self.thickness*1.5)*scale), parstartup-8*scale,
+					self.thickness*scale, self.range - emanceimgwidth*scale)
 				
 				love.graphics.setColor(unpack(emancelinecolor))
-				love.graphics.rectangle("fill", math.floor(((self.x-1-xscroll)*16+6)*scale), parstartup-8*scale, scale*4, self.range - emanceimgwidth*scale)
+				love.graphics.rectangle("fill", math.floor(((self.x-1-xscroll)*16+self.thickness*1.5)*scale), parstartup-8*scale,
+					self.thickness*scale, self.range - emanceimgwidth*scale)
 				love.graphics.setColor(1, 1, 1)
 				
 				for i, v in pairs(self.particles.i) do
