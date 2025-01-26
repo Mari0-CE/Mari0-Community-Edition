@@ -60,7 +60,7 @@ function love.run()
 			if e == "quit" then
 				if not love.quit() then
 					love.audio.stop()
-					return
+					return function() return a or 0 end
 				end
 			end
 			love.handlers[e](a,b,c,d)
